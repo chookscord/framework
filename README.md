@@ -2,8 +2,8 @@
 
 The **Easiest** Discord.JS Framework by far.
 
-[![npm (scoped)](https://img.shields.io/npm/v/@chookscord/framework)](https://npmjs.com/package/@chookscord/framework)
-[![npm](https://img.shields.io/npm/dt/@chookscord/framework)](https://npmjs.com/package/@chookscord/framework)
+[![npm (scoped)](https://img.shields.io/npm/v/chookscord)](https://npmjs.com/package/chookscord)
+[![npm](https://img.shields.io/npm/dt/chookscord)](https://npmjs.com/package/chookscord)
 
 ## This project is still experimental!
 
@@ -18,10 +18,10 @@ Check the [issues](https://github.com/chookscord/framework/issues) tab in the re
 This project recommends using [**yarn**](https://yarnpkg.com/) as your package manager for a better dev experience.
 
 ```bash
-$ yarn add @chookscord/framework
+$ yarn add chookscord
 
 # OR using npm
-$ npm i @chookscord/framework
+$ npm i chookscord
 ```
 
 ## Usage
@@ -59,7 +59,7 @@ DISCORD_BOT_TOKEN=your-bot-token-here
 
 ```js
 // chooks.config.js
-const { defineConfig } = require('@chookscord/utils');
+const { defineConfig } = require('chookscord');
 
 module.exports = defineConfig({
   // .env files are automatically loaded
@@ -79,7 +79,7 @@ The `commands` folder should contain all your commands.
 
 ```js
 // commands/ping.js
-const { defineCommand } = require('@chookscord/utils');
+const { defineCommand } = require('chookscord');
 
 module.exports = defineCommand({
   name: 'ping',
@@ -96,7 +96,7 @@ The `events` folder should contain all your event handlers.
 
 ```js
 // commands/ready.js
-const { defineEvent } = require('@chookscord/utils');
+const { defineEvent } = require('chookscord');
 
 module.exports = defineEvent({
   name: 'ready',
@@ -105,3 +105,22 @@ module.exports = defineEvent({
   },
 });
 ```
+
+### Final structure
+
+Once all that is set up, your project should now look a bit like this:
+
+```bash
+.
+├── node_modules
+├── commands
+│   ├── ping.js
+├── events
+│   └── ready.js
+├── .env
+├── chooks.config.js
+├── package.json
+└── yarn.lock
+```
+
+Now you can start your bot using `yarn dev`!
