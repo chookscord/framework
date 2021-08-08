@@ -64,7 +64,7 @@ const { defineConfig } = require('chookscord');
 module.exports = defineConfig({
   // .env files are automatically loaded
   token: process.env.DISCORD_BOT_TOKEN,
-  // the prefix is required if want to use commands other than slash commands.
+  // the prefix is required if want to use the traditional message commands.
   prefix: '!',
   intents: [
     'GUILDS',
@@ -77,15 +77,35 @@ module.exports = defineConfig({
 
 The `commands` folder should contain all your commands.
 
+By default, all commands are slash commands and will have the `interaction` object available in their context.
+
+To use the traditional message commands instead, add `text: true` to your options, or use `defineTextCommand`. `interaction` will be replaced with the standard `message` object and `args` which will be whatever input the user sent.
+
 ```js
 // commands/ping.js
 const { defineCommand } = require('chookscord');
 
 module.exports = defineCommand({
   name: 'ping',
+  description: 'Replies with pong!',
+  async execute({ interaction }) {
+    await interaction.reply('pong!');
+    console.log('user ponged!');
+  },
+});
+```
+
+```js
+// commands/pong.js
+const { defineTextCommand } = require('chookscord');
+
+module.exports = defineTextCommand({
+  text: true,
+  name: 'pong',
+  description: 'Replies with ping!',
   async execute({ message }) {
-    await message.channel.send('pong!');
-    console.log('channel pinged!');
+    await message.reply('ping!');
+    console.log('user pinged!');
   },
 });
 ```
@@ -115,6 +135,7 @@ Once all that is set up, your project should now look a bit like this:
 ├── node_modules
 ├── commands
 │   ├── ping.js
+│   └── pong.js
 ├── events
 │   └── ready.js
 ├── .env
