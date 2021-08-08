@@ -7,6 +7,7 @@ register({
   transpileOnly: true,
   compilerOptions: {
     module: 'CommonJS',
+    target: 'ES2021',
   },
 });
 
