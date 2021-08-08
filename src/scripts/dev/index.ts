@@ -5,7 +5,6 @@ import { register } from 'ts-node';
 
 register({
   transpileOnly: true,
-  transpiler: 'ts-node/transpilers/swc-experimental',
   compilerOptions: {
     module: 'CommonJS',
   },
