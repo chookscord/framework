@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@chookscord/lib": "^0.1.1",
+    "@swc/core": "^1.2.75",
     "@types/node": "^16.4.13",
     "@types/node-fetch": "^2.5.12",
     "commander": "^8.1.0",

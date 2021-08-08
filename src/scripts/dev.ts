@@ -10,7 +10,13 @@ import type { Client } from 'discord.js';
 import type { EventContext } from '@chookscord/lib';
 import { register } from 'ts-node';
 
-register({ compilerOptions: { module: 'CommonJS' } });
+register({
+  transpileOnly: true,
+  transpiler: 'ts-node/transpilers/swc-experimental',
+  compilerOptions: {
+    module: 'CommonJS',
+  },
+});
 
 function createEventContext(client: Client, config: Config): EventContext {
   return { client, config, fetch };
