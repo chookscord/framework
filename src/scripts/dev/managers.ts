@@ -1,34 +1,33 @@
-import {
+import * as loader from '../../loaders/commands';
+import chooks, {
   CommandManager,
   EventContext,
   EventManager,
   InteractionManager,
-  createCommandManager,
-  createCommandStore,
-  createEventManager,
-  createInteractionManager,
 } from '@chookscord/lib';
-import { loadCommands } from './loader';
+
 
 export interface ManagerInterface {
   event: EventManager;
   command: CommandManager;
   interaction: InteractionManager;
-  load: () => Promise<void>;
+  loadEvents: () => Promise<void>;
+  loadCommands: () => Promise<void>;
 }
 
 export function createManagers(ctx: EventContext): ManagerInterface {
-  const commandStore = createCommandStore();
+  const commandStore = chooks.createCommandStore();
 
-  const eventManager = createEventManager(ctx, 'events');
-  const commandManager = createCommandManager(ctx, commandStore);
-  const interactionManager = createInteractionManager(ctx, commandStore);
+  const eventManager = chooks.createEventManager(ctx, eventsPath);
+  const commandManager = chooks.createCommandManager(ctx, commandStore);
+  const interactionManager = chooks.createInteractionManager(ctx, commandStore);
 
-  const load = async () => {
-    await Promise.all([
-      eventManager.load(),
-      loadCommands(commandStore, 'commands'),
-    ]);
+  const loadEvents = async () => {
+    await eventManager.load();
+  };
+
+  const loadCommands = async () => {
+    await loader.loadCommands(commandStore, commandsPath);
     commandManager.load();
     interactionManager.load();
   };
@@ -37,6 +36,7 @@ export function createManagers(ctx: EventContext): ManagerInterface {
     event: eventManager,
     command: commandManager,
     interaction: interactionManager,
-    load,
+    loadEvents,
+    loadCommands,
   };
 }
