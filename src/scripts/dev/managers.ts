@@ -24,7 +24,6 @@ export function createManagers(
   const commandStore = chooks.createCommandStore();
 
   const eventsPath = join('.chooks', 'events');
-  const commandsPath = join('commands');
 
   // @todo(Choooks22): Remove event importing from event manager
   const eventManager = chooks.createEventManager(ctx, eventsPath);
@@ -32,12 +31,12 @@ export function createManagers(
   const interactionManager = chooks.createInteractionManager(ctx, commandStore);
 
   const loadEvents = async () => {
-    await loader.loadEvents(eventsPath, compiler);
+    await loader.loadEvents('events', compiler);
     await eventManager.load();
   };
 
   const loadCommands = async () => {
-    await loader.loadCommands(commandStore, commandsPath, compiler);
+    await loader.loadCommands(commandStore, 'commands', compiler);
     commandManager.load();
     interactionManager.load();
   };
