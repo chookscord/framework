@@ -1,10 +1,12 @@
-import * as loader from '../../loaders/commands';
-import chooks, {
+import * as chooks from '@chookscord/lib';
+import * as loader from './loaders';
+import type {
   CommandManager,
   EventContext,
   EventManager,
   InteractionManager,
 } from '@chookscord/lib';
+import type { WatchCompiler } from '../../compilers';
 import { join } from 'path';
 
 export interface ManagerInterface {
@@ -15,11 +17,14 @@ export interface ManagerInterface {
   loadCommands: () => Promise<void>;
 }
 
-export function createManagers(ctx: EventContext): ManagerInterface {
+export function createManagers(
+  compiler: WatchCompiler,
+  ctx: EventContext,
+): ManagerInterface {
   const commandStore = chooks.createCommandStore();
 
   const eventsPath = join('.chooks', 'events');
-  const commandsPath = join('.chooks', 'commands');
+  const commandsPath = join('commands');
 
   const eventManager = chooks.createEventManager(ctx, eventsPath);
   const commandManager = chooks.createCommandManager(ctx, commandStore);
@@ -30,7 +35,7 @@ export function createManagers(ctx: EventContext): ManagerInterface {
   };
 
   const loadCommands = async () => {
-    await loader.loadCommands(commandStore, commandsPath);
+    await loader.loadCommands(commandStore, commandsPath, compiler);
     commandManager.load();
     interactionManager.load();
   };

@@ -38,7 +38,7 @@ export async function init(): Promise<void> {
 
   const client = createClient(config);
   const eventCtx = createEventContext(client.self, config);
-  const managers = createManagers(eventCtx);
+  const managers = createManagers(compiler, eventCtx);
 
   // Need to login first before registering slash commands
   await managers.loadEvents();
