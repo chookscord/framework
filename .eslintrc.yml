@@ -11,3 +11,4 @@ rules:
   '@typescript-eslint/naming-convention': 'off'
   func-style: 'off'
   multiline-ternary: 'off'
+  operator-linebreak: 'off'
