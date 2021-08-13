@@ -26,11 +26,13 @@ export function createManagers(
   const eventsPath = join('.chooks', 'events');
   const commandsPath = join('commands');
 
+  // @todo(Choooks22): Remove event importing from event manager
   const eventManager = chooks.createEventManager(ctx, eventsPath);
   const commandManager = chooks.createCommandManager(ctx, commandStore);
   const interactionManager = chooks.createInteractionManager(ctx, commandStore);
 
   const loadEvents = async () => {
+    await loader.loadEvents(eventsPath, compiler);
     await eventManager.load();
   };
 
