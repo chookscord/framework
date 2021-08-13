@@ -1,4 +1,4 @@
-# @chookscord/framework
+# chookscord
 
 The **Easiest** Discord.JS Framework by far.
 
@@ -8,6 +8,10 @@ The **Easiest** Discord.JS Framework by far.
 ## This project is still experimental!
 
 A lot of stuff is still under construction, and documentation is still very lacking. Stuff may change at any moment without warning, so consider holding on to deploying to production until **v1.x.x** is up!
+
+### Notice
+
+Slash commands are currently broken (0.3.x). Will be fixed in 0.4.x.
 
 ### Todo list
 
