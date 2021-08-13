@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@chookscord/lib@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@chookscord/lib/-/lib-0.3.1.tgz#a0575879d9a20b9f4656d90382c316f6deca1a6d"
-  integrity sha512-H3p3rLd1n/rbIHzFBQgPGh8vFSGUEN6Z8YeHM7KNPDFNupmJ7RRU8GH4gb4YsBaM2jbt2qSrxD4MXrAhfDfZrg==
+"@chookscord/lib@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@chookscord/lib/-/lib-0.4.0.tgz#f2e9b0b0e516f96b24e960a2264f94694fafefc7"
+  integrity sha512-NZSMgBE2nC7PhPNgjqJGrWOC7VAnTCkjUsy1AUeTBKBJhPlpKnDfjJRZrTjTFgtUHkb0NixGGHHznrVAFG0Fbg==
   dependencies:
     "@types/node-fetch" "^2.5.12"
     node-fetch "^2.6.1"
