@@ -5,7 +5,7 @@ import chooks, {
   EventManager,
   InteractionManager,
 } from '@chookscord/lib';
-
+import { join } from 'path';
 
 export interface ManagerInterface {
   event: EventManager;
@@ -17,6 +17,9 @@ export interface ManagerInterface {
 
 export function createManagers(ctx: EventContext): ManagerInterface {
   const commandStore = chooks.createCommandStore();
+
+  const eventsPath = join('.chooks', 'events');
+  const commandsPath = join('.chooks', 'commands');
 
   const eventManager = chooks.createEventManager(ctx, eventsPath);
   const commandManager = chooks.createCommandManager(ctx, commandStore);
