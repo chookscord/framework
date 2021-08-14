@@ -10,11 +10,6 @@ const opendir = async (path: string) => {
   }
 };
 
-export function uncachedImport<T>(path: string): Promise<T> {
-  delete require.cache[require.resolve(path)];
-  return import(path);
-}
-
 export async function *loadFiles<T>(dirname: string): AsyncGenerator<T> {
   console.debug(`[Loader]: Loading files from "${dirname}"...`);
   const path = join(process.cwd(), dirname);
