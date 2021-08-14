@@ -6,7 +6,6 @@ import type {
   IntentsString,
 } from 'discord.js';
 import type { EventContext } from './contexts';
-import type { FetchUtil } from '../utils/fetch';
 
 export interface ClientInterface {
   readonly self: Client;
@@ -56,5 +55,4 @@ export interface Config {
 export interface Utils {
   readonly config: Config;
   readonly client: Client;
-  fetch: FetchUtil;
 }
