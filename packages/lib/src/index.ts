@@ -5,5 +5,4 @@ export * from './cache';
 export * from './definition';
 export * from './types';
 
-export * from './tools/import-files';
-export * from './tools/load-config';
+export * as tools from './tools';
