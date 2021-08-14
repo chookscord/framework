@@ -1,4 +1,5 @@
-import type { CommandStore, EventContext } from '../../';
+/* eslint-disable @typescript-eslint/no-throw-literal */
+import type { CommandStore, EventContext, TextCommand } from '../../';
 import { getMessageHandler, getMessageValidator } from '../../cache';
 import type { Message } from 'discord.js';
 
@@ -8,26 +9,31 @@ interface CommandHandler {
 }
 
 export function createCommandHandler(
+  store: CommandStore<TextCommand>,
   ctx: EventContext,
-  commandStore: CommandStore,
 ): CommandHandler {
-  console.debug('[Command Handler]: Command Handler created.');
-  const handler = async (message: Message) => {
-    console.debug('[Command Handler]: Message received.');
-    const validateMessage = getMessageValidator();
-    const valid = await validateMessage(ctx, message);
-    if (!valid) {
-      console.debug('[Command Handler]: Message invalid.');
-      return;
-    }
+  // Part 1: Check if message is a valid command first
+  const validate = async (message: Message) => {
+    const validator = getMessageValidator();
+    const isValid = await validator(ctx, message);
+    if (!isValid) throw null;
+  };
 
-    const handleMessage = getMessageHandler();
-    const [command, args] = await handleMessage(ctx, commandStore.get, message);
-    if (!command) {
-      console.debug('[Command Handler]: No commands.');
-      return;
-    }
+  // Part 2: Find command and parsed args from message content
+  const handle = async (message: Message) => {
+    const messageHandler = getMessageHandler();
+    const [command, args] = await messageHandler(ctx, store.get, message);
 
+    if (!command) throw null;
+    return [command, args ?? []] as [TextCommand, string[]];
+  };
+
+  // Part 3: Execute command (with monitoring and error handling)
+  const execute = async (
+    message: Message,
+    command: TextCommand,
+    args: string[],
+  ) => {
     try {
       const start = Date.now();
       console.info(`[Command Handler]: Executing command "${command.name}"...`);
@@ -37,22 +43,32 @@ export function createCommandHandler(
     } catch (error) {
       // @todo(Choooks22): Better logging
       console.error(`[Command Handler]: Command "${command.name}" threw an error!`);
-      console.error('[Command Handler]:', error);
+      console.error('[Command Handler]:', error?.message);
     }
   };
 
-  const register = () => {
-    ctx.client.on('messageCreate', handler);
-    console.info('[Command Handler] Command Handler registered.');
-  };
-
-  const unregister = () => {
-    ctx.client.removeListener('messageCreate', handler);
-    console.info('[Command Handler] Command Handler unregistered.');
+  // The actual message handler that will be passed to the client
+  const handler = async (message: Message) => {
+    try {
+      await validate(message);
+      const context = await handle(message);
+      await execute(message, ...context);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('[Command Handler]: Could not validate message!');
+        console.error('[Command Handler]:', error.message);
+      }
+    }
   };
 
   return {
-    register,
-    unregister,
+    register() {
+      ctx.client.on('messageCreate', handler);
+      console.info('[Command Handler] Command Handler registered.');
+    },
+    unregister() {
+      ctx.client.removeListener('messageCreate', handler);
+      console.info('[Command Handler] Command Handler unregistered.');
+    },
   };
 }
