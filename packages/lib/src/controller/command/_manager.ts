@@ -1,9 +1,9 @@
-import type { CommandStore, EventContext } from '../../';
+import type { CommandStore, EventContext, TextCommand } from '../../';
 import { createCommandHandler } from './_handler';
 
 export interface CommandManager {
   load: () => void;
-  reload: () => void;
+  unload: () => void;
 }
 
 export function createCommandManager(
@@ -11,24 +11,19 @@ export function createCommandManager(
   ctx: EventContext,
 ): CommandManager {
   console.debug('[Command Manager]: Command Manager created.');
-  const commandHandler = createCommandHandler(store, ctx);
-
-  const load: CommandManager['load'] = () => {
-    console.info('[Command Manager]: Loading text commands...');
-    const commands = [...commandStore.getAll('text')];
-    commandHandler.register();
-    console.info(`[Command Manager]: ${commands.length} text commands loaded.`);
-  };
-
-  const reload: CommandManager['reload'] = () => {
-    console.info('[Command Manager]: Reloading...');
-    commandStore.clear();
-    load();
-    console.info('[Command Manager]: Reloaded.');
-  };
+  const handler = createCommandHandler(store, ctx);
 
   return {
-    load,
-    reload,
+    load() {
+      console.info('[Command Manager]: Loading text commands...');
+      handler.register();
+      console.info(`[Command Manager]: ${store.count} text commands loaded.`);
+    },
+    unload(this: CommandManager) {
+      console.info('[Command Manager]: Unloading commands...');
+      store.clear();
+      handler.unregister();
+      console.info('[Command Manager]: Commands unloaded.');
+    },
   };
 }
