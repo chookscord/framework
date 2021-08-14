@@ -43,6 +43,6 @@ export type MessageValidator = (
 
 export type MessageHandler = (
   ctx: EventContext,
-  getCommand: CommandStore['get'],
+  getCommand: CommandStore<TextCommand>['get'],
   message: Message
 ) => Awaited<[command: TextCommand, args: string[]] | []>;

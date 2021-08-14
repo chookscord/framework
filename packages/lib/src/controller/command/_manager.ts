@@ -7,11 +7,11 @@ export interface CommandManager {
 }
 
 export function createCommandManager(
+  store: CommandStore<TextCommand>,
   ctx: EventContext,
-  commandStore: CommandStore,
 ): CommandManager {
   console.debug('[Command Manager]: Command Manager created.');
-  const commandHandler = createCommandHandler(ctx, commandStore);
+  const commandHandler = createCommandHandler(store, ctx);
 
   const load: CommandManager['load'] = () => {
     console.info('[Command Manager]: Loading text commands...');

@@ -16,7 +16,7 @@ const defaults: MessageHandlerStore = {
       .slice(ctx.config.prefix?.length)
       .split(/ +/g);
 
-    const command = getCommand('text', commandName);
+    const command = getCommand(commandName);
 
     if (command) {
       return [command, args];
