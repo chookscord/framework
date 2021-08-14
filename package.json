@@ -3,18 +3,6 @@
   "version": "0.3.0",
   "description": "The Easiest Discord.JS Framework by far.",
   "license": "MIT",
-  "main": "dist/index.js",
-  "bin": {
-    "chooks": "dist/bin/chooks.js"
-  },
-  "dependencies": {
-    "@chookscord/lib": "^0.4.1",
-    "@types/node-fetch": "^2.5.12",
-    "commander": "^8.1.0",
-    "discord.js": "^13.0.1",
-    "dotenv": "^10.0.0",
-    "node-fetch": "^2.6.1"
-  },
   "devDependencies": {
     "@chookslint/eslint-config-typescript": "^1.0.2",
     "@types/node": "^16.6.1",
