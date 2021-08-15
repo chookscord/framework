@@ -28,6 +28,8 @@ export interface CommandGroup extends BaseCommand {
   options: SubCommandOption[] | SubCommandGroupOption;
 }
 
+export type SlashCommand = Command | CommandGroup;
+
 export interface BaseCommandOption {
   type: AppCommandOptionType;
   name: string;
