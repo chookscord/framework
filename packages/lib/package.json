@@ -5,8 +5,9 @@
   "description": "The core library for @chookscord/framework.",
   "license": "MIT",
   "scripts": {
+    "dev": "yarn build -w",
     "build": "tsc",
-    "dev": "tsc -w"
+    "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo"
   },
   "dependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",

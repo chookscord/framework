@@ -4,6 +4,11 @@
   "main": "dist/index.js",
   "repository": "https://github.com/chookscord/framework",
   "license": "MIT",
+  "scripts": {
+    "dev": "yarn build -w",
+    "build": "tsc",
+    "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo"
+  },
   "files": [
     "dist"
   ],

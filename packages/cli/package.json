@@ -6,5 +6,10 @@
   "license": "MIT",
   "files": [
     "dist"
-  ]
+  ],
+  "scripts": {
+    "dev": "yarn build -w",
+    "build": "tsc",
+    "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo"
+  }
 }
