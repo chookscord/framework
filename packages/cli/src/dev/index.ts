@@ -1,4 +1,4 @@
-import { getCompiler, importTs } from '../../compilers';
+import { getCompiler, importTs } from '@chookscord/compiler';
 import { createClient } from '@chookscord/lib';
 import { createEventContext } from './utils';
 import { createManagers } from './managers';

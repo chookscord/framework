@@ -1,6 +1,6 @@
-import { Config, setConfig, uncachedImport } from '@chookscord/lib';
-import type { Lang } from '../../types';
-import type { WatchCompiler } from '../../compilers';
+import { Config, setConfig, tools } from '@chookscord/lib';
+import type { Lang } from '../types';
+import type { WatchCompiler } from '@chookscord/compiler';
 import { existsSync } from 'fs';
 import { join } from 'path';
 
@@ -42,7 +42,7 @@ function loadConfigFile(
   return new Promise(res => {
     watchCompiler.register(configFile, async outPath => {
       const path = join(process.cwd(), outPath);
-      const config = await uncachedImport<{ default: Config }>(path);
+      const config = await tools.uncachedImport<{ default: Config }>(path);
       setConfig(config.default);
       res(config.default);
     });
