@@ -11,7 +11,9 @@ A lot of stuff is still under construction, and documentation is still very lack
 
 ### Notice
 
-Slash commands are currently broken (0.3.x). Will be fixed in 0.4.x.
+Slash commands are only available in your own dev server currently.
+
+Ability to register global commands will come in the next update, along with support for subcommands.
 
 ### Todo list
 
