@@ -21,7 +21,8 @@
   },
   "scripts": {
     "dev": "yarn build -w",
-    "build": "tsc --project tsconfig.build.json"
+    "build": "tsc --project tsconfig.build.json",
+    "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo"
   },
   "files": [
     "dist"
