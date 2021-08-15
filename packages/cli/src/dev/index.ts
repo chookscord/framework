@@ -40,8 +40,11 @@ export async function init(): Promise<void> {
   const eventCtx = createEventContext(client.self, config);
   const managers = createManagers(compiler, eventCtx);
 
-  // Need to login first before registering slash commands
-  await managers.loadEvents();
+  // since files are now loaded in the background,
+  // there's a change that the ready event might be loaded
+  // AFTER the bot has logged in.
+  managers.loadEvents();
+  managers.loadCommands();
+
   await client.login();
-  await managers.loadCommands();
 }

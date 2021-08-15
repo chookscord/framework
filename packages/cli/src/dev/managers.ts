@@ -1,42 +1,52 @@
 import * as chooks from '@chookscord/lib';
-import * as loader from './loaders';
-import type {
-  CommandManager,
-  EventContext,
-  EventManager,
-  InteractionManager,
-} from '@chookscord/lib';
-import type { WatchCompiler } from '../../compilers';
-import { join } from 'path';
+import * as loader from './load-files';
+import type { WatchCompiler } from '@chookscord/compiler';
 
 export interface ManagerInterface {
-  event: EventManager;
-  command: CommandManager;
-  interaction: InteractionManager;
-  loadEvents: () => Promise<void>;
-  loadCommands: () => Promise<void>;
+  event: chooks.EventManager;
+  command: chooks.CommandManager;
+  interaction: chooks.InteractionManager;
+  loadEvents: () => void;
+  loadCommands: () => void;
 }
 
 export function createManagers(
   compiler: WatchCompiler,
-  ctx: EventContext,
+  ctx: chooks.EventContext,
 ): ManagerInterface {
-  const commandStore = chooks.createCommandStore();
-
-  const eventsPath = join('.chooks', 'events');
+  const slashStore = new chooks.CommandStore<chooks.SlashCommand>();
+  const textStore = new chooks.CommandStore<chooks.TextCommand>();
+  const eventStore = new chooks.EventStore();
 
   // @todo(Choooks22): Remove event importing from event manager
-  const eventManager = chooks.createEventManager(ctx, eventsPath);
-  const commandManager = chooks.createCommandManager(ctx, commandStore);
-  const interactionManager = chooks.createInteractionManager(ctx, commandStore);
+  const eventManager = chooks.createEventManager(eventStore, ctx);
+  const commandManager = chooks.createCommandManager(textStore, ctx);
+  const interactionManager = chooks.createInteractionManager(slashStore, ctx, {
+    ...ctx.config.credentials,
+    guildId: ctx.config.devServer,
+  });
 
-  const loadEvents = async () => {
-    await loader.loadEvents('events', compiler);
-    await eventManager.load();
+  const loadEvents = () => {
+    loader.importFiles<chooks.Event>(compiler, 'events', event => {
+      eventStore.set(event);
+    });
+    eventManager.load();
   };
 
-  const loadCommands = async () => {
-    await loader.loadCommands(commandStore, 'commands', compiler);
+  const loadCommands = () => {
+    loader.importFiles<chooks.SlashCommand | chooks.TextCommand>(compiler, 'commands', command => {
+      if (chooks.isTextCommand(command)) {
+        textStore.set(command.name, command);
+        if (!Array.isArray(command.aliases)) {
+          return;
+        }
+        for (const alias of command.aliases) {
+          textStore.set(alias, command);
+        }
+      } else {
+        slashStore.set(command.name, command);
+      }
+    });
     commandManager.load();
     interactionManager.load();
   };
