@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { getCompiler, importTs } from '@chookscord/compiler';
 import { createClient } from '@chookscord/lib';
 import { createEventContext } from './utils';
