@@ -1,10 +1,14 @@
 import { Event, EventName } from '../..';
 
+type EventListener = (event: Event) => unknown;
+
 export class EventStore {
   private _store = new Set<Event>();
+  private _listeners = new Set<EventListener>();
 
   public set(event: Event): void {
     this._store.add(event);
+    this._emit(event);
   }
 
   public *get<T extends EventName>(eventName: T): Iterable<Event<T>> {
@@ -37,5 +41,17 @@ export class EventStore {
 
   public clear(): void {
     this._store.clear();
+  }
+
+  public onSet(listener: EventListener): void {
+    this._listeners.add(listener);
+  }
+
+  public removeListener(listener: EventListener): void {
+    this._listeners.delete(listener);
+  }
+
+  private _emit(event: Event) {
+    this._listeners.forEach(fn => fn(event));
   }
 }
