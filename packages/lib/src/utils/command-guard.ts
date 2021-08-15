@@ -1,13 +1,13 @@
-import { Command, TextCommand } from '..';
+import { Command, SlashCommand, TextCommand } from '..';
 
 export function isTextCommand(
-  command: Command | TextCommand,
+  command: SlashCommand | TextCommand,
 ): command is TextCommand {
   return 'text' in command && command.text;
 }
 
 export function isCommand(
-  command: Command | TextCommand,
+  command: SlashCommand | TextCommand,
 ): command is Command {
   return !isTextCommand(command);
 }
