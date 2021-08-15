@@ -25,7 +25,7 @@ export interface Command extends BaseCommand {
 }
 
 export interface CommandGroup extends BaseCommand {
-  options: SubCommandOption[] | SubCommandGroupOption;
+  options: SubCommandOption[] | SubCommandGroupOption[];
 }
 
 export type SlashCommand = Command | CommandGroup;
