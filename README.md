@@ -69,7 +69,15 @@ const { defineConfig } = require('chookscord');
 
 module.exports = defineConfig({
   // .env files are automatically loaded
-  token: process.env.DISCORD_BOT_TOKEN,
+  credentials: {
+    token: process.env.DISCORD_BOT_TOKEN,
+    // your application id should be the "General Information" tab
+    // this is required for registering slash commands
+    applicationId: process.env.DISCORD_APPLICATION_ID,
+  },
+  // a discord server where you would be doing most of the testing
+  // slash commands are registered here instantly while developing
+  devServer: process.env.DISCORD_DEV_SERVER,
   // the prefix is required if want to use the traditional message commands.
   prefix: '!',
   intents: [
