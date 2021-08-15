@@ -8,7 +8,7 @@
   },
   "main": "dist/index.js",
   "dependencies": {
-    "@chookscord/cli": "^0.5.1",
+    "@chookscord/cli": "^0.5.2",
     "discord.js": "^13.1.0"
   },
   "devDependencies": {
