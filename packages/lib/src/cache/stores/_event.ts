@@ -1,21 +1,25 @@
 import { Event, EventName } from '../..';
 
 export class EventStore {
-  private _store = new Map<EventName, Event>();
+  private _store = new Set<Event>();
 
-  public set<T extends EventName>(eventName: T, event: Event<T>): void {
-    this._store.set(eventName, event);
+  public set(event: Event): void {
+    this._store.add(event);
   }
 
-  public get<T extends EventName>(eventName: T): Event<T> | null {
-    return this._store.get(eventName) as Event<T> ?? null;
+  public *get<T extends EventName>(eventName: T): Iterable<Event<T>> {
+    for (const event of this._store.values()) {
+      if (event.name === eventName) {
+        yield event as Event<T>;
+      }
+    }
   }
 
-  public getAll(): Iterable<[EventName, Event]> {
-    return this._store.entries();
+  public getAll(): Iterable<Event> {
+    return this._store.values();
   }
 
-  public toArray(): [EventName, Event][] {
+  public toArray(): Event[] {
     return [...this.getAll()];
   }
 
@@ -24,7 +28,11 @@ export class EventStore {
   }
 
   public remove(eventName: EventName): void {
-    this._store.delete(eventName);
+    for (const event of this._store.values()) {
+      if (event.name === eventName) {
+        this._store.delete(event);
+      }
+    }
   }
 
   public clear(): void {
