@@ -1,12 +1,9 @@
 ---
+root: true
 extends:
   - '@chookslint/typescript'
 parserOptions:
   project: ./tsconfig.json
-overrides:
-  - files: sample/**/*
-    parserOptions:
-      project: sample/tsconfig.json
 rules:
   '@typescript-eslint/naming-convention': 'off'
   func-style: 'off'
