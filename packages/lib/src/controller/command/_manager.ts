@@ -21,7 +21,6 @@ export function createCommandManager(
     },
     unload(this: CommandManager) {
       console.info('[Command Manager]: Unloading commands...');
-      store.clear();
       handler.unregister();
       console.info('[Command Manager]: Commands unloaded.');
     },
