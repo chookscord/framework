@@ -1,13 +1,18 @@
-import { CommandStore, EventContext, SlashCommand } from '../..';
-import { InteractionCredentials, createInteractionRegister } from './_register';
+import type {
+  BotCredentials,
+  CommandStore,
+  EventContext,
+  SlashCommand,
+} from '../..';
 import { createInteractionHandler } from './_handler';
+import { createInteractionRegister } from './_register';
 
 export interface InteractionManager {
   load: () => Promise<void>;
   unload: () => Promise<void>;
 }
 
-export interface DevStuff extends InteractionCredentials {
+export interface DevStuff extends BotCredentials {
   guildId: string;
 }
 

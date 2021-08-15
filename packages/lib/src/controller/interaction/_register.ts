@@ -1,26 +1,21 @@
+import type { BotCredentials, SlashCommand } from '../..';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import type { SlashCommand } from '../..';
 
 export interface InteractionRegister {
   register: (commands: SlashCommand[]) => Promise<void>;
   unregister: () => Promise<void>;
 }
 
-export interface InteractionCredentials {
-  token: string;
-  appId: string;
-}
-
 export function createInteractionRegister(
-  credentials: InteractionCredentials,
+  credentials: BotCredentials,
   guild?: string,
 ): InteractionRegister {
   console.debug('[Interaction Register]: Interaction Register created.');
   const rest = new REST({ version: '9' }).setToken(credentials.token);
   const route = guild
-    ? Routes.applicationGuildCommands(credentials.appId, guild)
-    : Routes.applicationCommands(credentials.appId);
+    ? Routes.applicationGuildCommands(credentials.applicationId, guild)
+    : Routes.applicationCommands(credentials.applicationId);
 
   const setCommands = async (commands: SlashCommand[]) => {
     await rest.put(route, { body: commands });
