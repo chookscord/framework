@@ -28,7 +28,7 @@ async function createWatchCompiler() {
   };
 }
 
-export async function init(): Promise<void> {
+export async function run(): Promise<void> {
   const { lang, compiler } = await createWatchCompiler();
   const config = await loadConfig(lang, compiler);
 
