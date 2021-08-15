@@ -1,9 +1,9 @@
-import type { Command } from '../..';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import type { SlashCommand } from '../..';
 
 export interface InteractionRegister {
-  register: (commands: Command[]) => Promise<void>;
+  register: (commands: SlashCommand[]) => Promise<void>;
   unregister: () => Promise<void>;
 }
 
@@ -22,7 +22,7 @@ export function createInteractionRegister(
     ? Routes.applicationGuildCommands(credentials.appId, guild)
     : Routes.applicationCommands(credentials.appId);
 
-  const setCommands = async (commands: Command[]) => {
+  const setCommands = async (commands: SlashCommand[]) => {
     await rest.put(route, { body: commands });
   };
 
