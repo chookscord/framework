@@ -1,6 +1,6 @@
 {
   "name": "chookscord",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "The Easiest Discord.JS Framework by far.",
   "license": "MIT",
   "bin": {
