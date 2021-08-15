@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 - 16/08/21
+
+### Fixed
+
+- Fixed missing `dotenv` import.
+
 ## 0.5.0 - 16/08/21
 
 ### Fixed
