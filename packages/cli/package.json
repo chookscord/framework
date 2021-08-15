@@ -11,5 +11,11 @@
     "dev": "yarn build -w",
     "build": "tsc",
     "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo"
+  },
+  "dependencies": {
+    "@chookscord/compiler": "^0.5.0",
+    "@chookscord/lib": "^0.5.0",
+    "discord.js": "^13.1.0",
+    "dotenv": "^10.0.0"
   }
 }
