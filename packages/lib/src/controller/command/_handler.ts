@@ -12,6 +12,10 @@ export function createCommandHandler(
   store: CommandStore<TextCommand>,
   ctx: EventContext,
 ): CommandHandler {
+  const getCommand = (commandName: string) => {
+    return store.get(commandName);
+  };
+
   // Part 1: Check if message is a valid command first
   const validate = async (message: Message) => {
     const validator = getMessageValidator();
@@ -22,7 +26,7 @@ export function createCommandHandler(
   // Part 2: Find command and parsed args from message content
   const handle = async (message: Message) => {
     const messageHandler = getMessageHandler();
-    const [command, args] = await messageHandler(ctx, store.get, message);
+    const [command, args] = await messageHandler(ctx, getCommand, message);
 
     if (!command) throw null;
     return [command, args ?? []] as [TextCommand, string[]];
