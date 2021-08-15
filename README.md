@@ -60,6 +60,7 @@ You should put your bot token and other sensitive info there instead.
 
 ```bash
 # .env
+# Put your other credentials here as well
 DISCORD_BOT_TOKEN=your-bot-token-here
 ```
 
@@ -95,6 +96,8 @@ By default, all commands are slash commands and will have the `interaction` obje
 
 To use the traditional message commands instead, add `text: true` to your options, or use `defineTextCommand`. `interaction` will be replaced with the standard `message` object and `args` which will be whatever input the user sent.
 
+#### Slash command `/ping`
+
 ```js
 // commands/ping.js
 const { defineCommand } = require('chookscord');
@@ -108,6 +111,8 @@ module.exports = defineCommand({
   },
 });
 ```
+
+#### Text command `!pong`
 
 ```js
 // commands/pong.js
