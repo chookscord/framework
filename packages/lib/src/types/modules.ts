@@ -1,25 +1,16 @@
-import type {
-  ApplicationCommandData,
-  ApplicationCommandOptionData,
-  Awaited,
-  ClientEvents,
-  Message,
-} from 'discord.js';
-import type { CommandContext, EventContext, TextCommandContext } from './contexts';
+/* eslint-disable @typescript-eslint/no-empty-interface */
+import type { Awaited, ClientEvents, Message } from 'discord.js';
 import type { CommandStore } from '../cache';
+import type { EventContext } from './contexts';
+import { TextCommand } from './commands';
 
 export type EventName = keyof ClientEvents;
 export type EventArgs<T extends EventName = EventName> = ClientEvents[T];
 
-export type EventHandler<T extends EventName = EventName> = (ctx: EventContext, ...args: EventArgs<T>) => Awaited<void>;
-
-export interface Command extends ApplicationCommandData {
-  execute: (ctx: CommandContext) => Awaited<unknown>;
-  options?: CommandOption[];
-}
-
-export interface CommandOption extends ApplicationCommandOptionData {
-}
+export type EventHandler<T extends EventName = EventName> = (
+  ctx: EventContext,
+  ...args: EventArgs<T>
+) => Awaited<void>;
 
 export interface Event<T extends EventName = EventName> {
   name: T;
