@@ -24,9 +24,9 @@ export function createEventManager(
       console.info(`[Event Manager]: ${eventCount} events loaded.`);
     },
     unload() {
-      console.info('[Event Manager]: Reloading...');
+      console.info('[Event Manager]: Unloading events...');
       register.clear();
-      console.info('[Event Manager]: Reloaded.');
+      console.info('[Event Manager]: Events unloaded.');
     },
   };
 }
