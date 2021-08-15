@@ -21,15 +21,6 @@ export interface Command extends ApplicationCommandData {
 export interface CommandOption extends ApplicationCommandOptionData {
 }
 
-export interface TextCommand {
-  /** Required for command to be registered to messages instead of interactions */
-  text: true;
-  name: string;
-  description: string;
-  aliases?: string[];
-  execute: (ctx: TextCommandContext) => Awaited<unknown>;
-}
-
 export interface Event<T extends EventName = EventName> {
   name: T;
   once?: boolean;
