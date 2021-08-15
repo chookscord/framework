@@ -21,6 +21,7 @@ export function createEventManager(
         register.set(event);
         eventCount++;
       }
+      store.onSet(register.set);
       console.info(`[Event Manager]: ${eventCount} events loaded.`);
     },
     unload() {
