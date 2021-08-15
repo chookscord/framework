@@ -14,7 +14,7 @@ export function createClient(config: Config): ClientInterface {
     },
     async login() {
       console.info('[Client]: Logging in...');
-      await client.login(config.token);
+      await client.login(config.credentials.token);
       console.info('[Client]: Logged in.');
     },
   };
