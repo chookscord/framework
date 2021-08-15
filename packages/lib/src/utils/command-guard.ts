@@ -1,4 +1,9 @@
-import { Command, SlashCommand, TextCommand } from '..';
+import type {
+  Command,
+  CommandGroup,
+  SlashCommand,
+  TextCommand,
+} from '..';
 
 export function isTextCommand(
   command: SlashCommand | TextCommand,
@@ -9,5 +14,19 @@ export function isTextCommand(
 export function isCommand(
   command: SlashCommand | TextCommand,
 ): command is Command {
-  return !isTextCommand(command);
+  return 'execute' in command && !isTextCommand(command);
+}
+
+export function isCommandGroup(
+  command: SlashCommand,
+): command is CommandGroup {
+  if (isCommand(command) || !(0 in command.options)) {
+    return false;
+  }
+
+  const { type } = command.options[0];
+  return (
+    type === 'SUB_COMMAND' ||
+    type === 'SUB_COMMAND_GROUP'
+  );
 }
