@@ -21,7 +21,6 @@ export async function importFiles<T>(
   };
 
   for await (const path of tools.traverseDir(rootPath)) {
-    const filePath = join(process.cwd(), path);
-    transpileFile(filePath);
+    transpileFile(path);
   }
 }
