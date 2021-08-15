@@ -6,7 +6,10 @@
     "esModuleInterop": true,
     "declaration": true,
     "skipLibCheck": true,
-    "incremental": true
+    "incremental": true,
+    "baseUrl": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "exclude": [
     "**/node_modules",
