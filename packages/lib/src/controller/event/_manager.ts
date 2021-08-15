@@ -1,38 +1,32 @@
-import type { Event, EventContext } from '../../types';
+import type { EventContext, EventStore } from '../..';
 import { createEventRegister } from './_register';
-import { loadFiles } from '../../tools/import-files';
 
 export interface EventManager {
-  load: () => Promise<void>;
-  reload: () => Promise<void>;
+  load: () => void;
+  unload: () => void;
 }
 
 export function createEventManager(
+  store: EventStore,
   ctx: EventContext,
-  eventsDir: string,
 ): EventManager {
   console.info('[Event Manager]: Event Manager created.');
-  const eventRegister = createEventRegister(ctx);
-
-  const load: EventManager['load'] = async () => {
-    console.info('[Event Manager]: Loading events...');
-    let eventCount = 0;
-    for await (const event of loadFiles<Event>(eventsDir)) {
-      eventRegister.set(event);
-      eventCount++;
-    }
-    console.info(`[Event Manager]: ${eventCount} events loaded.`);
-  };
-
-  const reload: EventManager['reload'] = async () => {
-    console.info('[Event Manager]: Reloading...');
-    eventRegister.clear();
-    await load();
-    console.info('[Event Manager]: Reloaded.');
-  };
+  const register = createEventRegister(ctx);
 
   return {
-    load,
-    reload,
+    load() {
+      console.info('[Event Manager]: Loading events...');
+      let eventCount = 0;
+      for (const event of store.getAll()) {
+        register.set(event);
+        eventCount++;
+      }
+      console.info(`[Event Manager]: ${eventCount} events loaded.`);
+    },
+    unload() {
+      console.info('[Event Manager]: Reloading...');
+      register.clear();
+      console.info('[Event Manager]: Reloaded.');
+    },
   };
 }
