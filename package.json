@@ -23,6 +23,9 @@
     "dev": "yarn build -w",
     "build": "tsc --project tsconfig.build.json"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "discord",
     "discord-js",
