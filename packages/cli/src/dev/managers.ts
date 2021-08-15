@@ -6,8 +6,8 @@ export interface ManagerInterface {
   event: chooks.EventManager;
   command: chooks.CommandManager;
   interaction: chooks.InteractionManager;
-  loadEvents: () => void;
-  loadCommands: () => void;
+  loadEvents: () => Promise<void>;
+  loadCommands: () => Promise<void>;
 }
 
 export function createManagers(
@@ -26,15 +26,15 @@ export function createManagers(
     guildId: ctx.config.devServer,
   });
 
-  const loadEvents = () => {
-    loader.importFiles<chooks.Event>(compiler, 'events', event => {
+  const loadEvents = async () => {
+    await loader.importFiles<chooks.Event>(compiler, 'events', event => {
       eventStore.set(event);
     });
     eventManager.load();
   };
 
-  const loadCommands = () => {
-    loader.importFiles<chooks.SlashCommand | chooks.TextCommand>(compiler, 'commands', command => {
+  const loadCommands = async () => {
+    await loader.importFiles<chooks.SlashCommand | chooks.TextCommand>(compiler, 'commands', command => {
       if (chooks.isTextCommand(command)) {
         textStore.set(command.name, command);
         if (!Array.isArray(command.aliases)) {

@@ -40,11 +40,11 @@ export async function run(): Promise<void> {
   const eventCtx = createEventContext(client.self, config);
   const managers = createManagers(compiler, eventCtx);
 
-  // since files are now loaded in the background,
-  // there's a change that the ready event might be loaded
-  // AFTER the bot has logged in.
-  managers.loadEvents();
-  managers.loadCommands();
+  // Wait for files to be loaded first before logging in
+  await Promise.all([
+    managers.loadEvents(),
+    managers.loadCommands(),
+  ]);
 
   await client.login();
 }
