@@ -1,8 +1,8 @@
 /* eslint-disable complexity */
-import { Command, TextCommand } from '../../types';
+import { SlashCommand, TextCommand } from '../../types';
 import { isTextCommand } from '../../utils/command-guard';
 
-export class CommandStore<T extends Command | TextCommand> {
+export class CommandStore<T extends SlashCommand | TextCommand> {
   private _store = new Map<string, T>();
 
   public set(commandName: string, command: T): void {
