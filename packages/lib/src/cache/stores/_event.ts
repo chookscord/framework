@@ -9,9 +9,28 @@ export class EventStore {
   private _store = new Set<Event>();
   private _listeners = new Set<EventListener>();
 
+  private _findDupe(event: Event): Event | null {
+    for (const oldEvent of this._store.values()) {
+      if (oldEvent.id === event.id) {
+        return oldEvent;
+      }
+    }
+    return null;
+  }
+
   public set(event: Event): void {
+    if (typeof event.id === 'string') {
+      const dupeEvent = this._findDupe(event);
+      this._emit(event, dupeEvent);
+      if (dupeEvent) {
+        this._store.delete(dupeEvent);
+      }
+    } else {
+      this._emit(event, null);
+      this.remove(event.name);
+    }
+
     this._store.add(event);
-    this._emit(event);
   }
 
   public *get<T extends EventName>(eventName: T): Iterable<Event<T>> {
