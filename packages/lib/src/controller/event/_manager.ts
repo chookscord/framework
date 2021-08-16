@@ -18,7 +18,7 @@ export function createEventManager(
       console.info('[Event Manager]: Loading events...');
       let eventCount = 0;
       for (const event of store.getAll()) {
-        register.set(event);
+        register.set(event, null);
         eventCount++;
       }
       store.onSet(register.set);
@@ -26,7 +26,9 @@ export function createEventManager(
     },
     unload() {
       console.info('[Event Manager]: Unloading events...');
-      register.clear();
+      for (const event of store.getAll()) {
+        register.remove(event);
+      }
       console.info('[Event Manager]: Events unloaded.');
     },
   };
