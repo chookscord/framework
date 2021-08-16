@@ -28,7 +28,7 @@ export class EventStore {
   }
 
   public get count(): number {
-    return this.toArray().length;
+    return this.count;
   }
 
   public remove(eventName: EventName): void {
