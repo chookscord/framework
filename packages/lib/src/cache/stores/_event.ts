@@ -1,6 +1,9 @@
 import { Event, EventName } from '../..';
 
-type EventListener = (event: Event) => unknown;
+type EventListener = (
+  newEvent: Event,
+  oldEvent: Event | null
+) => unknown;
 
 export class EventStore {
   private _store = new Set<Event>();
@@ -51,7 +54,7 @@ export class EventStore {
     this._listeners.delete(listener);
   }
 
-  private _emit(event: Event) {
-    this._listeners.forEach(fn => fn(event));
+  private _emit(newEvent: Event, oldEvent: Event | null) {
+    this._listeners.forEach(fn => fn(newEvent, oldEvent));
   }
 }
