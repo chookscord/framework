@@ -2,11 +2,11 @@
 import { SlashCommand, TextCommand } from '../../types';
 import { isTextCommand } from '../../utils/command-guard';
 
-type CommandListener<T> = (command: T) => unknown;
+export type CommandStoreListener<T> = (command: T) => unknown;
 
 export class CommandStore<T extends SlashCommand | TextCommand> {
   private _store = new Map<string, T>();
-  private _listeners = new Set<CommandListener<T>>();
+  private _listeners = new Set<CommandStoreListener<T>>();
 
   public set(commandName: string, command: T): void {
     this._store.set(commandName.toLowerCase(), command);
@@ -48,11 +48,11 @@ export class CommandStore<T extends SlashCommand | TextCommand> {
     this._store.clear();
   }
 
-  public onSet(listener: CommandListener<T>): void {
+  public onSet(listener: CommandStoreListener<T>): void {
     this._listeners.add(listener);
   }
 
-  public removeListener(listener: CommandListener<T>): void {
+  public removeListener(listener: CommandStoreListener<T>): void {
     this._listeners.delete(listener);
   }
 

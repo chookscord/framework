@@ -1,13 +1,13 @@
 import { Event, EventName } from '../..';
 
-type EventListener = (
+export type EventStoreListener = (
   newEvent: Event,
   oldEvent: Event | null
 ) => unknown;
 
 export class EventStore {
   private _store = new Set<Event>();
-  private _listeners = new Set<EventListener>();
+  private _listeners = new Set<EventStoreListener>();
 
   private _findDupe(event: Event): Event | null {
     for (const oldEvent of this._store.values()) {
@@ -63,11 +63,11 @@ export class EventStore {
     this._store.clear();
   }
 
-  public onSet(listener: EventListener): void {
+  public onSet(listener: EventStoreListener): void {
     this._listeners.add(listener);
   }
 
-  public removeListener(listener: EventListener): void {
+  public removeListener(listener: EventStoreListener): void {
     this._listeners.delete(listener);
   }
 
