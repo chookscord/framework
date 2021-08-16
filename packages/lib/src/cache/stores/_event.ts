@@ -35,10 +35,8 @@ export class EventStore {
   }
 
   public remove(eventName: EventName): void {
-    for (const event of this._store.values()) {
-      if (event.name === eventName) {
-        this._store.delete(event);
-      }
+    for (const event of this.get(eventName)) {
+      this._store.delete(event);
     }
   }
 
