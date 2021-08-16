@@ -14,6 +14,8 @@ export type EventHandler<T extends EventName = EventName> = (
 
 export interface Event<T extends EventName = EventName> {
   name: T;
+  /** Required if you have multiple event listeners */
+  id?: string;
   once?: boolean;
   execute: EventHandler<T>;
 }
