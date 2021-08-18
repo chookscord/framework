@@ -1,9 +1,15 @@
 ---
+env:
+  node: true
 root: true
 extends:
   - '@chookslint/typescript'
 parserOptions:
   project: ./tsconfig.json
+overrides:
+  - files: '*.js'
+    rules:
+      '@typescript-eslint/no-var-requires': 'off'
 rules:
   '@typescript-eslint/naming-convention': 'off'
   func-style: 'off'
