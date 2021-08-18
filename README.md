@@ -7,13 +7,16 @@ The **Easiest** Discord.JS Framework by far.
 
 ## This project is still experimental!
 
-A lot of stuff is still under construction, and documentation is still very lacking. Stuff may change at any moment without warning, so consider holding on to deploying to production until **v1.x.x** is up!
+A lot of stuff is still under construction, and documentation is still very
+lacking. Stuff may change at any moment without warning, so consider holding
+on to deploying to production until **v1.x.x** is up!
 
 ### Notice
 
 Slash commands are only available in your own dev server currently.
 
-Ability to register global commands will come in the next update, along with support for subcommands.
+Ability to register global commands will come in the next update,
+along with support for subcommands.
 
 ### Todo list
 
@@ -21,7 +24,8 @@ Check the [issues](https://github.com/chookscord/framework/issues) tab in the re
 
 ## Installation
 
-This project recommends using [**yarn**](https://yarnpkg.com/) as your package manager for a better dev experience.
+This project recommends using [**yarn**](https://yarnpkg.com/) as your package
+manager for a better dev experience.
 
 ```bash
 $ yarn add chookscord
@@ -46,16 +50,21 @@ Now you can run your bot using `yarn dev` or `npm run dev`!
 
 ## Directory Structure
 
-The framework automatically loads files from specific directories, so no need to implement your own handlers.
+The framework automatically loads files from specific directories, so no need
+to implement your own handlers.
 
-While `module.exports = {}` are enough to define files, this framework contains utilities to provide type support, so you know what things are available in the current context!
+While `module.exports = {}` are enough to define files, this framework contains
+utilities to provide type support, so you know what things are available in the
+current context!
 
 ### Config
 
-At the root of your project, there should be a `chooks.config.js` or `chooks.config.ts` file.  
+At the root of your project, there should be a `chooks.config.js` or
+`chooks.config.ts` file.  
 This file is **required** as it should contain your bot's token and intents.
 
-***It is highly recommended to use a `.env` file to store your sensitive credentials!***  
+***It is highly recommended to use a `.env` file to store your
+sensitive credentials!***  
 You should put your bot token and other sensitive info there instead.
 
 ```bash
@@ -92,9 +101,12 @@ module.exports = defineConfig({
 
 The `commands` folder should contain all your commands.
 
-By default, all commands are slash commands and will have the `interaction` object available in their context.
+By default, all commands are slash commands and will have the `interaction`
+object available in their context.
 
-To use the traditional message commands instead, add `text: true` to your options, or use `defineTextCommand`. `interaction` will be replaced with the standard `message` object and `args` which will be whatever input the user sent.
+To use the traditional message commands instead, add `text: true` to your
+options, or use `defineTextCommand`. `interaction` will be replaced with the
+standard `message` object and `args` which will be whatever input the user sent.
 
 #### Slash command `/ping`
 
