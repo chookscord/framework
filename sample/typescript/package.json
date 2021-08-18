@@ -1,0 +1,14 @@
+{
+  "name": "chookscord-sample-ts",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "chooks"
+  },
+  "dependencies": {
+    "chookscord": "^0.5.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  }
+}
