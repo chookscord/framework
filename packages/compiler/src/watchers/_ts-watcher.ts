@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import type { WatchCompiler } from './_types';
+import type { WatchCompiler } from '../_types';
 import fs from 'fs/promises';
-import { mkdir } from './_utils';
+import { mkdir } from '../_utils';
 import { readFileSync } from 'fs';
 import type ts from 'typescript';
-import { watchFile } from './_watcher';
+import { watchFile } from '../_watcher';
 
 /**
  * Incremental program watcher

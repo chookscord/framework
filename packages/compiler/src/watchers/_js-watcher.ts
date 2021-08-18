@@ -1,8 +1,8 @@
-import type { WatchCompiler } from './_types';
+import type { WatchCompiler } from '../_types';
 import fs from 'fs/promises';
 import { join } from 'path';
-import { mkdir } from './_utils';
-import { watchFile } from './_watcher';
+import { mkdir } from '../_utils';
+import { watchFile } from '../_watcher';
 
 async function copyFile(inPath: string, outPath: string) {
   await fs.copyFile(

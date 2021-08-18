@@ -4,7 +4,7 @@ export * from './_import-ts';
 export * from './_types';
 
 async function getJsCompiler(): Promise<JsCompiler> {
-  const { jsCompiler } = await import('./_js-compiler');
+  const { jsCompiler } = await import('./watchers');
   return {
     lang: 'js',
     createCompiler: jsCompiler,
@@ -12,7 +12,7 @@ async function getJsCompiler(): Promise<JsCompiler> {
 }
 
 async function getTsCompiler(ts: typeof import('typescript')): Promise<TsCompiler> {
-  const { tsCompiler } = await import('./_ts-compiler');
+  const { tsCompiler } = await import('./watchers');
   return {
     lang: 'ts',
     createCompiler(...args) {
