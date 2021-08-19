@@ -1,17 +1,15 @@
+import { dirname, join } from 'path';
 import type { WatchCompiler } from '../_types';
 import fs from 'fs/promises';
-import { join } from 'path';
 import { mkdir } from '../_utils';
 import { watchFile } from '../_watcher';
 
-async function copyFile(inPath: string, outPath: string) {
-  await fs.copyFile(
-    join(process.cwd(), inPath),
-    join(process.cwd(), outPath),
-  );
+async function copy(inPath: string, outPath: string) {
+  await mkdir(dirname(outPath));
+  await fs.copyFile(inPath, outPath);
 }
 
-export function jsCompiler(): WatchCompiler {
+export function jsCompiler(outDir: string): WatchCompiler {
   console.info('[Compiler]: Using js compiler.');
   const filePaths: string[] = [];
 
@@ -20,11 +18,10 @@ export function jsCompiler(): WatchCompiler {
     onEmit: (outPath: string) => unknown,
   ) => {
     console.debug(`[Compiler]: Emitting ${path}.`);
-    const outPath = join('.chooks', path);
+    const inPath = join(process.cwd(), path);
+    const outPath = join(outDir, path);
 
-    await mkdir(outPath);
-    await copyFile(path, outPath);
-
+    await copy(inPath, outPath);
     onEmit(outPath);
   };
 

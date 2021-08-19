@@ -9,7 +9,7 @@ export interface WatchCompiler {
 
 export interface JsCompiler {
   lang: 'js';
-  createCompiler: () => WatchCompiler;
+  createCompiler: (outDir: string) => WatchCompiler;
 }
 
 export interface TsCompiler {
