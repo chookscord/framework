@@ -11,12 +11,26 @@ export type UpdateListener = (filePath: string) => unknown;
 export interface WatchCompilerConfig {
   input: string;
   output: string;
-  compilerOptions: swc.Options;
+  compilerOptions?: swc.Options;
   onCompile?: UpdateListener;
   onDelete?: UpdateListener;
 }
 
 const logger = createLogger('[cli] Compiler');
+const defaultOptions: Readonly<swc.Options> = {
+  jsc: {
+    loose: true,
+    target: 'es2021',
+    externalHelpers: true,
+    parser: {
+      syntax: 'typescript',
+      dynamicImport: true,
+    },
+  },
+  module: {
+    type: 'commonjs',
+  },
+};
 
 function isFile(stats: Stats): boolean {
   return stats.isFile() && !stats.isDirectory();
@@ -24,7 +38,7 @@ function isFile(stats: Stats): boolean {
 
 function compileFile(
   filePath: string,
-  options: swc.Options,
+  options: swc.Options = defaultOptions,
 ): WriteFile {
   const transform = swc.transformFile(filePath, options);
   return async outPath => {
