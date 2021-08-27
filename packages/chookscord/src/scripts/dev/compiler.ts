@@ -48,12 +48,13 @@ function compileFile(
 }
 
 export function createWatchCompiler(config: WatchCompilerConfig): () => void {
+  const dirNameLength = dirname(config.input).length;
   const watcher = watch(config.input);
 
-  logger.info(`Watching "${config.input}".`);
+  logger.info(`Watching "${config.input.slice(dirNameLength)}".`);
 
   const _getPaths = (filePath: string): [inPath: string, outPath: string] => {
-    const inPath = filePath.slice(config.input.length + 1);
+    const inPath = filePath.slice(dirNameLength);
     const outPath = join(config.output, inPath).replace(/\.ts$/, '.js');
     return [inPath, outPath];
   };
