@@ -1,6 +1,6 @@
-import { defineCommand } from 'chookscord';
+import { defineSlashCommand } from 'chookscord';
 
-export default defineCommand({
+export default defineSlashCommand({
   name: 'ping',
   description: 'Replies with Pong!',
   // Destructuring the "context" object is the recommended way to do things.

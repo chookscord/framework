@@ -3,14 +3,18 @@
     "target": "ES2021",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "declaration": true,
+    "lib": [
+      "ESNext"
+    ],
+    "importHelpers": true,
+    "noEmitHelpers": true,
     "skipLibCheck": true,
-    "incremental": true,
-    "baseUrl": "src",
-    "outDir": "dist",
-    "tsBuildInfoFile": "dist/.tsbuildinfo"
+    "declaration": true,
+    "strict": true
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "**/node_modules",
     "**/dist"

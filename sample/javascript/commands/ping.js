@@ -1,7 +1,7 @@
-const { defineCommand } = require('chookscord');
+const { defineSlashCommand } = require('chookscord');
 
 // This slash command will be accessible using /ping
-module.exports = defineCommand({
+module.exports = defineSlashCommand({
   name: 'ping',
   description: 'Replies with Pong!',
   // For beginners, we can also destructure our "context" object to make typing things shorter!
