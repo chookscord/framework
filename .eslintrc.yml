@@ -12,6 +12,7 @@ overrides:
       '@typescript-eslint/no-var-requires': 'off'
 rules:
   '@typescript-eslint/naming-convention': 'off'
+  '@typescript-eslint/no-empty-interface': 'off'
   func-style: 'off'
   multiline-ternary: 'off'
   operator-linebreak: 'off'
