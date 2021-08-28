@@ -7,7 +7,7 @@ export async function registerCommands(
 ): Promise<void> {
   logger.info('Preparing commands...');
   const commands = register.prepare(store.getAll());
-  logger.success(`Prepared ${commands.length}`);
+  logger.success(`Prepared ${commands.length} commands.`);
   try {
     logger.info(`Registering ${commands.length} commands...`);
     const ok = await register.register(commands);
