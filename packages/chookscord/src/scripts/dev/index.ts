@@ -1,74 +1,66 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import 'dotenv/config';
 process.env.NODE_ENV = 'development';
-import * as consola from 'consola';
-import * as handlers from './handlers';
-import type * as swc from '@swc/core';
-import { UpdateListener, createWatchCompiler } from './compiler';
-import { basename, join } from 'path';
-import { configFiles, loadConfig } from './config';
-import { createLogger, loadDir } from '@chookscord/lib';
+import * as lib from '@chookscord/lib';
+import * as path from 'path';
+import { Client } from 'discord.js';
+import type { Config } from '../../types';
+import { ReloadModule } from './modules/_types';
+import { appendPath } from './utils';
+import { createConfigLoader } from './config';
+import { findFiles } from './load-files';
 
-const logger = createLogger('[cli] Chooks');
+const logger = lib.createLogger('[cli] Chooks');
+const fetch = lib.fetch;
 
-const rootOutPath = join(process.cwd(), '.chooks');
-const options: Readonly<swc.Options> = {
-  jsc: {
-    loose: true,
-    target: 'es2021',
-    externalHelpers: true,
-    parser: {
-      syntax: 'typescript',
-      dynamicImport: true,
-    },
-  },
-  module: {
-    type: 'commonjs',
-  },
-};
-
-// @todo(Choooks22): Improve functionality
-function createCompiler(
-  dirName: string,
-  on?: {
-    compile?: UpdateListener;
-    delete?: UpdateListener;
-  },
-): { close: () => void } {
-  const close = createWatchCompiler({
-    input: join(process.cwd(), dirName),
-    output: join(rootOutPath, dirName),
-    compilerOptions: options,
-    onCompile: on?.compile,
-    onDelete: on?.delete,
-  });
-  return { close };
+async function logVersion(): Promise<void> {
+  const packagePath = path.join(__dirname, '..', '..', '..', 'package.json');
+  const { name, version } = await import(packagePath);
+  logger.info(`Using ${name} v${version}`);
 }
 
-// eslint-disable-next-line complexity
+function createClient(config: Config): Client {
+  const client = new Client({
+    ...config.client?.config,
+    intents: config.intents,
+  });
+
+  return client;
+}
+
 export async function run(): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const files = (await loadDir(process.cwd()))!;
+  await logVersion();
+  const [configFile, addedModules] = await findFiles();
 
-  let configFound = false;
-  for await (const file of files) {
-    const fileName = basename(file.path);
-
-    if (file.isDirectory && fileName in handlers) {
-      logger.info(`Found "${fileName}" directory.`);
-      const handler = fileName as unknown as keyof typeof handlers;
-      createCompiler(fileName, handlers[handler]);
-      continue;
-    }
-
-    if (configFiles.includes(fileName)) {
-      configFound = true;
-      loadConfig(fileName);
-    }
-  }
-
-  if (!configFound) {
-    consola.fatal(new Error('Could not find a config file!'));
+  if (!configFile) {
+    logger.fatal(new Error('Could not find a config file!'));
     process.exit();
   }
+
+  let client: Client;
+  const loadedModules: (ReloadModule | null)[] = [];
+  const _reload = (config: Config) => {
+    // @todo(Choooks22): Detect changes in config relevant for the client
+    // and recreate it if necessary.
+    for (const reloadModule of loadedModules) {
+      reloadModule?.({ client, config, fetch });
+    }
+  };
+
+  const config = await createConfigLoader({
+    inputFile: appendPath.fromRoot(configFile),
+    outputPath: appendPath.fromOut(),
+    onReload: _reload,
+  });
+
+  client = createClient(config);
+
+  for (const loadModule of addedModules) {
+    const reloadModule = loadModule({ client, config, fetch });
+    loadedModules.push(reloadModule);
+  }
+
+  logger.info('Client logging in...');
+  await client.login();
+  logger.success('Client successfully logged in!');
 }
