@@ -1,35 +1,30 @@
 import * as lib from '@chookscord/lib';
-import * as modules from '../scripts/dev/modules';
-import { ModuleContext, ReloadModule } from '../scripts/dev/modules/_types';
-import { appendPath } from '../utils';
 import { basename } from 'path';
 import { configFiles } from '../scripts/dev/config';
 
 const logger = lib.createLogger('[cli] Loader');
 
-type LoadedModule = ((ctx: ModuleContext) => ReloadModule | null);
+interface conf {
+  configFiles: string[];
+  directories: string[];
+}
 
 // eslint-disable-next-line complexity
-export async function findFiles(): Promise<[
+export async function findFiles(conf: conf): Promise<[
   configFile: string | null,
-  addedModules: LoadedModule[],
+  directories: string[],
 ]> {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const files = (await lib.loadDir(process.cwd()))!;
-  const addedModules: LoadedModule[] = [];
 
   let configFile = Infinity;
+  const directories: string[] = [];
   for await (const file of files) {
     const fileName = basename(file.path);
 
-    if (file.isDirectory && fileName in modules) {
+    if (file.isDirectory && conf.directories.includes(fileName)) {
       logger.info(`Found "${fileName}" directory.`);
-      const initModule: LoadedModule = ctx => {
-        const module = modules[fileName as unknown as keyof typeof modules];
-        const output = appendPath.fromOut(fileName);
-        return module.init({ ctx, input: file.path, output });
-      };
-      addedModules.push(initModule);
+      directories.push(fileName);
       continue;
     }
 
@@ -43,5 +38,5 @@ export async function findFiles(): Promise<[
 
   const configFileName = configFiles[configFile] ?? null;
   logger.success(`Selected config file "${configFileName}".`);
-  return [configFileName, addedModules];
+  return [configFileName, directories];
 }
