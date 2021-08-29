@@ -7,6 +7,16 @@ async function main() {
   await dev.run();
 }
 
+// register script
+async function registerCommands() {
+  const { register } = await import ('../scripts');
+  await register.run();
+}
+
 if (!args.length) {
   main();
+}
+
+if (args[0] === 'register') {
+  registerCommands();
 }
