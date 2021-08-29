@@ -1,2 +1,2 @@
 export * from './compile';
-export * from './load-files';
+export * from './find-files';
