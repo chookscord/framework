@@ -3,7 +3,6 @@ import 'dotenv/config';
 process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
 import * as modules from './modules';
-import * as path from 'path';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
 import type { ModuleContext, ReloadModule } from './modules/_types';
@@ -13,12 +12,6 @@ import type { Config } from '../../types';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;
-
-async function logVersion(): Promise<void> {
-  const packagePath = path.join(__dirname, '..', '..', '..', 'package.json');
-  const { name, version } = await import(packagePath);
-  logger.info(`Using ${name} v${version}`);
-}
 
 function createClient(config: Config): Client {
   const client = new Client({
@@ -49,7 +42,7 @@ function *loadModules(
 }
 
 export async function run(): Promise<void> {
-  await logVersion();
+  await utils.logVersion(logger);
   logger.info('Starting...');
   const endTimer = utils.createTimer();
 
