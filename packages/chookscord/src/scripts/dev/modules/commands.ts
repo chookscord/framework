@@ -4,6 +4,7 @@ import * as utils from '../utils';
 import type { Client, Interaction } from 'discord.js';
 import type { ModuleConfig, ReloadModule } from './_types';
 import { UpdateListener, createWatchCompiler } from '../compiler';
+import { createTimer } from '../utils';
 
 const logger = lib.createLogger('[cli] Commands');
 
@@ -31,7 +32,7 @@ function createListener(
 
     try {
       logger.info(`Executing command "${commandName}"...`);
-      const start = Date.now();
+      const stopTimer = createTimer();
       await command.execute({
         client,
         fetch: lib.fetch,
@@ -39,8 +40,7 @@ function createListener(
         interaction,
       });
 
-      const end = Date.now() - start;
-      logger.success(`Finished executing command "${commandName}". Time took: ${end.toLocaleString()}ms`);
+      logger.success(`Finished executing command "${commandName}". Time took: ${stopTimer.toLocaleString()}ms`);
     } catch (error) {
       logger.error(`Failed to execute command "${commandName}"!`);
       logger.error(error);
@@ -94,6 +94,8 @@ export function init(config: ModuleConfig): ReloadModule {
   };
 
   const _compile: UpdateListener = async filePath => {
+    logger.debug('Reloading command...');
+    const stopTimer = createTimer();
     const command = await utils.uncachedImportDefault<lib.BaseSlashCommand>(filePath);
     const errorMessage = validateCommand(filePath, command);
     if (errorMessage) {
@@ -105,17 +107,26 @@ export function init(config: ModuleConfig): ReloadModule {
 
     paths[filePath] = command.name;
     store.set(command.name, command);
+    logger.debug(`Command reloaded. Time took: ${stopTimer().toLocaleString()}ms`);
 
     if (didChange) {
-      registerCommands();
+      logger.debug('Command details changed. Reregistering...');
+      await registerCommands();
+      logger.debug('Reregistering complete.');
+      return;
     }
+
+    logger.debug('Command details did not changed.');
   };
 
-  const _delete: UpdateListener = filePath => {
+  const _delete: UpdateListener = async filePath => {
+    logger.debug('Deleting command...');
     const commandName = paths[filePath];
     delete paths[filePath];
     store.delete(commandName);
-    registerCommands();
+    logger.debug('Command deleted. Reregistering...');
+    await registerCommands();
+    logger.debug('Reregistering complete.');
   };
 
   createWatchCompiler({

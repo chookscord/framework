@@ -3,6 +3,7 @@ import * as swc from '@swc/core';
 import { dirname, join } from 'path';
 import { Stats } from 'fs';
 import { createLogger } from '@chookscord/lib';
+import { createTimer } from './utils';
 import { watch } from 'chokidar';
 
 export type WriteFile = (outPath: string) => Promise<void>;
@@ -66,11 +67,14 @@ export function createWatchCompiler(config: WatchCompilerConfig): () => void {
     const [inPath, outPath] = _getPaths(filePath);
 
     try {
+      logger.debug(`Emitting file "${inPath}"...`);
+      const stopTimer = createTimer();
       const writeFile = compileFile(filePath, config.compilerOptions);
       await fs.mkdir(dirname(outPath), { recursive: true });
       await writeFile(outPath);
       logger.success(`Emit "${inPath}".`);
       config.onCompile?.(outPath);
+      logger.debug(`File emitted. Time took: ${stopTimer().toLocaleString()}ms`);
     } catch (error) {
       logger.error(`Failed to emit "${inPath}"!`);
       logger.error(error);
@@ -81,9 +85,12 @@ export function createWatchCompiler(config: WatchCompilerConfig): () => void {
     const [inPath, outPath] = _getPaths(filePath);
 
     try {
+      logger.debug(`Deleting file "${filePath}"...`);
+      const stopTimer = createTimer();
       await fs.rm(outPath, { recursive: true, force: true });
       logger.success(`Delete "${inPath}".`);
       config.onDelete?.(outPath);
+      logger.debug(`File deleted. Time took: ${stopTimer().toLocaleString()}ms`);
     } catch (error) {
       logger.error(`Failed to delete "${inPath}"!`);
       logger.error(error);
