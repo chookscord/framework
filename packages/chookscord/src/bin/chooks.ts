@@ -3,14 +3,20 @@ const args = process.argv.slice(2);
 
 // dev script
 async function main() {
-  const { dev } = await import('../scripts');
+  const dev = await import('../scripts/dev');
   await dev.run();
 }
 
 // register script
 async function registerCommands() {
-  const { register } = await import ('../scripts');
+  const register = await import ('../scripts/register');
   await register.run();
+}
+
+// build script
+async function buildProject() {
+  const build = await import('../scripts/build');
+  await build.run();
 }
 
 if (!args.length) {
@@ -19,4 +25,8 @@ if (!args.length) {
 
 if (args[0] === 'register') {
   registerCommands();
+}
+
+if (args[0] === 'build') {
+  buildProject();
 }
