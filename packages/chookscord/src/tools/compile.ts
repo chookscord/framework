@@ -28,7 +28,7 @@ export async function compile(
   outPath: string,
   options: swc.Options = defaultOptions,
 ): Promise<void> {
-  const job = swc.transform(filePath, options);
+  const job = swc.transformFile(filePath, options);
   await mkdir(outPath);
 
   const output = await job;
