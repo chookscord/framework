@@ -3,12 +3,12 @@ import 'dotenv/config';
 process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
 import * as path from 'path';
+import * as tools from '../../tools';
 import { Client } from 'discord.js';
 import type { Config } from '../../types';
 import { ReloadModule } from './modules/_types';
 import { appendPath } from './utils';
 import { createConfigLoader } from './config';
-import { findFiles } from './load-files';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;
@@ -30,7 +30,7 @@ function createClient(config: Config): Client {
 
 export async function run(): Promise<void> {
   await logVersion();
-  const [configFile, addedModules] = await findFiles();
+  const [configFile, addedModules] = await tools.findFiles();
 
   if (!configFile) {
     logger.fatal(new Error('Could not find a config file!'));

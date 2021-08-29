@@ -1,9 +1,9 @@
 import * as lib from '@chookscord/lib';
-import * as modules from './modules';
-import { ModuleContext, ReloadModule } from './modules/_types';
-import { appendPath } from './utils';
+import * as modules from '../scripts/dev/modules';
+import { ModuleContext, ReloadModule } from '../scripts/dev/modules/_types';
+import { appendPath } from '../utils';
 import { basename } from 'path';
-import { configFiles } from './config';
+import { configFiles } from '../scripts/dev/config';
 
 const logger = lib.createLogger('[cli] Loader');
 
