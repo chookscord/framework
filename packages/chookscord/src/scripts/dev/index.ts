@@ -4,10 +4,10 @@ process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
 import * as path from 'path';
 import * as tools from '../../tools';
+import * as utils from '../../utils';
 import { Client } from 'discord.js';
 import type { Config } from '../../types';
 import { ReloadModule } from './modules/_types';
-import { appendPath } from './utils';
 import { createConfigLoader } from './config';
 
 const logger = lib.createLogger('[cli] Chooks');
@@ -48,8 +48,8 @@ export async function run(): Promise<void> {
   };
 
   const config = await createConfigLoader({
-    inputFile: appendPath.fromRoot(configFile),
-    outputPath: appendPath.fromOut(),
+    inputFile: utils.appendPath.fromRoot(configFile),
+    outputPath: utils.appendPath.fromOut(),
     onReload: _reload,
   });
 

@@ -1,9 +1,9 @@
 import * as fs from 'fs/promises';
 import * as swc from '@swc/core';
+import * as utils from '../../utils';
 import { dirname, join } from 'path';
 import { Stats } from 'fs';
 import { createLogger } from '@chookscord/lib';
-import { createTimer } from './utils';
 import { watch } from 'chokidar';
 
 export type WriteFile = (outPath: string) => Promise<void>;
@@ -68,7 +68,7 @@ export function createWatchCompiler(config: WatchCompilerConfig): () => void {
 
     try {
       logger.debug(`Emitting file "${inPath}"...`);
-      const stopTimer = createTimer();
+      const stopTimer = utils.createTimer();
       const writeFile = compileFile(filePath, config.compilerOptions);
       await fs.mkdir(dirname(outPath), { recursive: true });
       await writeFile(outPath);
@@ -86,7 +86,7 @@ export function createWatchCompiler(config: WatchCompilerConfig): () => void {
 
     try {
       logger.debug(`Deleting file "${filePath}"...`);
-      const stopTimer = createTimer();
+      const stopTimer = utils.createTimer();
       await fs.rm(outPath, { recursive: true, force: true });
       logger.success(`Delete "${inPath}".`);
       config.onDelete?.(outPath);

@@ -1,7 +1,7 @@
 import * as lib from '@chookscord/lib';
+import * as utils from '../../../utils';
 import type { ModuleConfig, ModuleContext, ReloadModule } from './_types';
 import { UpdateListener, createWatchCompiler } from '../compiler';
-import { createTimer, uncachedImportDefault } from '../utils';
 import { ClientEvents } from 'discord.js';
 import { createLogger } from '@chookscord/lib';
 
@@ -34,7 +34,7 @@ function createOnCompile(
 ): UpdateListener {
   return async filePath => {
     logger.debug('Event updated.');
-    const event = await uncachedImportDefault<lib.Event>(filePath);
+    const event: lib.Event = await utils.uncachedImportDefault<lib.Event>(filePath);
     const validationError = validateEvent(filePath, event);
 
     if (validationError) {
@@ -102,7 +102,7 @@ export function init(config: ModuleConfig): ReloadModule {
 
   const setEvent: lib.EventSetListener = (event, oldEvent) => {
     logger.info(`Attaching "${event.name}" listener...`);
-    const stopTimer = createTimer();
+    const stopTimer = utils.createTimer();
     if (oldEvent) {
       logger.debug(`Removing old "${oldEvent.name}" listener.`);
       removeEvent(oldEvent);

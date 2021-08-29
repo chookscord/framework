@@ -1,8 +1,8 @@
 import * as consola from 'consola';
+import * as utils from '../../utils';
 import type { Config } from '../../types';
 import { createLogger } from '@chookscord/lib';
 import { createWatchCompiler } from './compiler';
-import { uncachedImportDefault } from './utils';
 
 const logger = createLogger('[cli] Config');
 
@@ -22,7 +22,7 @@ interface ConfigWatcherOpts {
 export function createConfigLoader(opts: ConfigWatcherOpts): Promise<Config> {
   const importConfig = async (filePath: string): Promise<Config> => {
     logger.info('Loading config...');
-    const config = await uncachedImportDefault<Config>(filePath);
+    const config = await utils.uncachedImportDefault<Config>(filePath);
 
     if (!config) {
       const invalidExport = 'Config file does not have a default export!';

@@ -1,10 +1,9 @@
 import * as lib from '@chookscord/lib';
 import * as path from 'path';
-import * as utils from '../utils';
+import * as utils from '../../../utils';
 import type { Client, Interaction } from 'discord.js';
 import type { ModuleConfig, ReloadModule } from './_types';
 import { UpdateListener, createWatchCompiler } from '../compiler';
-import { createTimer } from '../utils';
 
 const logger = lib.createLogger('[cli] Commands');
 
@@ -32,7 +31,7 @@ function createListener(
 
     try {
       logger.info(`Executing command "${commandName}"...`);
-      const stopTimer = createTimer();
+      const stopTimer = utils.createTimer();
       await command.execute({
         client,
         fetch: lib.fetch,
@@ -64,7 +63,7 @@ function createOnCompile(
 ): UpdateListener {
   return async filePath => {
     logger.debug('Reloading command...');
-    const stopTimer = createTimer();
+    const stopTimer = utils.createTimer();
     const command = await utils.uncachedImportDefault<lib.BaseSlashCommand>(filePath);
     const errorMessage = validateCommand(filePath, command);
     if (errorMessage) {
