@@ -57,6 +57,57 @@ function validateCommand(
     : `${path.dirname(filePath)} does not have a default export!`;
 }
 
+function createOnCompile(
+  paths: Record<string, string>,
+  store: lib.CommandStore<lib.BaseSlashCommand>,
+  register: () => unknown,
+): UpdateListener {
+  return async filePath => {
+    logger.debug('Reloading command...');
+    const stopTimer = createTimer();
+    const command = await utils.uncachedImportDefault<lib.BaseSlashCommand>(filePath);
+    const errorMessage = validateCommand(filePath, command);
+    if (errorMessage) {
+      logger.error(new Error(errorMessage));
+      return;
+    }
+
+    const oldCommand = store.get(command.name);
+    const didChange = utils.slashCommandChanged(command, oldCommand);
+
+    paths[filePath] = command.name;
+    store.set(command.name, command);
+    logger.debug(`Command reloaded. Time took: ${stopTimer().toLocaleString()}ms`);
+
+    if (didChange) {
+      logger.debug('Command details changed. Reregistering...');
+      await register();
+      logger.debug('Reregistering complete.');
+      return;
+    }
+
+    logger.debug('Command details did not changed.');
+  };
+}
+
+function createOnDelete(
+  paths: Record<string, string>,
+  store: lib.CommandStore<lib.BaseSlashCommand>,
+  register: () => unknown,
+): UpdateListener {
+  return async filePath => {
+    const commandName = paths[filePath];
+    logger.debug(`Deleting command "${commandName}"...`);
+
+    delete paths[filePath];
+    store.delete(commandName);
+    logger.debug(`Command "${commandName}" deleted. Reregistering...`);
+
+    await register();
+    logger.debug('Reregistering complete.');
+  };
+}
+
 export function init(config: ModuleConfig): ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, string> = {};
@@ -88,54 +139,12 @@ export function init(config: ModuleConfig): ReloadModule {
     logger.info(`${store.size} commands refreshed.`);
   };
 
-  const commandChanged = (command: lib.BaseSlashCommand) => {
-    const oldCommand = store.get(command.name);
-    return utils.slashCommandChanged(command, oldCommand);
-  };
-
-  const _compile: UpdateListener = async filePath => {
-    logger.debug('Reloading command...');
-    const stopTimer = createTimer();
-    const command = await utils.uncachedImportDefault<lib.BaseSlashCommand>(filePath);
-    const errorMessage = validateCommand(filePath, command);
-    if (errorMessage) {
-      logger.error(new Error(errorMessage));
-      return;
-    }
-
-    const didChange = commandChanged(command);
-
-    paths[filePath] = command.name;
-    store.set(command.name, command);
-    logger.debug(`Command reloaded. Time took: ${stopTimer().toLocaleString()}ms`);
-
-    if (didChange) {
-      logger.debug('Command details changed. Reregistering...');
-      await registerCommands();
-      logger.debug('Reregistering complete.');
-      return;
-    }
-
-    logger.debug('Command details did not changed.');
-  };
-
-  const _delete: UpdateListener = async filePath => {
-    logger.debug('Deleting command...');
-    const commandName = paths[filePath];
-    delete paths[filePath];
-    store.delete(commandName);
-    logger.debug('Command deleted. Reregistering...');
-    await registerCommands();
-    logger.debug('Reregistering complete.');
-  };
-
   createWatchCompiler({
     ...config,
-    onCompile: _compile,
-    onDelete: _delete,
+    onCompile: createOnCompile(paths, store, registerCommands),
+    onDelete: createOnDelete(paths, store, registerCommands),
   });
 
-  load(ctx.client);
-
+  load(ctx.client as Client);
   return reload;
 }
