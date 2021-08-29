@@ -25,7 +25,7 @@ describe('interactions register', () => {
       execute() { /*  */ },
     });
 
-    const commands = register.prepare(store.getAll());
+    const commands = chooks.prepareCommands(store.getAll());
 
     expect(commands).toBeInstanceOf(Array);
     expect(commands.length).toBe(2);
@@ -50,7 +50,7 @@ describe('interactions register', () => {
       ],
     });
 
-    const [command] = register.prepare(store.getAll());
+    const [command] = chooks.prepareCommands(store.getAll());
     const [option] = command.options!;
 
     expect(option.type).toBe(chooks.CommandOptionType.SUB_COMMAND);
@@ -79,7 +79,7 @@ describe('interactions register', () => {
       ],
     });
 
-    const [command] = register.prepare(store.getAll());
+    const [command] = chooks.prepareCommands(store.getAll());
     const [option] = command.options!;
     const [subCommand] = option.options!;
 
