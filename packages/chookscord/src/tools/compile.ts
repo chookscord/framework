@@ -2,17 +2,35 @@ import * as fs from 'fs/promises';
 import * as swc from '@swc/core';
 import { dirname } from 'path';
 
-async function writeFile(outPath: string, data: string): Promise<void> {
-  const outDir = dirname(outPath);
+// Duplicated from scripts/dev/compiler
+const defaultOptions: Readonly<swc.Options> = {
+  jsc: {
+    loose: true,
+    target: 'es2021',
+    externalHelpers: true,
+    parser: {
+      syntax: 'typescript',
+      dynamicImport: true,
+    },
+  },
+  module: {
+    type: 'commonjs',
+  },
+};
+
+async function mkdir(path: string): Promise<void> {
+  const outDir = dirname(path);
   await fs.mkdir(outDir, { recursive: true });
-  await fs.writeFile(outPath, data);
 }
 
 export async function compile(
   filePath: string,
   outPath: string,
-  options?: swc.Options,
+  options: swc.Options = defaultOptions,
 ): Promise<void> {
-  const output = await swc.transform(filePath, options);
-  await writeFile(outPath, output.code);
+  const job = swc.transform(filePath, options);
+  await mkdir(outPath);
+
+  const output = await job;
+  await fs.writeFile(outPath, output.code);
 }
