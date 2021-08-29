@@ -25,13 +25,15 @@ export function defineSlashCommand(
   return command;
 }
 
-export function defineSlashSubCommand(
+// @todo(Choooks22): Implement slash sub commands
+function defineSlashSubCommand(
   command: SlashSubCommand,
 ): SlashSubCommand {
   return command;
 }
 
-export function defineSlashCommandGroup(
+// @todo(Choooks22): Implement slash command groups
+function defineSlashCommandGroup(
   command: SlashSubCommandGroup,
 ): SlashSubCommandGroup {
   return command;
