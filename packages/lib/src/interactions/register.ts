@@ -32,6 +32,7 @@ export function createInteractionRegister(
     }
 
     logger.info(`Registering ${commands.length} commands...`);
+    logger.debug('Route:', route);
     const response = await registerCommands({
       route,
       token: config.token,
