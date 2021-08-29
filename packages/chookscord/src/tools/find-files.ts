@@ -2,27 +2,31 @@ import * as lib from '@chookscord/lib';
 import { basename } from 'path';
 import { configFiles } from '../scripts/dev/config';
 
-const logger = lib.createLogger('[cli] Loader');
-
-interface conf {
+interface FindFilesConfig {
+  path: string;
   configFiles: string[];
   directories: string[];
 }
 
+const logger = lib.createLogger('[cli] Loader');
+
 // eslint-disable-next-line complexity
-export async function findFiles(conf: conf): Promise<[
+export async function findFiles(config: FindFilesConfig): Promise<[
   configFile: string | null,
   directories: string[],
 ]> {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const files = (await lib.loadDir(process.cwd()))!;
+  const files = await lib.loadDir(config.path);
+
+  if (!files) {
+    throw new Error(`"${config.path}" does not exist!`);
+  }
 
   let configFile = Infinity;
   const directories: string[] = [];
   for await (const file of files) {
     const fileName = basename(file.path);
 
-    if (file.isDirectory && conf.directories.includes(fileName)) {
+    if (file.isDirectory && config.directories.includes(fileName)) {
       logger.info(`Found "${fileName}" directory.`);
       directories.push(fileName);
       continue;
