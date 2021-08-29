@@ -40,7 +40,7 @@ function createListener(
         interaction,
       });
 
-      logger.success(`Finished executing command "${commandName}". Time took: ${stopTimer.toLocaleString()}ms`);
+      logger.success(`Finished executing command "${commandName}". Time took: ${stopTimer().toLocaleString()}ms`);
     } catch (error) {
       logger.error(`Failed to execute command "${commandName}"!`);
       logger.error(error);
