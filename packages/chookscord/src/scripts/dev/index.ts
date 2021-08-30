@@ -4,16 +4,15 @@ process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
 import * as modules from './modules';
 import * as tools from '../../tools';
-import type * as types from '../../types/modules';
+import type * as types from '../../types';
 import * as utils from '../../utils';
 import { configFiles, createConfigLoader } from './config';
 import { Client } from 'discord.js';
-import type { Config } from '../../types';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;
 
-function createClient(config: Config): Client {
+function createClient(config: types.Config): Client {
   const client = new Client({
     ...config.client?.config,
     intents: config.intents,
@@ -62,7 +61,7 @@ export async function run(): Promise<void> {
 
   let client: Client;
   const loadedModules: (types.ReloadModule | null)[] = [];
-  const _reload = (config: Config) => {
+  const _reload = (config: types.Config) => {
     // @todo(Choooks22): Detect changes in config relevant for the client
     // and recreate it if necessary.
     for (const reloadModule of loadedModules) {
