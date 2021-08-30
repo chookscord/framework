@@ -86,7 +86,7 @@ export async function run(): Promise<void> {
   }
 
   logger.info('Client logging in...');
-  await client.login();
+  await client.login(config.credentials.token);
   logger.success('Client successfully logged in!');
   logger.info(`Startup time: ${endTimer().toLocaleString()}ms`);
 }
