@@ -1,5 +1,10 @@
 #! /usr/bin/env node
+/* eslint-disable @typescript-eslint/no-var-requires */
+import 'dotenv/config';
 const args = process.argv.slice(2);
+
+const { version } = require('../../package.json');
+process.env.CHOOKSCORD_VERSION = version;
 
 // dev script
 async function main() {
