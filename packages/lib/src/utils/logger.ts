@@ -28,7 +28,7 @@ function getTotalCharCode(string: string): number {
 }
 
 export function createLogger(name: string): consola.Consola {
-  const color = COLORS[getTotalCharCode(name.toLowerCase()) % COLORS.length];
+  const color = COLORS[getTotalCharCode(name.toUpperCase()) % COLORS.length];
   return consola.create({
     defaults: {
       message: chalk.bold[color](`${name}:`),
