@@ -1,6 +1,5 @@
-import { inRange, isType } from '../tests';
+import { assert, inRange, isType } from '../tests';
 import type { ValidationError } from '../types';
-import { assert } from '..';
 
 function validateType(context: string, type: number, max: number): ValidationError {
   return (
