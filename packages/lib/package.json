@@ -2,8 +2,12 @@
   "name": "@chookscord/lib",
   "version": "0.9.0",
   "main": "dist/index.js",
-  "repository": "chookscord/framework",
-  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chookscord/framework.git",
+    "directory": "packages/lib"
+  },
   "files": [
     "dist"
   ],
@@ -19,5 +23,9 @@
   },
   "peerDependencies": {
     "discord.js": "^13.1.0"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   }
 }
