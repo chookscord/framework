@@ -41,7 +41,6 @@ function *loadModules(
 }
 
 export async function run(): Promise<void> {
-  await utils.logVersion(logger);
   logger.info('Starting...');
   const endTimer = utils.createTimer();
 

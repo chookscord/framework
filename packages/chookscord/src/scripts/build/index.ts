@@ -30,7 +30,6 @@ function getOutPath(inPath: string): string {
 }
 
 export async function run(): Promise<void> {
-  await utils.logVersion(logger);
   logger.info('Compiling project...');
   const endTimer = utils.createTimer();
 

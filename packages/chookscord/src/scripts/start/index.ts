@@ -64,7 +64,6 @@ function createclient(config: Config): Client {
 }
 
 export async function run(): Promise<void> {
-  await utils.logVersion(logger);
   logger.info('Starting in production mode...');
   const endTimer = utils.createTimer();
 
