@@ -19,6 +19,11 @@ async function buildProject() {
   await build.run();
 }
 
+async function startApp() {
+  const start = await import('../scripts/start');
+  await start.run();
+}
+
 if (!args.length) {
   main();
 }
@@ -29,4 +34,8 @@ if (args[0] === 'register') {
 
 if (args[0] === 'build') {
   buildProject();
+}
+
+if (args[0] === 'start') {
+  startApp();
 }
