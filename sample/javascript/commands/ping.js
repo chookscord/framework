@@ -6,7 +6,8 @@ module.exports = defineSlashCommand({
   description: 'Replies with Pong!',
   // For beginners, we can also destructure our "context" object to make typing things shorter!
   // For more info: https://javascript.info/destructuring-assignment
-  async execute({ interaction }) {
+  async execute({ logger, interaction }) {
     await interaction.reply('Pong!');
+    logger.success('Replied with Pong!');
   },
 });
