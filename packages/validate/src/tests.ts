@@ -1,5 +1,9 @@
 import type { Primitive, ValidationError } from './types';
 
+export function testRegex(regex: RegExp): (value: string) => boolean {
+  return value => regex.test(value);
+}
+
 export function inRange(min: number, max: number): (value: number) => boolean {
   return value => min <= value && value <= max;
 }
