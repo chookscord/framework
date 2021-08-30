@@ -4,8 +4,8 @@ process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
 import * as modules from './modules';
 import * as tools from '../../tools';
+import type * as types from '../../types/modules';
 import * as utils from '../../utils';
-import type { ModuleContext, ReloadModule } from './modules/_types';
 import { configFiles, createConfigLoader } from './config';
 import { Client } from 'discord.js';
 import type { Config } from '../../types';
@@ -23,9 +23,9 @@ function createClient(config: Config): Client {
 }
 
 function *loadModules(
-  ctx: ModuleContext,
+  ctx: types.ModuleContext,
   addedModules: string[],
-): Iterable<ReloadModule | null> {
+): Iterable<types.ReloadModule | null> {
   logger.info(`Loading ${addedModules.length} modules...`);
   const endTimer = utils.createTimer();
   for (const moduleName of addedModules) {
@@ -61,7 +61,7 @@ export async function run(): Promise<void> {
   }
 
   let client: Client;
-  const loadedModules: (ReloadModule | null)[] = [];
+  const loadedModules: (types.ReloadModule | null)[] = [];
   const _reload = (config: Config) => {
     // @todo(Choooks22): Detect changes in config relevant for the client
     // and recreate it if necessary.

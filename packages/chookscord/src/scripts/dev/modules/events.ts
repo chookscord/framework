@@ -1,6 +1,6 @@
 import * as lib from '@chookscord/lib';
+import type * as types from '../../../types';
 import * as utils from '../../../utils';
-import type { ModuleConfig, ModuleContext, ReloadModule } from './_types';
 import { UpdateListener, createWatchCompiler } from '../compiler';
 import { ClientEvents } from 'discord.js';
 import { createLogger } from '@chookscord/lib';
@@ -30,7 +30,7 @@ function validateEvent(
 function createOnCompile(
   paths: Record<string, keyof ClientEvents>,
   store: lib.EventStore,
-  ctx: ModuleContext,
+  ctx: types.ModuleContext,
 ): UpdateListener {
   return async filePath => {
     logger.debug('Event updated.');
@@ -72,12 +72,12 @@ function createOnDelete(
   };
 }
 
-export function init(config: ModuleConfig): ReloadModule {
+export function init(config: types.ModuleConfig): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, keyof ClientEvents> = {};
   const store = new lib.EventStore();
 
-  const reload: ReloadModule = newCtx => {
+  const reload: types.ReloadModule = newCtx => {
     logger.info('Refreshing events...');
     ctx = newCtx;
     for (const event of store.getAll()) {

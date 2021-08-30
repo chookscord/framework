@@ -1,8 +1,8 @@
 import * as lib from '@chookscord/lib';
 import * as path from 'path';
+import type * as types from '../../../types';
 import * as utils from '../../../utils';
 import type { Client, Interaction } from 'discord.js';
-import type { ModuleConfig, ReloadModule } from './_types';
 import { UpdateListener, createWatchCompiler } from '../compiler';
 
 const logger = lib.createLogger('[cli] Commands');
@@ -107,7 +107,7 @@ function createOnDelete(
   };
 }
 
-export function init(config: ModuleConfig): ReloadModule {
+export function init(config: types.ModuleConfig): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, string> = {};
   const store = new lib.CommandStore<lib.BaseSlashCommand>();
@@ -129,7 +129,7 @@ export function init(config: ModuleConfig): ReloadModule {
     logger.success('Interaction listener attached to client.');
   };
 
-  const reload: ReloadModule = newCtx => {
+  const reload: types.ReloadModule = newCtx => {
     logger.info('Refreshing commands...');
     // @todo(Choooks22): Detect changes in config
     // and recreate client and register if needed.
