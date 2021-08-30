@@ -2,6 +2,10 @@
 
 ## 0.9.0 - 30/08/21
 
+### Fixed
+
+- Interaction option types.
+
 ### Added
 
 - More cli commands.
