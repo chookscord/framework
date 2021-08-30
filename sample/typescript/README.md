@@ -3,18 +3,15 @@
 ## Getting started
 
 Setup is exactly the same as you would with just plain JS,
-the only difference is of course using `.ts` files and adding `typescript`
-as a dev dependency.
+the only difference is of course using `.ts` files, no need to add the `typescript`
+package if not necessary.
 
-```sh
-$ yarn add chookscord
-$ yarn add -D typescript
-```
-
-You need to set up your `tsconfig.json` file only so your editor won't complain,
+You might need to set up your `tsconfig.json` file so your editor won't complain,
 targeting Node 16.
 
 ### You shouldn't manually compile your project!
 
-When you have TS installed, the framework detects this and automatically switches
-to TS mode without any extra setup!
+TS to JS compilation is done automatically by the framework.
+
+Manually compiling your typescript project might result in unwanted behavior since
+the framework automatically compiles and outputs your typescript files.

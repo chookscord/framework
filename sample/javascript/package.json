@@ -3,9 +3,12 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "chooks"
+    "dev": "chooks",
+    "start": "chooks start",
+    "build": "chooks build",
+    "register": "chooks register"
   },
   "dependencies": {
-    "chookscord": "^0.5.1"
+    "chookscord": "^0.9.0"
   }
 }

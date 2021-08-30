@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.9.0 - 30/08/21
+
+### Fixed
+
+- Interaction option types.
+
+### Added
+
+- More cli commands.
+  - Build command.
+  - Production mode.
+  - Register interactions command.
+- First-class TypeScript support without extra config.
+- Better logging util using `consola` and `chalk`.
+- `fetch` util using `node-fetch`.
+
+### Changed
+
+- Moved compiler from `tsc` to `swc`.
+- Moved file watcher from `fs` to `chokidar`.
+- Merged compile package to framework.
+- Optimized package size by importing helper packages.
+
+### Removed
+
+- Auto detecting `typescript` package.
+- Text commands.
+
 ## 0.5.1 - 16/08/21
 
 ### Fixed

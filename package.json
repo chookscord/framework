@@ -1,46 +1,31 @@
 {
-  "name": "chookscord",
-  "version": "0.5.1",
-  "description": "The Easiest Discord.JS Framework by far.",
+  "name": "chookscord-framework",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "version": "0.9.0",
   "license": "MIT",
-  "bin": {
-    "chooks": "dist/bin/chooks.js"
-  },
-  "main": "dist/index.js",
-  "dependencies": {
-    "@chookscord/cli": "^0.5.2",
-    "discord.js": "^13.1.0"
-  },
   "devDependencies": {
     "@chookslint/eslint-config-typescript": "^1.0.2",
-    "@types/node": "^16.6.1",
-    "@typescript-eslint/eslint-plugin": "^4.28.5",
-    "@typescript-eslint/parser": "^4.28.5",
+    "@swc/cli": "^0.1.49",
+    "@swc/core": "^1.2.82",
+    "@swc/helpers": "^0.2.13",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.2",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "discord.js": "^13.1.0",
+    "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.5",
     "typescript": "^4.3.5"
   },
   "scripts": {
-    "dev": "yarn build -w",
-    "build": "tsc --project tsconfig.build.json",
-    "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo"
-  },
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "discord",
-    "discord-js",
-    "discord.js",
-    "framework",
-    "client",
-    "bot",
-    "cli",
-    "modular",
-    "commands",
-    "typescript"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/chookscord/framework"
+    "build": "npx tsc --project tsconfig.build.json",
+    "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo",
+    "test": "jest --rootDir test",
+    "dev": "yarn build --watch"
   }
 }

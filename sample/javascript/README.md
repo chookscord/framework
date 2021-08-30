@@ -23,18 +23,24 @@ $ yarn add chookscord
 
 ## Setup
 
-In your created `package.json` file, add this small snippet `scripts` object:
+In your created `package.json` file, add this small `scripts` snippet:
 
 ```json
 {
   // ...
   "scripts": {
-    "dev": "chooks"
+    "dev": "chooks",
+    "build": "chooks build",
+    "start": "chooks start",
+    "register": "chooks register"
   }
 }
 ```
 
 This should now allow you to start your bot using `yarn dev`.
+
+To deploy your bot, run `yarn build` then `yarn register` to register your
+interactions globally, then run `yarn start` to start your bot in production mode.
 
 ## Files
 
