@@ -11,13 +11,6 @@ A lot of stuff is still under construction, and documentation is still very
 lacking. Stuff may change at any moment without warning, so consider holding
 on to deploying to production until **v1.x.x** is up!
 
-### Notice
-
-Slash commands are only available in your own dev server currently.
-
-Ability to register global commands will come in the next update,
-along with support for subcommands.
-
 ### Todo list
 
 Check the [issues](https://github.com/chookscord/framework/issues) tab in the repository.
@@ -36,17 +29,34 @@ $ npm i chookscord
 
 ## Usage
 
-In your `package.json` file, add this line to your scripts:
+In your `package.json` file, add the following lines to your scripts:
 
 ```json
 {
   "scripts": {
-    "dev": "chooks"
+    "dev": "chooks",
+    "build": "chooks build",
+    "start": "chooks start",
+    "register": "chooks register"
   }
 }
 ```
 
-Now you can run your bot using `yarn dev` or `npm run dev`!
+`yarn dev` would start your bot in development mode, meaning it'll have Hot Reload
+and Auto Interaction Register enabled. This should only be used while developing
+your bot since it registers interactions on startup and will not register your
+interactions globally!
+
+`yarn build` will build your project without running your bot. Useful for
+deploying to production.
+
+`yarn start` will start your bot in production mode. This will be a bit more
+efficient that development mode since there's no file watching and other
+unnecessary overheads, and doesn't register interactions on startup!
+
+`yarn register` will register your built commands globally.
+
+To start developing your bot, run `yarn dev`!
 
 ## Directory Structure
 
@@ -57,10 +67,50 @@ While `module.exports = {}` are enough to define files, this framework contains
 utilities to provide type support, so you know what things are available in the
 current context!
 
+### Sample File
+
+This framework only relies on exporting objects, so you can make commands without
+having to import anything!
+
+* Example minimal command:
+
+```js
+// commands/hello-world.js
+module.exports = {
+  name: 'hello',
+  description: 'My basic command.',
+  execute(ctx) {
+    ctx.interaction.reply('Hello, world!');
+  },
+};
+```
+
+But of course, working blind isn't really productive, so you can import helper
+functions that will provide you with types!
+
+* Example minimal command with types:
+
+```js
+// commands/hello-world.js
+const { defineSlashCommand } = require('chookscord');
+
+module.exports = defineSlashCommand({
+  // Now you can see what fields you need to add!
+  name: 'hello',
+  description: 'My basic command.',
+  execute(ctx) {
+    // You can also see what the "ctx" context contains and their properties!
+    ctx.interaction.reply('Hello, world!');
+  },
+})
+```
+
 ### Config
 
 At the root of your project, there should be a `chooks.config.js` or
-`chooks.config.ts` file.  
+`chooks.config.ts` file, or `chooks.config.dev.js` or `chooks.config.dev.ts`
+while developing.
+
 This file is **required** as it should contain your bot's token and intents.
 
 ***It is highly recommended to use a `.env` file to store your
@@ -88,12 +138,7 @@ module.exports = defineConfig({
   // a discord server where you would be doing most of the testing
   // slash commands are registered here instantly while developing
   devServer: process.env.DISCORD_DEV_SERVER,
-  // the prefix is required if want to use the traditional message commands.
-  prefix: '!',
-  intents: [
-    'GUILDS',
-    'GUILD_MESSAGES',
-  ],
+  intents: [],
 });
 ```
 
@@ -104,39 +149,17 @@ The `commands` folder should contain all your commands.
 By default, all commands are slash commands and will have the `interaction`
 object available in their context.
 
-To use the traditional message commands instead, add `text: true` to your
-options, or use `defineTextCommand`. `interaction` will be replaced with the
-standard `message` object and `args` which will be whatever input the user sent.
-
 #### Slash command `/ping`
 
 ```js
 // commands/ping.js
-const { defineCommand } = require('chookscord');
+const { defineSlashCommand } = require('chookscord');
 
-module.exports = defineCommand({
+module.exports = defineSlashCommand({
   name: 'ping',
   description: 'Replies with pong!',
   async execute({ interaction }) {
     await interaction.reply('pong!');
-    console.log('user ponged!');
-  },
-});
-```
-
-#### Text command `!pong`
-
-```js
-// commands/pong.js
-const { defineTextCommand } = require('chookscord');
-
-module.exports = defineTextCommand({
-  text: true,
-  name: 'pong',
-  description: 'Replies with ping!',
-  async execute({ message }) {
-    await message.reply('ping!');
-    console.log('user pinged!');
   },
 });
 ```
@@ -151,8 +174,8 @@ const { defineEvent } = require('chookscord');
 
 module.exports = defineEvent({
   name: 'ready',
-  execute({ client }) {
-    console.log(`${client.user.username} ready!`);
+  execute({ logger, client }) {
+    logger.info(`${client.user.username} ready!`);
   },
 });
 ```
@@ -166,7 +189,6 @@ Once all that is set up, your project should now look a bit like this:
 ├── node_modules
 ├── commands
 │   ├── ping.js
-│   └── pong.js
 ├── events
 │   └── ready.js
 ├── .env
@@ -176,3 +198,16 @@ Once all that is set up, your project should now look a bit like this:
 ```
 
 Now you can start your bot using `yarn dev`!
+
+## Extras
+
+### TypeScript
+
+This framework supports working with `.ts` files out of the box!  
+Running dev mode with typescript files will make it automatically compile it to javascript
+without any extra config.
+
+### Sample Projects
+
+You can go to the [`samples`](https://github.com/chookscord/framework/tree/master/sample)
+directory inside the repository to see working templates using javascript or typescript.
