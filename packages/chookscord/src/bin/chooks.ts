@@ -1,9 +1,14 @@
 #! /usr/bin/env node
 /* eslint-disable @typescript-eslint/no-var-requires */
 import 'dotenv/config';
+import { createLogger } from '@chookscord/lib';
+
 const args = process.argv.slice(2);
+const logger = createLogger('chookscord');
+logger.debug('Args:', args.join(' '));
 
 const { version } = require('../../package.json');
+logger.info(`Using chookscord v${version}`);
 process.env.CHOOKSCORD_VERSION = version;
 
 // dev script
