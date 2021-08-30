@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, complexity */
-import 'dotenv/config';
 process.env.NODE_ENV = 'production';
 import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
