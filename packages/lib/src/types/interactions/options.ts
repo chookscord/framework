@@ -5,6 +5,7 @@ export interface ApplicationOption {
   name: string;
   description: string;
   required?: boolean;
+  choices?: CommandChoice[];
   options?: ApplicationOption[];
 }
 

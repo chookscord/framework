@@ -2,7 +2,7 @@ import * as lib from '..';
 import { logger } from './_logger';
 import { validateOption } from '../validation/slash-commands/_option';
 
-function prepareOption(option: lib.CommandOption): lib.ApplicationOption {
+function prepareOption(option: lib.CommandOption & { choices?: lib.CommandChoice[] }): lib.ApplicationOption {
   const error = validateOption(option);
   if (error) {
     throw new Error(error);
@@ -14,6 +14,8 @@ function prepareOption(option: lib.CommandOption): lib.ApplicationOption {
     name: option.name,
     description: option.description,
     type: lib.CommandOptionType[option.type],
+    choices: option.choices,
+    required: option.required,
     options: subOptions?.length
       ? subOptions.map(prepareOption)
       : undefined,
