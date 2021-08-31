@@ -4,6 +4,9 @@ export const commandModules = {
   get commands(): Promise<typeof import('./commands')> {
     return import('./commands');
   },
+  get subcommands(): Promise<typeof import('./sub-commands')> {
+    return import('./sub-commands');
+  },
 };
 
 export async function loadCommands(
