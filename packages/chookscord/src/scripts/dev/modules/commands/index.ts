@@ -1,9 +1,10 @@
 import * as lib from '@chookscord/lib';
-import * as path from 'path';
-import type * as types from '../../../types';
-import * as utils from '../../../utils';
+import type * as types from '../../../../types';
+import * as utils from '../../../../utils';
 import type { Client, Interaction } from 'discord.js';
-import { UpdateListener, createWatchCompiler } from '../compiler';
+import { createOnCompile } from './_compile';
+import { createOnDelete } from './_delete';
+import { createWatchCompiler } from '../../compiler';
 
 const logger = lib.createLogger('[cli] Commands');
 
@@ -47,66 +48,6 @@ function createListener(
   };
 }
 
-function validateCommand(
-  filePath: string,
-  command: lib.BaseSlashCommand,
-): string | null {
-  return command
-    ? lib.validateSlashCommand(command)
-    : `${path.dirname(filePath)} does not have a default export!`;
-}
-
-function createOnCompile(
-  paths: Record<string, string>,
-  store: lib.Store<lib.BaseSlashCommand>,
-  register: () => unknown,
-): UpdateListener {
-  return async filePath => {
-    logger.debug('Reloading command...');
-    const stopTimer = utils.createTimer();
-    const command = await utils.uncachedImportDefault<lib.BaseSlashCommand>(filePath);
-    const errorMessage = validateCommand(filePath, command);
-    if (errorMessage) {
-      logger.error(new Error(errorMessage));
-      return;
-    }
-
-    const oldCommand = store.get(command.name);
-    const didChange = utils.slashCommandChanged(command, oldCommand);
-
-    paths[filePath] = command.name;
-    store.set(command.name, command);
-    logger.debug(`Command reloaded. Time took: ${stopTimer().toLocaleString()}ms`);
-
-    if (didChange) {
-      logger.debug('Command details changed. Reregistering...');
-      await register();
-      logger.debug('Reregistering complete.');
-      return;
-    }
-
-    logger.debug('Command details did not changed.');
-  };
-}
-
-function createOnDelete(
-  paths: Record<string, string>,
-  store: lib.Store<lib.BaseSlashCommand>,
-  register: () => unknown,
-): UpdateListener {
-  return async filePath => {
-    const commandName = paths[filePath];
-    logger.debug(`Deleting command "${commandName}"...`);
-
-    delete paths[filePath];
-    store.delete(commandName);
-    logger.debug(`Command "${commandName}" deleted. Reregistering...`);
-
-    await register();
-    logger.debug('Reregistering complete.');
-  };
-}
-
 export function init(config: types.ModuleConfig): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, string> = {};
@@ -140,8 +81,8 @@ export function init(config: types.ModuleConfig): types.ReloadModule {
 
   createWatchCompiler({
     ...config,
-    onCompile: createOnCompile(paths, store, registerCommands),
-    onDelete: createOnDelete(paths, store, registerCommands),
+    onCompile: createOnCompile(logger, paths, store, registerCommands),
+    onDelete: createOnDelete(logger, paths, store, registerCommands),
   });
 
   load(ctx.client as Client);
