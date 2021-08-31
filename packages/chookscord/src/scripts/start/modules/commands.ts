@@ -8,7 +8,7 @@ const logger = lib.createLogger('[cli] Commands');
 // Duplicated from /scripts/dev/modules/commands
 function createListener(
   client: Client,
-  store: lib.CommandStore<lib.BaseSlashCommand>,
+  store: lib.Store<lib.BaseSlashCommand>,
 ) {
   logger.success('Slash command listener created.');
   return async (interaction: Interaction) => {
@@ -48,7 +48,7 @@ export async function init(
   config: Omit<types.ModuleConfig, 'output'>,
 ): Promise<void> {
   const client: Client = config.ctx.client;
-  const store = new lib.CommandStore<lib.BaseSlashCommand>();
+  const store = new lib.Store<lib.BaseSlashCommand>('Commands');
   const files = await lib.loadDir(config.input);
 
   logger.trace('Checking loaded dir.');

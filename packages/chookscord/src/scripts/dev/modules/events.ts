@@ -29,7 +29,7 @@ function validateEvent(
 
 function createOnCompile(
   paths: Record<string, keyof ClientEvents>,
-  store: lib.EventStore,
+  store: lib.Store<lib.Event>,
   ctx: types.ModuleContext,
 ): UpdateListener {
   return async filePath => {
@@ -64,7 +64,7 @@ function createOnCompile(
 
 function createOnDelete(
   paths: Record<string, keyof ClientEvents>,
-  store: lib.EventStore,
+  store: lib.Store<lib.Event>,
 ): UpdateListener {
   return filePath => {
     const eventName = paths[filePath];
@@ -75,7 +75,7 @@ function createOnDelete(
 export function init(config: types.ModuleConfig): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, keyof ClientEvents> = {};
-  const store = new lib.EventStore();
+  const store = new lib.Store<lib.Event>('Events');
 
   const reload: types.ReloadModule = newCtx => {
     logger.info('Refreshing events...');
@@ -100,7 +100,7 @@ export function init(config: types.ModuleConfig): types.ReloadModule {
     );
   };
 
-  const setEvent: lib.EventSetListener = (event, oldEvent) => {
+  const setEvent: lib.StoreSetListener<lib.Event> = (event, oldEvent) => {
     logger.info(`Attaching "${event.name}" listener...`);
     const stopTimer = utils.createTimer();
     if (oldEvent) {

@@ -11,7 +11,7 @@ const logger = lib.createLogger('[cli] Commands');
 // Each module would then "append" their handler to the listener.
 function createListener(
   client: Client,
-  store: lib.CommandStore<lib.BaseSlashCommand>,
+  store: lib.Store<lib.BaseSlashCommand>,
 ) {
   logger.success('Slash command listener created.');
   return async (interaction: Interaction) => {
@@ -58,7 +58,7 @@ function validateCommand(
 
 function createOnCompile(
   paths: Record<string, string>,
-  store: lib.CommandStore<lib.BaseSlashCommand>,
+  store: lib.Store<lib.BaseSlashCommand>,
   register: () => unknown,
 ): UpdateListener {
   return async filePath => {
@@ -91,7 +91,7 @@ function createOnCompile(
 
 function createOnDelete(
   paths: Record<string, string>,
-  store: lib.CommandStore<lib.BaseSlashCommand>,
+  store: lib.Store<lib.BaseSlashCommand>,
   register: () => unknown,
 ): UpdateListener {
   return async filePath => {
@@ -110,7 +110,7 @@ function createOnDelete(
 export function init(config: types.ModuleConfig): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, string> = {};
-  const store = new lib.CommandStore<lib.BaseSlashCommand>();
+  const store = new lib.Store<lib.BaseSlashCommand>('Commands');
   const register = lib.createInteractionRegister({
     ...ctx.config.credentials,
     guildId: ctx.config.devServer,
