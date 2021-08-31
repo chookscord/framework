@@ -22,20 +22,24 @@ function createClient(config: types.Config): Client {
 
 function *loadModules(
   ctx: types.ModuleContext,
-  addedModules: string[],
-): Iterable<types.ReloadModule | null> {
+  addedModules: (keyof typeof modules.commandModules)[],
+): Iterable<Promise<types.ReloadModule> | null> {
   logger.info(`Loading ${addedModules.length} modules...`);
   const endTimer = utils.createTimer();
   for (const moduleName of addedModules) {
     logger.info(`Loading "${moduleName}"...`);
-    const loadModule = modules[moduleName as keyof typeof modules];
-    const reloadModule = loadModule.init({
-      ctx: { ...ctx }, // Respread to avoid mutating other modules
+
+    const config: types.ModuleConfig = {
+      ctx: { ...ctx },
       input: utils.appendPath.fromRoot(moduleName),
       output: utils.appendPath.fromOut(moduleName),
-    });
-    yield reloadModule;
+    };
+
+    yield (moduleName as string) === 'events'
+      ? modules.loadEvents(config)
+      : modules.loadCommands(config, moduleName);
   }
+
   logger.success(`Loaded ${addedModules.length} modules. Time took: ${endTimer().toLocaleString()}`);
 }
 
@@ -47,7 +51,7 @@ export async function run(): Promise<void> {
   const [configFile, addedModules] = await tools.findFiles({
     path: process.cwd(),
     configFiles,
-    directories: Object.keys(modules),
+    directories: ['events', ...Object.keys(modules.commandModules)],
   });
   logger.debug(`Config file: "${configFile}"`);
   logger.debug(`Modules loaded: ${addedModules.map(module => `[${module}]`).join(' ')}`);
@@ -78,8 +82,9 @@ export async function run(): Promise<void> {
   client = createClient(config);
   const ctx = { client, config, fetch };
 
-  for (const reloadModule of loadModules(ctx, addedModules)) {
-    loadedModules.push(reloadModule);
+  // @todo(Choooks22): Cleanup on this part
+  for (const reloadModule of loadModules(ctx, addedModules as (keyof typeof modules.commandModules)[])) {
+    loadedModules.push(await reloadModule);
   }
 
   logger.info('Client logging in...');
