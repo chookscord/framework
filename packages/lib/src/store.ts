@@ -33,6 +33,39 @@ export class Store<T> {
     this._emit('set', value, oldValue);
   }
 
+  public delete(key: string): void {
+    this._logger.debug('Delete:', key);
+    const oldValue = this.get(key);
+    this._store.delete(key);
+
+    if (oldValue) {
+      this._emit('remove', oldValue);
+    }
+  }
+
+  public *getAll(): Iterable<T> {
+    this._logger.debug('GetAll');
+    const set = new Set(this._store.values());
+    for (const value of set) {
+      yield value;
+    }
+  }
+
+  public toArray(): T[] {
+    this._logger.debug('ToArray');
+    return [...this.getAll()];
+  }
+
+  public get size(): number {
+    const set = new Set(this._store.values());
+    return set.size;
+  }
+
+  public clear(): void {
+    this._logger.debug('Clear');
+    this._store.clear();
+  }
+
   private _emit(
     event: 'set',
     ...args: ExtractArgs<StoreSetListener<T>>
