@@ -44,15 +44,19 @@ export function slashCommandChanged(
     return true;
   }
 
-  if (
-    !Array.isArray(interaction.options) ||
-    !Array.isArray(oldInteraction.options)
-  ) {
+  const newIsArray = Array.isArray(interaction.options);
+  const oldIsArray = Array.isArray(oldInteraction.options);
+
+  if (newIsArray !== oldIsArray) {
+    return true;
+  }
+
+  if (!newIsArray && !oldIsArray) {
     return false;
   }
 
   return slashCommandOptionChanged(
-    interaction.options,
-    oldInteraction.options,
+    interaction.options!,
+    oldInteraction.options!,
   );
 }
