@@ -23,7 +23,7 @@ export interface CommandChoice {
 
 export interface NonCommandOption extends CommandOption {
   type: Exclude<keyof typeof CommandOptionType, 'SUB_COMMAND' | 'SUB_COMMAND_GROUP'>;
-  choice?: CommandChoice[];
+  choices?: CommandChoice[];
 }
 
 export interface SubCommandOption {
