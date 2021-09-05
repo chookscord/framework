@@ -1,19 +1,22 @@
+import * as lib from '@chookscord/lib';
 import type { Consola } from 'consola';
 import type { UpdateListener } from '../../compiler';
 
 export function createOnDelete(
   logger: Consola,
   paths: Record<string, string>,
+  store: lib.Store<lib.SlashSubCommand>,
+  register: () => unknown,
 ): UpdateListener {
-  return filePath => {
+  return async filePath => {
     const commandName = paths[filePath];
     logger.debug(`Deleting command "${commandName}"...`);
 
     delete paths[filePath];
-    // delete from store
+    store.delete(commandName);
     logger.debug(`Command "${commandName}" deleted. Reregistering...`);
 
-    // register
+    await register();
     logger.debug('Reregistering complete.');
   };
 }
