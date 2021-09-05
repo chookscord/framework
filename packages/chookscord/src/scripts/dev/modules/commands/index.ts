@@ -53,10 +53,12 @@ function createListener(
   };
 }
 
-export function init(config: types.ModuleConfig): types.ReloadModule {
+export function init(
+  config: types.ModuleConfig,
+  store: lib.Store<lib.BaseSlashCommand>,
+): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, string> = {};
-  const store = new lib.Store<lib.BaseSlashCommand>('Commands');
   const register = lib.createInteractionRegister({
     ...ctx.config.credentials,
     guildId: ctx.config.devServer,

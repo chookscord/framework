@@ -23,6 +23,7 @@ function createClient(config: types.Config): Client {
 function *loadModules(
   ctx: types.ModuleContext,
   addedModules: (keyof typeof modules.commandModules)[],
+  store: lib.Store<lib.SlashCommand>,
 ): Iterable<Promise<types.ReloadModule> | null> {
   logger.info(`Loading ${addedModules.length} modules...`);
   const endTimer = utils.createTimer();
@@ -37,7 +38,7 @@ function *loadModules(
 
     yield (moduleName as string) === 'events'
       ? modules.loadEvents(config)
-      : modules.loadCommands(config, moduleName);
+      : modules.loadCommands(config, moduleName, store);
   }
 
   logger.success(`Loaded ${addedModules.length} modules. Time took: ${endTimer().toLocaleString()}`);
@@ -46,6 +47,10 @@ function *loadModules(
 export async function run(): Promise<void> {
   logger.info('Starting...');
   const endTimer = utils.createTimer();
+
+  // @todo(Choooks22): Fix this this is ugly
+  logger.trace('Creating commands store...');
+  const store = new lib.Store<lib.SlashCommand>('Commands');
 
   logger.trace('Finding files...');
   const [configFile, addedModules] = await tools.findFiles({
@@ -83,7 +88,11 @@ export async function run(): Promise<void> {
   const ctx = { client, config, fetch };
 
   // @todo(Choooks22): Cleanup on this part
-  for (const reloadModule of loadModules(ctx, addedModules as (keyof typeof modules.commandModules)[])) {
+  for (const reloadModule of loadModules(
+    ctx,
+    addedModules as (keyof typeof modules.commandModules)[],
+    store,
+  )) {
     loadedModules.push(await reloadModule);
   }
 
