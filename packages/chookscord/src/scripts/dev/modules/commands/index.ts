@@ -59,17 +59,6 @@ export function init(
 ): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, string> = {};
-  const register = lib.createInteractionRegister({
-    ...ctx.config.credentials,
-    guildId: ctx.config.devServer,
-  });
-
-  const registerCommands = utils.debounce(
-    utils.registerCommands,
-    250,
-    register,
-    store,
-  );
 
   const load = (client: Client) => {
     logger.info('Attaching interaction listener to client...');
@@ -88,8 +77,8 @@ export function init(
 
   createWatchCompiler({
     ...config,
-    onCompile: createOnCompile(logger, paths, store, registerCommands),
-    onDelete: createOnDelete(logger, paths, store, registerCommands),
+    onCompile: createOnCompile(logger, paths, store, config.register),
+    onDelete: createOnDelete(logger, paths, store, config.register),
   });
 
   load(ctx.client as Client);

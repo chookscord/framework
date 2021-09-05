@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-non-null-assertion, prefer-const */
 process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
 import * as modules from './modules';
@@ -24,6 +24,7 @@ function *loadModules(
   ctx: types.ModuleContext,
   addedModules: (keyof typeof modules.commandModules)[],
   store: lib.Store<lib.SlashCommand>,
+  register: () => unknown,
 ): Iterable<Promise<types.ReloadModule> | null> {
   logger.info(`Loading ${addedModules.length} modules...`);
   const endTimer = utils.createTimer();
@@ -34,6 +35,7 @@ function *loadModules(
       ctx: { ...ctx },
       input: utils.appendPath.fromRoot(moduleName),
       output: utils.appendPath.fromOut(moduleName),
+      register,
     };
 
     yield (moduleName as string) === 'events'
@@ -67,6 +69,7 @@ export async function run(): Promise<void> {
   }
 
   let client: Client;
+  let register: lib.RegisterInteraction;
   const loadedModules: (types.ReloadModule | null)[] = [];
   const _reload = (config: types.Config) => {
     // @todo(Choooks22): Detect changes in config relevant for the client
@@ -83,6 +86,18 @@ export async function run(): Promise<void> {
     onReload: _reload,
   });
 
+  register = lib.createInteractionRegister({
+    ...config.credentials,
+    guildId: config.devServer,
+  });
+
+  const registerCommands = utils.debounce(
+    utils.registerCommands,
+    250,
+    register,
+    store,
+  );
+
   logger.trace('Creating client.');
   client = createClient(config);
   const ctx = { client, config, fetch };
@@ -92,6 +107,7 @@ export async function run(): Promise<void> {
     ctx,
     addedModules as (keyof typeof modules.commandModules)[],
     store,
+    registerCommands,
   )) {
     loadedModules.push(await reloadModule);
   }
