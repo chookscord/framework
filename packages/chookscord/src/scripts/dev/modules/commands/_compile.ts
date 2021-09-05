@@ -29,7 +29,7 @@ export function createOnCompile(
       return;
     }
 
-    const oldCommand = store.get(command.name);
+    const oldCommand: lib.SlashCommand | null = store.get(command.name);
     const didChange = utils.slashCommandChanged(command, oldCommand);
 
     paths[filePath] = command.name;
