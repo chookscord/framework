@@ -1,6 +1,6 @@
 {
   "name": "chookscord",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "The Easiest Discord.JS Framework by far.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

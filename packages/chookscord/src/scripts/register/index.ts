@@ -6,7 +6,7 @@ import * as utils from '../../utils';
 import { Config } from '../../types';
 
 const logger = lib.createLogger('[cli] Chooks');
-const interactionDirs = ['commands'];
+const interactionDirs = ['commands', 'subcommands'];
 
 // eslint-disable-next-line consistent-return
 const findFiles: typeof tools.findFiles = async config => {
