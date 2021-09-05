@@ -3,14 +3,14 @@ import * as types from '../../../types';
 import * as utils from '../../../utils';
 import { Client, Interaction } from 'discord.js';
 
-const logger = lib.createLogger('[cli] Commands');
+const logger = lib.createLogger('[cli] Sub Commands');
 
-// Duplicated from /scripts/dev/modules/commands
+// Duplicated from /scripts/start/modules/commands
 function createListener(
   client: Client,
-  store: lib.Store<lib.BaseSlashCommand>,
+  store: lib.Store<lib.SlashSubCommand>,
 ) {
-  logger.success('Slash command listener created.');
+  logger.success('Slash sub command listener created.');
   // eslint-disable-next-line complexity
   return async (interaction: Interaction) => {
     logger.debug('Interaction received.');
@@ -27,14 +27,24 @@ function createListener(
       return;
     }
 
-    if (typeof command.execute !== 'function') {
+    const subCommandName = interaction.options.getSubcommand();
+    const subCommand = command.options.find(
+      option => option.name === subCommandName,
+    );
+
+    if (!subCommand) {
+      logger.warn(`Missing subcommand "${subCommandName}" from "${commandName}"!`);
+      return;
+    }
+
+    if (typeof subCommand.execute !== 'function') {
       return;
     }
 
     try {
       logger.info(`Executing command "${commandName}"...`);
       const stopTimer = utils.createTimer();
-      await command.execute({
+      await subCommand.execute({
         client,
         fetch: lib.fetch,
         logger: lib.createLogger(`[commands] ${commandName}`),
@@ -49,11 +59,12 @@ function createListener(
   };
 }
 
+// Duplicated from /scripts/start/modules/commands
 export async function init(
   config: Omit<types.ModuleConfig, 'output'>,
 ): Promise<void> {
   const client: Client = config.ctx.client;
-  const store = new lib.Store<lib.BaseSlashCommand>('Commands');
+  const store = new lib.Store<lib.SlashSubCommand>('Commands');
   const files = await lib.loadDir(config.input);
 
   logger.trace('Checking loaded dir.');
@@ -66,14 +77,14 @@ export async function init(
     const path = filePath.slice(config.input.length);
     logger.info(`Loading command file "${path}"...`);
     const endTimer = utils.createTimer();
-    const command = await utils.importDefault<lib.BaseSlashCommand>(filePath);
+    const command = await utils.importDefault<lib.SlashSubCommand>(filePath);
 
     if (JSON.stringify(command) === '{}') {
       logger.error(new Error(`"${path}" has no exported command!`));
       return;
     }
 
-    const validateError = lib.validateBaseCommand(command);
+    const validateError = lib.validateSlashSubCommand(command);
     if (validateError) {
       logger.error(new Error(validateError));
       return;

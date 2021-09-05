@@ -16,7 +16,7 @@ async function findFiles(): Promise<[configFile: string, dirs: string[]]> {
     const [configFile, dirs] = await tools.findFiles({
       path: utils.appendPath.fromOut(),
       configFiles: ['chooks.config.js'],
-      directories: ['commands', 'events'],
+      directories: ['commands', 'events', 'subcommands'],
     });
 
     if (!configFile) {
@@ -86,6 +86,7 @@ export async function run(): Promise<void> {
   logger.trace('Loading modules.');
   for (const dir of dirs) {
     if (!(dir in modules)) continue;
+    // @ts-ignore Should extract type and omit unneeded `register` method.
     modules[dir as keyof typeof modules].init({
       ctx: { client, config, fetch },
       input: utils.appendPath.fromOut(dir),
