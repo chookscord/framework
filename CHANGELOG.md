@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.10.0 - 05/09/21
+
+### Added
+
+- Support for subcommands.
+
+### Changed
+
+- Removed `Slash` prefix on helper functions.
+- Combined stores into one generic store.
+
 ## 0.9.0 - 30/08/21
 
 ### Fixed
