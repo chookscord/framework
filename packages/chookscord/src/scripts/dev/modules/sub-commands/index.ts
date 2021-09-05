@@ -1,12 +1,20 @@
 import * as lib from '@chookscord/lib';
 import * as types from '../../../../types';
 import * as utils from '../../../../utils';
-import type { Client, Interaction } from 'discord.js';
+import type { Client, CommandInteraction, Interaction } from 'discord.js';
 import { createOnCompile } from './_compile';
 import { createOnDelete } from './_delete';
 import { createWatchCompiler } from '../../compiler';
 
 const logger = lib.createLogger('[cli] Sub Commands');
+
+function getSubCommand(interaction: CommandInteraction): string | null {
+  try {
+    return interaction.options.getSubcommand();
+  } catch {
+    return null;
+  }
+}
 
 // Duplicated from /scripts/dev/modules/commands.
 function createListener(
@@ -22,8 +30,12 @@ function createListener(
       return;
     }
 
+    const subCommandName = getSubCommand(interaction);
+    if (!subCommandName) {
+      return;
+    }
+
     const commandName = interaction.commandName;
-    const subCommandName = interaction.options.getSubcommand();
     const command = store.get(commandName);
 
     if (!command) {

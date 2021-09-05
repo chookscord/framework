@@ -1,9 +1,18 @@
 import * as lib from '@chookscord/lib';
 import * as types from '../../../types';
 import * as utils from '../../../utils';
-import { Client, Interaction } from 'discord.js';
+import { Client, CommandInteraction, Interaction } from 'discord.js';
 
 const logger = lib.createLogger('[cli] Sub Commands');
+
+// Duplicated from /scripts/start/modules/commands
+function getSubCommand(interaction: CommandInteraction): string | null {
+  try {
+    return interaction.options.getSubcommand();
+  } catch {
+    return null;
+  }
+}
 
 // Duplicated from /scripts/start/modules/commands
 function createListener(
@@ -19,6 +28,11 @@ function createListener(
       return;
     }
 
+    const subCommandName = getSubCommand(interaction);
+    if (!subCommandName) {
+      return;
+    }
+
     const commandName = interaction.commandName;
     const command = store.get(commandName);
 
@@ -27,7 +41,6 @@ function createListener(
       return;
     }
 
-    const subCommandName = interaction.options.getSubcommand();
     const subCommand = command.options.find(
       option => option.name === subCommandName,
     );
