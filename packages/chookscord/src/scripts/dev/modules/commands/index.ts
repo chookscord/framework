@@ -15,6 +15,7 @@ function createListener(
   store: lib.Store<lib.BaseSlashCommand>,
 ) {
   logger.success('Slash command listener created.');
+  // eslint-disable-next-line complexity
   return async (interaction: Interaction) => {
     logger.debug('Interaction received.');
     if (!interaction.isCommand()) {
@@ -27,6 +28,10 @@ function createListener(
 
     if (!command) {
       logger.warn(`Command "${commandName}" was recieved, but no handler was present!`);
+      return;
+    }
+
+    if (typeof command.execute !== 'function') {
       return;
     }
 
