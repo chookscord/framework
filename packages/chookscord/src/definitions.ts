@@ -19,22 +19,24 @@ export function defineEvent<T extends keyof ClientEvents>(
   return event;
 }
 
-export function defineSlashCommand(
+export function defineCommand(
   command: BaseSlashCommand,
 ): BaseSlashCommand {
   return command;
 }
 
-// @todo(Choooks22): Implement slash sub commands
-function defineSlashSubCommand(
+export function defineSubCommand(
   command: SlashSubCommand,
 ): SlashSubCommand {
   return command;
 }
 
 // @todo(Choooks22): Implement slash command groups
-function defineSlashCommandGroup(
+function defineCommandGroup(
   command: SlashSubCommandGroup,
 ): SlashSubCommandGroup {
   return command;
 }
+
+// @todo(Choooks22): Define context command
+// @todo(Choooks22): Define message command

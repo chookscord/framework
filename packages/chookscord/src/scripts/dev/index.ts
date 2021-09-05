@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-non-null-assertion, prefer-const */
 process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
 import * as modules from './modules';
@@ -22,20 +22,27 @@ function createClient(config: types.Config): Client {
 
 function *loadModules(
   ctx: types.ModuleContext,
-  addedModules: string[],
-): Iterable<types.ReloadModule | null> {
+  addedModules: (keyof typeof modules.commandModules)[],
+  store: lib.Store<lib.SlashCommand>,
+  register: () => unknown,
+): Iterable<Promise<types.ReloadModule> | null> {
   logger.info(`Loading ${addedModules.length} modules...`);
   const endTimer = utils.createTimer();
   for (const moduleName of addedModules) {
     logger.info(`Loading "${moduleName}"...`);
-    const loadModule = modules[moduleName as keyof typeof modules];
-    const reloadModule = loadModule.init({
-      ctx: { ...ctx }, // Respread to avoid mutating other modules
+
+    const config: types.ModuleConfig = {
+      ctx: { ...ctx },
       input: utils.appendPath.fromRoot(moduleName),
       output: utils.appendPath.fromOut(moduleName),
-    });
-    yield reloadModule;
+      register,
+    };
+
+    yield (moduleName as string) === 'events'
+      ? modules.loadEvents(config)
+      : modules.loadCommands(config, moduleName, store);
   }
+
   logger.success(`Loaded ${addedModules.length} modules. Time took: ${endTimer().toLocaleString()}`);
 }
 
@@ -43,11 +50,15 @@ export async function run(): Promise<void> {
   logger.info('Starting...');
   const endTimer = utils.createTimer();
 
+  // @todo(Choooks22): Fix this this is ugly
+  logger.trace('Creating commands store...');
+  const store = new lib.Store<lib.SlashCommand>('Commands');
+
   logger.trace('Finding files...');
   const [configFile, addedModules] = await tools.findFiles({
     path: process.cwd(),
     configFiles,
-    directories: Object.keys(modules),
+    directories: ['events', ...Object.keys(modules.commandModules)],
   });
   logger.debug(`Config file: "${configFile}"`);
   logger.debug(`Modules loaded: ${addedModules.map(module => `[${module}]`).join(' ')}`);
@@ -58,6 +69,7 @@ export async function run(): Promise<void> {
   }
 
   let client: Client;
+  let register: lib.RegisterInteraction;
   const loadedModules: (types.ReloadModule | null)[] = [];
   const _reload = (config: types.Config) => {
     // @todo(Choooks22): Detect changes in config relevant for the client
@@ -74,12 +86,30 @@ export async function run(): Promise<void> {
     onReload: _reload,
   });
 
+  register = lib.createInteractionRegister({
+    ...config.credentials,
+    guildId: config.devServer,
+  });
+
+  const registerCommands = utils.debounce(
+    utils.registerCommands,
+    250,
+    register,
+    store,
+  );
+
   logger.trace('Creating client.');
   client = createClient(config);
   const ctx = { client, config, fetch };
 
-  for (const reloadModule of loadModules(ctx, addedModules)) {
-    loadedModules.push(reloadModule);
+  // @todo(Choooks22): Cleanup on this part
+  for (const reloadModule of loadModules(
+    ctx,
+    addedModules as (keyof typeof modules.commandModules)[],
+    store,
+    registerCommands,
+  )) {
+    loadedModules.push(await reloadModule);
   }
 
   logger.info('Client logging in...');

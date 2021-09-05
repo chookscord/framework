@@ -3,7 +3,7 @@ import * as lib from '@chookscord/lib';
 const logger = lib.createLogger('[cli] Register');
 export async function registerCommands(
   register: lib.RegisterInteraction,
-  store: lib.CommandStore<lib.BaseSlashCommand>,
+  store: lib.Store<lib.SlashCommand>,
 ): Promise<void> {
   logger.info('Preparing commands...');
   const commands = lib.prepareCommands(store.getAll());

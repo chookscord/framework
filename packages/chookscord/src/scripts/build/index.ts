@@ -12,7 +12,7 @@ async function findFiles(): Promise<[configPath: string, dirs: string[]]> {
   const [configFile, dirs] = await tools.findFiles({
     path: process.cwd(),
     configFiles: ['chooks.config.ts', 'chooks.config.js'],
-    directories: ['events', 'commands'],
+    directories: ['events', 'commands', 'subcommands'],
   });
 
   if (!configFile) {

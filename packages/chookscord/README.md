@@ -42,15 +42,19 @@ In your `package.json` file, add the following lines to your scripts:
 }
 ```
 
-`yarn dev` would start your bot in development mode, meaning it'll have Hot Reload
-and Auto Interaction Register enabled. This should only be used while developing
-your bot since it registers interactions on startup and will not register your
-interactions globally!
+These should expose all the commands the framework has included.
+
+### Scripts
+
+`yarn dev` would start your bot in `development` mode, meaning it'll have
+<u>Hot Reload</u> and <u>Auto Interaction Register</u> enabled. **This should
+only be used while developing your bot since it registers interactions on startup
+and will not register your interactions globally!**
 
 `yarn build` will build your project without running your bot. Useful for
 deploying to production.
 
-`yarn start` will start your bot in production mode. This will be a bit more
+`yarn start` will start your bot in `production` mode. This will be a bit more
 efficient that development mode since there's no file watching and other
 unnecessary overheads, and doesn't register interactions on startup!
 
@@ -92,9 +96,9 @@ functions that will provide you with types!
 
 ```js
 // commands/hello-world.js
-const { defineSlashCommand } = require('chookscord');
+const { defineCommand } = require('chookscord');
 
-module.exports = defineSlashCommand({
+module.exports = defineCommand({
   // Now you can see what fields you need to add!
   name: 'hello',
   description: 'My basic command.',
@@ -144,23 +148,59 @@ module.exports = defineConfig({
 
 ### Commands
 
-The `commands` folder should contain all your commands.
+The `commands` folder should contain all your slash commands.
 
-By default, all commands are slash commands and will have the `interaction`
-object available in their context.
+All command handlers will have the `interaction` object available in
+their context.
 
 #### Slash command `/ping`
 
 ```js
 // commands/ping.js
-const { defineSlashCommand } = require('chookscord');
+const { defineCommand } = require('chookscord');
 
-module.exports = defineSlashCommand({
+module.exports = defineCommand({
   name: 'ping',
   description: 'Replies with pong!',
   async execute({ interaction }) {
     await interaction.reply('pong!');
   },
+});
+```
+
+### Subcommands
+
+The `subcommands` folder is where you would put your subcommands.
+
+It has the same context as `commands`.
+
+#### Subcommands `/say hi` and `/say hello`
+
+```js
+// subcommands/greet.js
+const { defineSubCommand } = require('chookscord');
+
+module.exports = defineSubCommand({
+  name: 'say',
+  description: 'Says a greeting.',
+  options: [
+    {
+      name: 'hi',
+      description: 'Says hi.',
+      type: 'SUB_COMMAND', // Option types are always required!
+      async execute({ interaction }) {
+        await interaction.reply('Hi!');
+      },
+    },
+    {
+      name: 'hello',
+      description: 'Says hello.',
+      type: 'SUB_COMMAND',
+      async execute({ interaction }) {
+        await interaction.reply('Hello!');
+      },
+    },
+  ],
 });
 ```
 
@@ -188,9 +228,11 @@ Once all that is set up, your project should now look a bit like this:
 .
 ├── node_modules
 ├── commands
-│   ├── ping.js
+│   └── ping.js
 ├── events
 │   └── ready.js
+├── subcommands
+│   └── greet.js
 ├── .env
 ├── chooks.config.js
 ├── package.json

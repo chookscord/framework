@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@chookscord/lib@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@chookscord/lib/-/lib-0.9.0.tgz#b2ee1fafb2aaa326e685eeb808ea2cbc7ffb840e"
-  integrity sha512-MSNHsRpATluB8iPZchh8yMi1PIa1ilcQ6CIxoS9iVOWGgTNxw+/1HSCZ/cSSHvQC6L0M9nsCiTaQ9hA/XDKnWg==
+"@chookscord/lib@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@chookscord/lib/-/lib-0.10.0.tgz#ec62848d8c02ebcd39279ca3c99258565625cc30"
+  integrity sha512-uC3wI3u5JpmEybWXXuiq6HwPfly7cIDU5fx966zCWIcdAvgp+DaEdaLKZhjd3/UyBtuL2dZsjM+tZ1RwTuYmAg==
   dependencies:
     "@types/node-fetch" "^2.5.12"
     chalk "^4.1.2"
@@ -223,12 +223,12 @@ chokidar@^3.5.2:
   optionalDependencies:
     fsevents "~2.3.2"
 
-chookscord@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/chookscord/-/chookscord-0.9.0.tgz#9b98c52026f67e3f5938032642f12534cf078e46"
-  integrity sha512-f03/hfnEXF5aqXKV6c3H1c3+35n/rb+9Ox7f/xZdNKogj7RjZXQD+AdlHrj0NnGeiUBA0AY9FVsnh6OJZROsKA==
+chookscord@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/chookscord/-/chookscord-0.10.0.tgz#b5de3f5e90be8879501d6ec83f9d9cd57ed80bc8"
+  integrity sha512-QTCjNjP6pzrbiW0Pxiseyhapklz33Lo6aYMgFmg6InP6Zt8T9g0UopbohSBTMZe+xkrfP7FlCFFh27Qg+B2png==
   dependencies:
-    "@chookscord/lib" "^0.9.0"
+    "@chookscord/lib" "^0.10.0"
     "@swc/core" "^1.2.81"
     "@swc/helpers" "^0.2.13"
     chokidar "^3.5.2"
