@@ -16,7 +16,7 @@
     "dev": "yarn build --watch"
   },
   "dependencies": {
-    "@chookscord/lib": "^0.9.0",
+    "@chookscord/lib": "^0.10.0",
     "@swc/core": "^1.2.81",
     "@swc/helpers": "^0.2.13",
     "chokidar": "^3.5.2",
