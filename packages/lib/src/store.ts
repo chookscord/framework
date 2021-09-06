@@ -11,10 +11,16 @@ export type StoreRemoveListener<T> = (
   oldValue: T
 ) => unknown;
 
+export interface StoreOptions {
+  name?: string;
+}
+
 export class Store<T> {
-  private _logger: Consola;
-  constructor(name: string) {
-    this._logger = createLogger(`[store] ${name}`);
+  private _logger?: Consola;
+  constructor(options: StoreOptions = {}) {
+    if (options.name) {
+      this._logger = createLogger(`[store] ${options.name}`);
+    }
   }
 
   private _store = new Map<string, T>();
@@ -22,19 +28,19 @@ export class Store<T> {
   private _removeListeners = new Set<StoreRemoveListener<T>>();
 
   public get(key: string): T | null {
-    this._logger.debug('Get:', key);
+    this._logger?.debug('Get:', key);
     return this._store.get(key) ?? null;
   }
 
   public set(key: string, value: T): void {
-    this._logger.debug('Set:', key);
+    this._logger?.debug('Set:', key);
     const oldValue = this.get(key);
     this._store.set(key, value);
     this._emit('set', value, oldValue);
   }
 
   public delete(key: string): void {
-    this._logger.debug('Delete:', key);
+    this._logger?.debug('Delete:', key);
     const oldValue = this.get(key);
     this._store.delete(key);
 
@@ -44,7 +50,7 @@ export class Store<T> {
   }
 
   public *getAll(): Iterable<T> {
-    this._logger.debug('GetAll');
+    this._logger?.debug('GetAll');
     const set = new Set(this._store.values());
     for (const value of set) {
       yield value;
@@ -52,7 +58,7 @@ export class Store<T> {
   }
 
   public toArray(): T[] {
-    this._logger.debug('ToArray');
+    this._logger?.debug('ToArray');
     return [...this.getAll()];
   }
 
@@ -62,7 +68,7 @@ export class Store<T> {
   }
 
   public clear(): void {
-    this._logger.debug('Clear');
+    this._logger?.debug('Clear');
     this._store.clear();
   }
 
@@ -78,7 +84,7 @@ export class Store<T> {
     event: 'set' | 'remove',
     ...args: [value: T, oldValue?: T | null]
   ): void {
-    this._logger.debug('Emit:', event);
+    this._logger?.debug('Emit:', event);
     const listenerName = `_${event}Listeners` as const;
     for (const listener of this[listenerName]) {
       listener(...args as [T, T | null]);
@@ -96,7 +102,7 @@ export class Store<T> {
     const listenerName = `_${event}Listeners` as const;
     // @ts-ignore This is logically correct and type-safe, but TS doesn't agree >:(
     this[listenerName].add(listener);
-    this._logger.trace('Listener added.');
+    this._logger?.trace('Listener added.');
   }
 
   public removeEventListener<Event extends 'set' | 'remove'>(
@@ -110,6 +116,6 @@ export class Store<T> {
     const listenerName = `_${event}Listeners` as const;
     // @ts-ignore See reason above
     this[listenerName].delete(listener);
-    this._logger.trace('Listener removed.');
+    this._logger?.trace('Listener removed.');
   }
 }
