@@ -1,5 +1,4 @@
 import * as lib from '..';
-import { logger } from './_logger';
 
 function condAppend<T, K extends keyof T>(
   object: T,
@@ -43,15 +42,16 @@ function prepareCommand(command: lib.SlashCommand): lib.ApplicationSlashCommand 
 
 export function prepareCommands(
   commands: Iterable<lib.SlashCommand>,
+  options: Partial<lib.Logger> = {},
 ): lib.BaseApplicationCommand[] {
-  logger.info('Preparing commands...');
+  options.logger?.info('Preparing commands...');
   let counter = 0;
   const preparedCommands: lib.ApplicationSlashCommand[] = [];
   for (const command of commands) {
     const appCommand = prepareCommand(command);
     preparedCommands.push(appCommand);
-    logger.debug(`Prepared ${++counter} commands.`);
+    options.logger?.debug(`Prepared ${++counter} commands.`);
   }
-  logger.info(`${counter} commands prepared.`);
+  options.logger?.info(`${counter} commands prepared.`);
   return preparedCommands;
 }

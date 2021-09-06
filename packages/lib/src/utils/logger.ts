@@ -1,6 +1,10 @@
 import * as chalk from 'chalk';
 import * as consola from 'consola';
 
+export interface Logger {
+  logger: consola.Consola;
+}
+
 const COLORS = [
   'red',
   'green',
