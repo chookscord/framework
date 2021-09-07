@@ -1,13 +1,13 @@
-/* eslint-disable complexity, require-atomic-updates */
 import * as routes from './_routes';
-import type * as types from '../types';
+import type * as types from '../';
 import { RateLimitError, getError } from './_error';
-import { logger } from './_logger';
 import { registerCommands } from './_register';
 
+export type GetCooldown = (now: number) => number | null;
 export type RegisterInteraction = (
-  commands: types.BaseApplicationCommand[]
-) => Promise<boolean>;
+  commands: types.BaseApplicationCommand[],
+  cooldown?: GetCooldown,
+) => Promise<GetCooldown | null>;
 
 export interface InteractionRegisterConfig {
   token: string;
@@ -17,45 +17,44 @@ export interface InteractionRegisterConfig {
 
 export function createInteractionRegister(
   config: InteractionRegisterConfig,
+  options: Partial<types.Logger> = {},
 ): RegisterInteraction {
-  logger.debug('Interaction Register created.');
+  options.logger?.debug('Interaction Register created.');
   const route = config.guildId
     ? routes.guild(config.applicationId, config.guildId)
     : routes.global(config.applicationId);
 
-  let retryAfter = 0;
-  return async commands => {
-    const cooldown = retryAfter - Date.now();
-    if (cooldown > 0) {
-      logger.warn(`You are still being rate limited! Retry after ${cooldown / 1000}s.`);
-      return false;
+  const register = (commands: types.BaseApplicationCommand[]) => registerCommands({
+    route,
+    token: config.token,
+    commands,
+  });
+
+  return async (
+    commands,
+    onCooldown = () => null,
+  ) => {
+    if (onCooldown(Date.now())) {
+      return onCooldown;
     }
 
-    logger.info(`Registering ${commands.length} commands...`);
-    logger.debug('Route:', route);
-    const response = await registerCommands({
-      route,
-      token: config.token,
-      commands,
-    });
+    options.logger?.info(`Registering ${commands.length} commands...`);
+    options.logger?.debug('Route:', route);
+    const response = await register(commands);
 
-    logger.debug(`Status: ${response.status} ${response.statusText}`);
-    logger.debug(`OK: ${response.ok}`);
     if (response.ok) {
-      logger.info(`${commands.length} commands successfully registered.`);
-      return true;
-    }
-
-    logger.error('Failed to register interactions!');
-    if (response.status === 429) {
-      const error = await getError(response) as RateLimitError;
-      logger.error(`${error.message} Retry after: ${error.retry_after}s.`);
-      retryAfter = Date.now() + error.retry_after * 1000;
+      options.logger?.info(`${commands.length} commands successfully registered.`);
+      return null;
     }
 
     const error = await getError(response);
-    if (error) logger.error(error);
+    if (response.status === 429) {
+      const retryAfter = (error as RateLimitError).retry_after;
+      options.logger?.error(`You are being rate limited! Retry after: ${retryAfter}s.`);
+      return now => retryAfter * 1000 - now;
+    }
 
-    return false;
+    options.logger?.error('Failed to register interactions!');
+    return null;
   };
 }
