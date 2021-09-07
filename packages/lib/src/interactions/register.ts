@@ -50,11 +50,11 @@ export function createInteractionRegister(
     const error = await getError(response);
     if (response.status === 429) {
       const retryAfter = (error as RateLimitError).retry_after;
-      options.logger?.error(`You are being rate limited! Retry after: ${retryAfter}s.`);
+      options.logger?.error(new Error(`You are being rate limited! Retry after: ${retryAfter}s.`));
       return now => retryAfter * 1000 - now;
     }
 
-    options.logger?.error('Failed to register interactions!');
+    options.logger?.error(new Error(`Failed to register interactions!\n${error}`));
     return null;
   };
 }
