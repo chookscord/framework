@@ -1,19 +1,14 @@
-import type {
-  BaseSlashCommand,
-  SlashCommand,
-  SlashSubCommand,
-  SlashSubCommandGroup,
-} from '../types';
+import type * as types from './types';
 
 export function isSlashCommand(
-  command: SlashCommand,
-): command is BaseSlashCommand {
+  command: types.SlashCommand,
+): command is types.BaseSlashCommand {
   return 'execute' in command && typeof command.execute === 'function';
 }
 
 export function isSlashSubCommand(
-  command: SlashCommand,
-): command is SlashSubCommand {
+  command: types.SlashCommand,
+): command is types.SlashSubCommand {
   if (isSlashCommand(command) || !Array.isArray(command.options)) {
     return false;
   }
@@ -23,8 +18,8 @@ export function isSlashSubCommand(
 
 // eslint-disable-next-line complexity
 export function isGroupSlashCommand(
-  command: SlashCommand,
-): command is SlashSubCommandGroup {
+  command: types.SlashCommand,
+): command is types.SlashSubCommandGroup {
   if (isSlashCommand(command) || isSlashSubCommand(command)) {
     return false;
   }
