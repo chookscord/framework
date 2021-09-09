@@ -11,7 +11,9 @@ const logger = lib.createLogger('[cli] Events');
 export function init(config: types.ModuleConfig): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, keyof ClientEvents> = {};
-  const store = new lib.Store<lib.Event>('Events');
+  const store = new lib.Store<lib.Event>({
+    name: 'Events',
+  });
 
   const reload: types.ReloadModule = newCtx => {
     logger.info('Refreshing events...');

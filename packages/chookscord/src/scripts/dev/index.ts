@@ -52,7 +52,9 @@ export async function run(): Promise<void> {
 
   // @todo(Choooks22): Fix this this is ugly
   logger.trace('Creating commands store...');
-  const store = new lib.Store<lib.SlashCommand>('Commands');
+  const store = new lib.Store<lib.SlashCommand>({
+    name: 'Commands',
+  });
 
   logger.trace('Finding files...');
   const [configFile, addedModules] = await tools.findFiles({

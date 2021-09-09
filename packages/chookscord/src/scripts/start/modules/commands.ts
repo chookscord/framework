@@ -53,7 +53,9 @@ export async function init(
   config: Omit<types.ModuleConfig, 'output'>,
 ): Promise<void> {
   const client: Client = config.ctx.client;
-  const store = new lib.Store<lib.BaseSlashCommand>('Commands');
+  const store = new lib.Store<lib.BaseSlashCommand>({
+    name: 'Commands',
+  });
   const files = await lib.loadDir(config.input);
 
   logger.trace('Checking loaded dir.');
