@@ -43,7 +43,7 @@ function *loadModules(
       : modules.loadCommands(config, moduleName, store);
   }
 
-  logger.success(`Loaded ${addedModules.length} modules. Time took: ${endTimer().toLocaleString()}`);
+  logger.success(`Loaded ${addedModules.length} modules. Time took: ${endTimer().toLocaleString()}ms`);
 }
 
 export async function run(): Promise<void> {
