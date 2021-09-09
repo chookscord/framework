@@ -1,4 +1,4 @@
-import type { Config } from './config';
+import type { Config } from '../config';
 import type { Consola } from 'consola';
 import type { FetchUtil } from '@chookscord/lib';
 
