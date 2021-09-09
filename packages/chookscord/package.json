@@ -4,6 +4,15 @@
   "description": "The Easiest Discord.JS Framework by far.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    "./discordjs": ["./dist/djs.js"]
+  },
+  "typesVersions": {
+    "*": {
+      "discordjs": ["./dist/djs.d.ts"],
+      "types": ["./dist/types/index.d.ts"]
+    }
+  },
   "bin": {
     "chooks": "dist/bin/chooks.js"
   },
