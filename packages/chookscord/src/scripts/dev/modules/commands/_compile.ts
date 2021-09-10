@@ -1,12 +1,13 @@
 import * as lib from '@chookscord/lib';
 import * as path from 'path';
 import * as utils from '../../../../utils';
+import type { ChooksSlashCommand } from '@chookscord/types';
 import type { Consola } from 'consola';
 import type { UpdateListener } from '../../compiler';
 
 function validateCommand(
   filePath: string,
-  command: lib.BaseSlashCommand,
+  command: ChooksSlashCommand,
 ): string | null {
   return command
     ? lib.validateSlashCommand(command)
@@ -16,20 +17,20 @@ function validateCommand(
 export function createOnCompile(
   logger: Consola,
   paths: Record<string, string>,
-  store: lib.Store<lib.BaseSlashCommand>,
+  store: lib.Store<ChooksSlashCommand>,
   register: () => unknown,
 ): UpdateListener {
   return async filePath => {
     logger.debug('Reloading command...');
     const endTimer = utils.createTimer();
-    const command = await utils.uncachedImportDefault<lib.BaseSlashCommand>(filePath);
+    const command = await utils.uncachedImportDefault<ChooksSlashCommand>(filePath);
     const errorMessage = validateCommand(filePath, command);
     if (errorMessage) {
       logger.error(new Error(errorMessage));
       return;
     }
 
-    const oldCommand: lib.SlashCommand | null = store.get(command.name);
+    const oldCommand: ChooksSlashCommand | null = store.get(command.name);
     const didChange = utils.slashCommandChanged(command, oldCommand);
 
     paths[filePath] = command.name;

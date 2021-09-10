@@ -1,11 +1,12 @@
 import * as lib from '@chookscord/lib';
+import type { ChooksSubCommand } from '@chookscord/types';
 import type { Consola } from 'consola';
 import type { UpdateListener } from '../../compiler';
 
 export function createOnDelete(
   logger: Consola,
   paths: Record<string, string>,
-  store: lib.Store<lib.SlashSubCommand>,
+  store: lib.Store<ChooksSubCommand>,
   register: () => unknown,
 ): UpdateListener {
   return async filePath => {

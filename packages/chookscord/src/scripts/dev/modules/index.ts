@@ -1,5 +1,6 @@
 import type * as lib from '@chookscord/lib';
-import { ModuleConfig, ReloadModule } from '../../../types';
+import type { ModuleConfig, ReloadModule } from '../../../types';
+import type { ChooksCommand } from '@chookscord/types';
 
 export const commandModules = {
   get commands(): Promise<typeof import('./commands')> {
@@ -13,7 +14,7 @@ export const commandModules = {
 export async function loadCommands(
   config: ModuleConfig,
   dir: keyof typeof commandModules,
-  store: lib.Store<lib.SlashCommand>,
+  store: lib.Store<ChooksCommand>,
 ): Promise<ReloadModule> {
   const commandModule = await commandModules[dir];
   return commandModule.init(config, store as lib.Store<never>);

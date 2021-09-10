@@ -2,6 +2,7 @@ import * as lib from '@chookscord/lib';
 import * as types from '../../../types';
 import * as utils from '../../../utils';
 import { Client, CommandInteraction, Interaction } from 'discord.js';
+import { ChooksSubCommand } from '@chookscord/types';
 
 const logger = lib.createLogger('[cli] Sub Commands');
 
@@ -17,7 +18,7 @@ function getSubCommand(interaction: CommandInteraction): string | null {
 // Duplicated from /scripts/start/modules/commands
 function createListener(
   client: Client,
-  store: lib.Store<lib.SlashSubCommand>,
+  store: lib.Store<ChooksSubCommand>,
 ) {
   logger.success('Slash sub command listener created.');
   // eslint-disable-next-line complexity
@@ -77,7 +78,7 @@ export async function init(
   config: Omit<types.ModuleConfig, 'output'>,
 ): Promise<void> {
   const client: Client = config.ctx.client;
-  const store = new lib.Store<lib.SlashSubCommand>({
+  const store = new lib.Store<ChooksSubCommand>({
     name: 'Commands',
   });
   const files = await lib.loadDir(config.input);
@@ -92,7 +93,7 @@ export async function init(
     const path = filePath.slice(config.input.length);
     logger.info(`Loading command file "${path}"...`);
     const endTimer = utils.createTimer();
-    const command = await utils.importDefault<lib.SlashSubCommand>(filePath);
+    const command = await utils.importDefault<ChooksSubCommand>(filePath);
 
     if (JSON.stringify(command) === '{}') {
       logger.error(new Error(`"${path}" has no exported command!`));

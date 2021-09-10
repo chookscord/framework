@@ -1,27 +1,27 @@
 import * as lib from '@chookscord/lib';
 import * as utils from '../../../../utils';
+import type { ChooksSubCommand } from '@chookscord/types';
 import type { Consola } from 'consola';
 import type { UpdateListener } from '../../compiler';
-import { validateSlashSubCommand } from '@chookscord/lib';
 
 export function createOnCompile(
   logger: Consola,
   paths: Record<string, string>,
-  store: lib.Store<lib.SlashSubCommand>,
+  store: lib.Store<ChooksSubCommand>,
   register: () => unknown,
 ): UpdateListener {
   return async filePath => {
     logger.debug('Reloading sub command...');
     const endTimer = utils.createTimer();
-    const command = await utils.uncachedImportDefault<lib.SlashSubCommand>(filePath);
+    const command = await utils.uncachedImportDefault<ChooksSubCommand>(filePath);
 
-    const errorMessage = validateSlashSubCommand(command);
+    const errorMessage = lib.validateSlashSubCommand(command);
     if (errorMessage) {
       logger.error(new Error(errorMessage));
       return;
     }
 
-    const oldCommand: lib.SlashCommand | null = store.get(command.name);
+    const oldCommand: ChooksSubCommand | null = store.get(command.name);
     const didChange = utils.slashCommandChanged(command, oldCommand);
 
     paths[filePath] = command.name;

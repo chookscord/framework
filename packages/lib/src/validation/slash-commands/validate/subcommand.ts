@@ -1,15 +1,14 @@
-import type { BaseSlashCommand, Command, SlashSubCommand } from '../../../types';
-import type { SubCommandOption } from '../../../types/interactions';
+import type { ChooksSubCommand, ChooksSubCommandOption } from '@chookscord/types';
 import { commandHasExecute } from '../_execute';
 import { logger } from '../../_logger';
-import { validateBaseCommand } from './base';
+import { validateCommandInfo } from './base';
 
 // eslint-disable-next-line complexity
 export function validateSlashSubCommandOption(
-  option: SubCommandOption & BaseSlashCommand,
+  option: ChooksSubCommandOption,
 ): string | null {
   logger.trace('Validating slash sub command option...');
-  const slashCommandError = validateBaseCommand(option);
+  const slashCommandError = validateCommandInfo(option);
   if (slashCommandError) {
     logger.trace('validateBaseCommand FAIL.');
     return slashCommandError;
@@ -22,7 +21,7 @@ export function validateSlashSubCommandOption(
   }
 
   logger.trace('Option type OK.');
-  if (!commandHasExecute(option)) {
+  if (!commandHasExecute(option as never)) {
     logger.trace('commandHasExecute FAIL.');
     return 'Subcommands must have an execute handler!';
   }
@@ -31,7 +30,7 @@ export function validateSlashSubCommandOption(
   if (Array.isArray(option.options) && option.options.length) {
     logger.trace('Option has sub options.');
     for (const subOption of option.options) {
-      if (commandHasExecute(subOption as unknown as Command)) {
+      if (commandHasExecute(subOption as never)) {
         logger.trace('Sub option FAIL.');
         return 'Subcommands cannot have subcommands!';
       }
@@ -45,10 +44,10 @@ export function validateSlashSubCommandOption(
 
 // eslint-disable-next-line complexity
 export function validateSlashSubCommand(
-  command: SlashSubCommand,
+  command: ChooksSubCommand,
 ): string | null {
   logger.trace('Validating slash sub command...');
-  const slashCommandError = validateBaseCommand(command);
+  const slashCommandError = validateCommandInfo(command);
   if (slashCommandError) {
     logger.trace('validateBaseCommand FAIL.');
     return slashCommandError;
@@ -62,7 +61,7 @@ export function validateSlashSubCommand(
 
   logger.trace('Command option exists OK.');
   for (const option of command.options) {
-    const subCommandOptionError = validateSlashSubCommandOption(option);
+    const subCommandOptionError = validateSlashSubCommandOption(option as never);
     if (subCommandOptionError) {
       logger.trace('Command option FAIL.');
       return subCommandOptionError;

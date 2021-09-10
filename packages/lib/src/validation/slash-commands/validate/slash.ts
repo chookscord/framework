@@ -1,13 +1,13 @@
-import type { SlashCommand } from '../../../types';
+import type { ChooksSlashCommand } from '@chookscord/types';
 import { commandHasExecute } from '../_execute';
 import { logger } from '../../_logger';
-import { validateBaseCommand } from './base';
+import { validateCommandInfo } from './base';
 
 export function validateSlashCommand(
-  command: SlashCommand,
+  command: ChooksSlashCommand,
 ): string | null {
   logger.trace('Validating slash command...');
-  const baseCommandError = validateBaseCommand(command);
+  const baseCommandError = validateCommandInfo(command);
   if (baseCommandError) {
     logger.trace('baseCommandError FAIL.');
     return baseCommandError;

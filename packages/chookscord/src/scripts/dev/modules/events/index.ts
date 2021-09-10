@@ -11,7 +11,7 @@ const logger = lib.createLogger('[cli] Events');
 export function init(config: types.ModuleConfig): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, keyof ClientEvents> = {};
-  const store = new lib.Store<lib.Event>({
+  const store = new lib.Store<types.Event>({
     name: 'Events',
   });
 
@@ -31,14 +31,14 @@ export function init(config: types.ModuleConfig): types.ReloadModule {
     logger.success('Events refreshed.');
   };
 
-  const removeEvent = (event: lib.Event) => {
+  const removeEvent = (event: types.Event) => {
     ctx.client.removeListener(
       event.name,
       event.execute as (...args: unknown[]) => void,
     );
   };
 
-  const setEvent: lib.StoreSetListener<lib.Event> = (event, oldEvent) => {
+  const setEvent: lib.StoreSetListener<types.Event> = (event, oldEvent) => {
     logger.info(`Attaching "${event.name}" listener...`);
     const stopTimer = utils.createTimer();
     if (oldEvent) {

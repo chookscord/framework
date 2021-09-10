@@ -1,34 +1,20 @@
-import type * as types from './types';
+import type { ChooksCommand, ChooksSlashCommand, ChooksSubCommand } from '@chookscord/types';
+import { commandHasExecute } from './validation/slash-commands/_execute';
+
+export function isCommand(
+  command: { type?: string },
+): command is ChooksCommand {
+  return !command.type || command.type === 'CHAT_INPUT';
+}
 
 export function isSlashCommand(
-  command: types.SlashCommand,
-): command is types.BaseSlashCommand {
-  return 'execute' in command && typeof command.execute === 'function';
+  command: ChooksCommand,
+): command is ChooksSlashCommand {
+  return isCommand(command) && commandHasExecute(command);
 }
 
-export function isSlashSubCommand(
-  command: types.SlashCommand,
-): command is types.SlashSubCommand {
-  if (isSlashCommand(command) || !Array.isArray(command.options)) {
-    return false;
-  }
-
-  return command.options[0]?.type !== 'SUB_COMMAND';
-}
-
-// eslint-disable-next-line complexity
-export function isGroupSlashCommand(
-  command: types.SlashCommand,
-): command is types.SlashSubCommandGroup {
-  if (isSlashCommand(command) || isSlashSubCommand(command)) {
-    return false;
-  }
-
-  const group = command.options[0];
-  if (group.type !== 'SUB_COMMAND_GROUP' || !Array.isArray(group.options)) {
-    return false;
-  }
-
-  const subCommand = group.options[0];
-  return subCommand.type === 'SUB_COMMAND' && isSlashCommand(subCommand);
+export function isSubCommand(
+  command: ChooksCommand,
+): command is ChooksSubCommand {
+  return !isSlashCommand(command) && command.options?.[0].type === 'SUB_COMMAND';
 }

@@ -1,11 +1,12 @@
 import * as routes from './_routes';
 import type * as types from '../';
 import { RateLimitError, getError } from './_error';
+import type { DiscordCommand } from '@chookscord/types';
 import { registerCommands } from './_register';
 
 export type GetCooldown = (now: number) => number | null;
 export type RegisterInteraction = (
-  commands: types.BaseApplicationCommand[],
+  commands: DiscordCommand[],
   cooldown?: GetCooldown,
 ) => Promise<GetCooldown | null>;
 
@@ -24,7 +25,7 @@ export function createInteractionRegister(
     ? routes.guild(config.applicationId, config.guildId)
     : routes.global(config.applicationId);
 
-  const register = (commands: types.BaseApplicationCommand[]) => registerCommands({
+  const register = (commands: DiscordCommand[]) => registerCommands({
     route,
     token: config.token,
     commands,

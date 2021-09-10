@@ -1,10 +1,10 @@
-import type { SlashCommand } from '../../../types';
+import type { ChooksCommand } from '@chookscord/types';
 import { logger } from '../../_logger';
 import { validateOptionDescription } from '../_description';
 import { validateOptionName } from '../_name';
 
-export function validateBaseCommand(
-  command: SlashCommand,
+export function validateCommandInfo(
+  command: Pick<ChooksCommand, 'name' | 'description'>,
 ): string | null {
   logger.trace('Validating base command...');
   const nameError = validateOptionName(command.name);

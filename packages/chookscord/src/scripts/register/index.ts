@@ -3,7 +3,8 @@ process.env.NODE_ENV = 'production';
 import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
-import { Config } from '../../types';
+import type { ChooksCommand } from '@chookscord/types';
+import type { Config } from '../../types';
 
 const logger = lib.createLogger('[cli] Chooks');
 const interactionDirs = ['commands', 'subcommands'];
@@ -63,16 +64,16 @@ export async function run(): Promise<void> {
   // @todo(Choooks22): Implement other command types
   const jobs = addedModules.map(async moduleName => {
     const path = utils.appendPath.fromOut(moduleName);
-    const commands: lib.SlashCommand[] = [];
+    const commands: ChooksCommand[] = [];
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const files = (await lib.loadDir(path, { recursive: true }))!;
 
     for await (const file of files) {
       if (file.isDirectory) continue;
-      const command = await utils.importDefault<lib.SlashCommand>(file.path);
+      const command = await utils.importDefault<ChooksCommand>(file.path);
 
       // @todo(Choooks22): Switch validation depending on module
-      const validationError = lib.validateBaseCommand(command);
+      const validationError = lib.validateCommandInfo(command);
       if (validationError) {
         logger.error(new Error(validationError));
         continue;

@@ -1,2 +1,1 @@
-import './context';
 import './env';

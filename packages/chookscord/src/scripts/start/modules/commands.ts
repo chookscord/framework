@@ -2,13 +2,14 @@ import * as lib from '@chookscord/lib';
 import * as types from '../../../types';
 import * as utils from '../../../utils';
 import { Client, Interaction } from 'discord.js';
+import { ChooksSlashCommand } from '@chookscord/types';
 
 const logger = lib.createLogger('[cli] Commands');
 
 // Duplicated from /scripts/dev/modules/commands
 function createListener(
   client: Client,
-  store: lib.Store<lib.BaseSlashCommand>,
+  store: lib.Store<ChooksSlashCommand>,
 ) {
   logger.success('Slash command listener created.');
   // eslint-disable-next-line complexity
@@ -53,7 +54,7 @@ export async function init(
   config: Omit<types.ModuleConfig, 'output'>,
 ): Promise<void> {
   const client: Client = config.ctx.client;
-  const store = new lib.Store<lib.BaseSlashCommand>({
+  const store = new lib.Store<ChooksSlashCommand>({
     name: 'Commands',
   });
   const files = await lib.loadDir(config.input);
@@ -68,14 +69,14 @@ export async function init(
     const path = filePath.slice(config.input.length);
     logger.info(`Loading command file "${path}"...`);
     const endTimer = utils.createTimer();
-    const command = await utils.importDefault<lib.BaseSlashCommand>(filePath);
+    const command = await utils.importDefault<ChooksSlashCommand>(filePath);
 
     if (JSON.stringify(command) === '{}') {
       logger.error(new Error(`"${path}" has no exported command!`));
       return;
     }
 
-    const validateError = lib.validateBaseCommand(command);
+    const validateError = lib.validateCommandInfo(command);
     if (validateError) {
       logger.error(new Error(validateError));
       return;

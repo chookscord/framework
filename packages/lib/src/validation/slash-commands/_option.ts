@@ -1,14 +1,14 @@
-import { CommandOption } from '../../types/interactions';
+import { ChooksCommandOption } from '@chookscord/types';
 import { logger } from '../_logger';
 import { validateOptionDescription } from './_description';
 import { validateOptionName } from './_name';
 
-export function optionIsCommand(option: CommandOption): boolean {
+export function optionIsCommand(option: ChooksCommandOption): boolean {
   return option.type === 'SUB_COMMAND' || option.type === 'SUB_COMMAND_GROUP';
 }
 
 // eslint-disable-next-line complexity
-export function optionHasType(option: CommandOption): boolean {
+export function optionHasType(option: ChooksCommandOption): boolean {
   logger.trace('Checking option type...');
   const hasType =
     option.type === 'BOOLEAN' ||
@@ -26,7 +26,7 @@ export function optionHasType(option: CommandOption): boolean {
   return hasType;
 }
 
-export function validateOption(option: CommandOption): string | null {
+export function validateOption(option: ChooksCommandOption): string | null {
   logger.trace('Validating options...');
   const nameError = validateOptionName(option.name);
   if (nameError) {

@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, complexity, array-bracket-newline */
-import { BaseSlashCommand, CommandOption } from '@chookscord/lib';
+import { ChooksCommand, ChooksCommandOption } from '@chookscord/types';
 import { keysAreSame } from './_object';
 
-// @todo(Choooks22): TEMPORARY HACK: Create proper types pls
-// lots of duplicated code, extract to functions
+// @todo(Choooks22): lots of duplicated code, extract to functions
 export function slashCommandOptionChanged(
-  options: (CommandOption & { options?: CommandOption[] })[],
-  oldOptions: (CommandOption & { options?: CommandOption[] })[],
+  options: ChooksCommandOption[],
+  oldOptions: ChooksCommandOption[],
 ): boolean {
   if (options.length !== oldOptions.length) {
     return true;
@@ -46,8 +45,8 @@ export function slashCommandOptionChanged(
 }
 
 export function slashCommandChanged(
-  interaction: Omit<BaseSlashCommand, 'execute' | 'options'> & { options?: CommandOption[] },
-  oldInteraction: Omit<BaseSlashCommand, 'execute' | 'options'> & { options?: CommandOption[] } | null,
+  interaction: ChooksCommand,
+  oldInteraction: ChooksCommand | null,
 ): boolean {
   if (!oldInteraction) {
     return true;

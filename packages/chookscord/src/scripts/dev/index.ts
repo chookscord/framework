@@ -6,6 +6,7 @@ import * as tools from '../../tools';
 import type * as types from '../../types';
 import * as utils from '../../utils';
 import { configFiles, createConfigLoader } from './config';
+import type { ChooksCommand } from '@chookscord/types';
 import { Client } from 'discord.js';
 
 const logger = lib.createLogger('[cli] Chooks');
@@ -23,7 +24,7 @@ function createClient(config: types.Config): Client {
 function *loadModules(
   ctx: types.ModuleContext,
   addedModules: (keyof typeof modules.commandModules)[],
-  store: lib.Store<lib.SlashCommand>,
+  store: lib.Store<ChooksCommand>,
   register: () => unknown,
 ): Iterable<Promise<types.ReloadModule> | null> {
   logger.info(`Loading ${addedModules.length} modules...`);
@@ -52,7 +53,7 @@ export async function run(): Promise<void> {
 
   // @todo(Choooks22): Fix this this is ugly
   logger.trace('Creating commands store...');
-  const store = new lib.Store<lib.SlashCommand>({
+  const store = new lib.Store<ChooksCommand>({
     name: 'Commands',
   });
 

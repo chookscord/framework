@@ -2,6 +2,7 @@ import * as lib from '@chookscord/lib';
 import type * as types from '../../../../types';
 import * as utils from '../../../../utils';
 import type { Client, Interaction } from 'discord.js';
+import type { ChooksSlashCommand } from '@chookscord/types';
 import { createOnCompile } from './_compile';
 import { createOnDelete } from './_delete';
 import { createWatchCompiler } from '../../compiler';
@@ -12,7 +13,7 @@ const logger = lib.createLogger('[cli] Commands');
 // Each module would then "append" their handler to the listener.
 function createListener(
   client: Client,
-  store: lib.Store<lib.BaseSlashCommand>,
+  store: lib.Store<ChooksSlashCommand>,
 ) {
   logger.success('Slash command listener created.');
   // eslint-disable-next-line complexity
@@ -55,7 +56,7 @@ function createListener(
 
 export function init(
   config: types.ModuleConfig,
-  store: lib.Store<lib.BaseSlashCommand>,
+  store: lib.Store<ChooksSlashCommand>,
 ): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, string> = {};

@@ -18,7 +18,7 @@ export async function init(
 
   const validateEvent = (
     path: string,
-    event: lib.Event,
+    event: types.Event,
   ): string | null => {
     if (JSON.stringify(event) === '{}') {
       return `"${path}" has no exported event!`;
@@ -41,7 +41,7 @@ export async function init(
     const endTimer = utils.createTimer();
 
     logger.trace('Loading event.');
-    const event = await utils.importDefault<lib.Event>(filePath);
+    const event = await utils.importDefault<types.Event>(filePath);
 
     logger.trace('Validating event.');
     const validationError = validateEvent(path, event);

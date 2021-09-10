@@ -8,7 +8,7 @@ import type { UpdateListener } from '../../compiler';
 // eslint-disable-next-line complexity
 function validateEvent(
   filePath: string,
-  event: lib.Event,
+  event: types.Event,
 ): string | null {
   if (JSON.stringify(event) === '{}') {
     return `"${filePath}" does not have a default export!`;
@@ -28,12 +28,12 @@ function validateEvent(
 export function createOnCompile(
   logger: Consola,
   paths: Record<string, keyof ClientEvents>,
-  store: lib.Store<lib.Event>,
+  store: lib.Store<types.Event>,
   ctx: types.ModuleContext,
 ): UpdateListener {
   return async filePath => {
     logger.debug('Event updated.');
-    const event: lib.Event = await utils.uncachedImportDefault<lib.Event>(filePath);
+    const event: types.Event = await utils.uncachedImportDefault<types.Event>(filePath);
     const validationError = validateEvent(filePath, event);
 
     if (validationError) {

@@ -5,6 +5,7 @@ import type { Client, CommandInteraction, Interaction } from 'discord.js';
 import { createOnCompile } from './_compile';
 import { createOnDelete } from './_delete';
 import { createWatchCompiler } from '../../compiler';
+import { ChooksSubCommand } from '@chookscord/types';
 
 const logger = lib.createLogger('[cli] Sub Commands');
 
@@ -19,7 +20,7 @@ function getSubCommand(interaction: CommandInteraction): string | null {
 // Duplicated from /scripts/dev/modules/commands.
 function createListener(
   client: Client,
-  store: lib.Store<lib.SlashSubCommand>,
+  store: lib.Store<ChooksSubCommand>,
 ) {
   logger.success('Slash command listener created.');
   // eslint-disable-next-line complexity
@@ -76,7 +77,7 @@ function createListener(
 
 export function init(
   config: types.ModuleConfig,
-  store: lib.Store<lib.SlashSubCommand>,
+  store: lib.Store<ChooksSubCommand>,
 ): types.ReloadModule {
   let ctx = config.ctx;
   const paths: Record<string, string> = {};

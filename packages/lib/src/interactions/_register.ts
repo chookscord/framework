@@ -1,10 +1,10 @@
 import { Response, default as fetch } from 'node-fetch';
-import { BaseApplicationCommand } from '..';
+import { DiscordCommand } from '@chookscord/types';
 
 interface RegisterConfig {
   route: string;
   token: string;
-  commands: BaseApplicationCommand[];
+  commands: DiscordCommand[];
 }
 
 export function registerCommands(

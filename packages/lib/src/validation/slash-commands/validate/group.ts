@@ -1,13 +1,12 @@
-import type { SlashSubCommand, SlashSubCommandGroup } from '../../../types';
-import type { SubCommandGroupOption } from '../../../types/interactions';
+import type { ChooksGroupCommandOption, ChooksSubCommand } from '@chookscord/types';
 import { commandHasExecute } from '../_execute';
 import { logger } from '../../_logger';
-import { validateBaseCommand } from './base';
+import { validateCommandInfo } from './base';
 import { validateSlashSubCommandOption } from './subcommand';
 
 // eslint-disable-next-line complexity
 export function validateSubCommandGroupOption(
-  option: SubCommandGroupOption & SlashSubCommand,
+  option: ChooksGroupCommandOption,
 ): string | null {
   logger.trace('Validating sub command group option...');
   if (option.type !== 'SUB_COMMAND_GROUP') {
@@ -16,7 +15,7 @@ export function validateSubCommandGroupOption(
   }
 
   logger.trace('Option type OK.');
-  if (commandHasExecute(option)) {
+  if (commandHasExecute(option as never)) {
     logger.trace('commandHasExecute FAIL.');
     return 'Subcommand groups cannot have an execute handler!';
   }
@@ -43,10 +42,10 @@ export function validateSubCommandGroupOption(
 
 // eslint-disable-next-line complexity
 export function validateSubCommandGroup(
-  command: SlashSubCommandGroup,
+  command: ChooksSubCommand,
 ): string | null {
   logger.trace('Validating sub command group...');
-  const slashCommandError = validateBaseCommand(command);
+  const slashCommandError = validateCommandInfo(command);
   if (slashCommandError) {
     logger.trace('validateBaseCommand FAIL.');
     return slashCommandError;
@@ -66,7 +65,7 @@ export function validateSubCommandGroup(
 
   logger.trace('Command option OK.');
   for (const option of command.options) {
-    const groupSubCommandOptionError = validateSubCommandGroupOption(option);
+    const groupSubCommandOptionError = validateSubCommandGroupOption(option as ChooksGroupCommandOption);
     if (groupSubCommandOptionError) {
       logger.trace('validateSubCommandGroup FAIL.');
       return groupSubCommandOptionError;

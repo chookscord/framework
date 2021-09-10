@@ -1,6 +1,13 @@
-import { EventContext } from '@chookscord/lib';
+import type { Client } from 'discord.js';
+import type { Config } from '.';
+import type { FetchUtil } from '@chookscord/lib';
 
-export type ModuleContext = Omit<EventContext, 'logger'>;
+export interface ModuleContext {
+  client: Client;
+  config: Config;
+  fetch: FetchUtil;
+}
+
 export interface ModuleConfig {
   input: string;
   output: string;
