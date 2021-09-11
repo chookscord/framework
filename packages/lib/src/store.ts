@@ -15,6 +15,10 @@ export interface StoreOptions {
   name?: string;
 }
 
+interface GetOptions {
+  unique?: boolean;
+}
+
 export class Store<T> {
   private _logger?: Consola;
   constructor(options: StoreOptions = {}) {
@@ -49,17 +53,17 @@ export class Store<T> {
     }
   }
 
-  public *getAll(): Iterable<T> {
+  public *getAll(opts: GetOptions = { unique: false }): Iterable<T> {
     this._logger?.debug('GetAll');
-    const set = new Set(this._store.values());
-    for (const value of set) {
-      yield value;
-    }
+    this._logger?.debug('Unique:', opts.unique);
+    yield* opts.unique
+      ? new Set(this._store.values())
+      : this._store.values();
   }
 
-  public toArray(): T[] {
+  public toArray(opts?: GetOptions): T[] {
     this._logger?.debug('ToArray');
-    return [...this.getAll()];
+    return [...this.getAll(opts)];
   }
 
   public get size(): number {
