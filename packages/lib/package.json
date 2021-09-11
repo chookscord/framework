@@ -22,6 +22,7 @@
     "consola": "^2.15.3"
   },
   "peerDependencies": {
+    "@chookscord/types": "^0.1.0",
     "discord.js": "^13.1.0"
   },
   "license": "MIT",

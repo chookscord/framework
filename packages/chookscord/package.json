@@ -10,8 +10,12 @@
   },
   "typesVersions": {
     "*": {
-      "discordjs": ["./dist/djs.d.ts"],
-      "types": ["./dist/types/index.d.ts"]
+      "discordjs": [
+        "./dist/djs.d.ts"
+      ],
+      "types": [
+        "./dist/types/index.d.ts"
+      ]
     }
   },
   "bin": {
@@ -27,6 +31,7 @@
   },
   "dependencies": {
     "@chookscord/lib": "^0.10.0",
+    "@chookscord/types": "^0.1.0",
     "@swc/core": "^1.2.81",
     "@swc/helpers": "^0.2.13",
     "chokidar": "^3.5.2",
