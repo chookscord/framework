@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "importHelpers": false,
+    "noEmitHelpers": false
+  },
   "include": [
     "src"
   ]
