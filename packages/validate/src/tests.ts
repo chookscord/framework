@@ -51,9 +51,20 @@ export function isType<T>(
     : x => isType(type, x);
 }
 
-export function assert<T>(value: T, test: (value: T) => ValidationError): ValidationError;
-export function assert<T>(value: T, test: (value: T) => boolean, message: string): ValidationError;
-export function assert<T>(value: T, test: (value: T) => (ValidationError | boolean), message?: string): ValidationError {
+export function assert<T>(
+  value: T,
+  test: (value: T) => ValidationError
+): ValidationError;
+export function assert<T>(
+  value: T,
+  test: (value: T) => boolean,
+  message: string
+): ValidationError;
+export function assert<T>(
+  value: T,
+  test: (value: T) => (ValidationError | boolean),
+  message?: string,
+): ValidationError {
   return message
     ? test(value) ? null : message
     : test(value) as ValidationError;
