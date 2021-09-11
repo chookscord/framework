@@ -1,4 +1,4 @@
-import { ChooksCommand, ChooksCommandOption, ChooksCommandOptionType } from './base';
+import type { ChooksCommand, ChooksCommandOption, ChooksCommandOptionType } from './base';
 
 export interface ChooksSlashCommand extends ChooksCommand {
   type?: 'CHAT_INPUT';

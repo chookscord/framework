@@ -1,7 +1,7 @@
 {
   "name": "@chookscord/types",
   "version": "0.1.0",
-  "main": "dist/index.js",
+  "main": "dist/discord.js",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
@@ -13,8 +13,9 @@
   ],
   "scripts": {
     "build": "npx tsc --outDir dist",
-    "clean-build": "rm -rf dist && yarn build",
-    "dev": "yarn build --watch"
+    "build:decl": "npx tsc --outDir dist -p tsconfig.types.json",
+    "clean-build": "rm -rf dist && yarn build && yarn build:decl",
+    "dev": "concurrently 'yarn build --watch' 'yarn build:decl --watch'"
   },
   "license": "MIT",
   "publishConfig": {
