@@ -20,6 +20,11 @@ export function validateSlashCommand(
     'Missing execute handler.',
   ) ??
   validate.assert(
+    command.options?.length ?? 0,
+    validate.inRange(0, 25),
+    'Invalid options size.',
+  ) ??
+  validate.assert(
     command.options ?? [],
     validate.testEach(validateNonCommandOption),
   );
