@@ -29,7 +29,7 @@ export function validateChoiceList(
   return validate.assert(
     choices.length ?? 0,
     validate.inRange(0, 25),
-    'Invalid choice amount.',
+    'Invalid choice size.',
   ) ??
   validate.assert(
     choices,
