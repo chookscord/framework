@@ -1,7 +1,7 @@
 import * as lib from '../../packages/lib';
 
 describe('store', () => {
-  const store = new lib.Store<string>('test');
+  const store = new lib.Store<string>();
   const key = 'foo';
   const value = 'bar';
 
