@@ -82,7 +82,7 @@ export function validateGroupCommandOption(
   ) ??
   validate.assert(
     (option as any).execute,
-    validate.isType('function'),
+    execute => !validate.isType('function', execute),
     'Subcommand groups cannot have execute handlers.',
   ) ??
   validate.assert(
@@ -117,5 +117,19 @@ export function validateOption(
     option.options?.length ?? 0,
     validate.inRange(0, 25),
     'Invalid options size.',
+  ) ??
+  validate.assert(
+    option.options ?? [],
+    validate.testEach(option => {
+      if (optionIsType(['SUB_COMMAND_GROUP'], option)) {
+        return validateGroupCommandOption(option);
+      }
+
+      if (optionIsType(['SUB_COMMAND'], option)) {
+        return validateSubCommandOption(option);
+      }
+
+      return validateNonCommandOption(option);
+    }),
   );
 }
