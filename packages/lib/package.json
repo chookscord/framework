@@ -17,7 +17,7 @@
     "dev": "yarn build --watch"
   },
   "dependencies": {
-    "@chookscord/validate": "^0.2.0",
+    "@chookscord/validate": "^0.3.0",
     "@types/node-fetch": "^2.5.12",
     "chalk": "^4.1.2",
     "consola": "^2.15.3"
