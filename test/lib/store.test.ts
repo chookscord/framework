@@ -1,4 +1,4 @@
-import * as lib from '@chookscord/lib';
+import * as lib from '../../packages/lib';
 
 describe('store', () => {
   const store = new lib.Store<string>('test');

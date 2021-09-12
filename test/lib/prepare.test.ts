@@ -1,8 +1,9 @@
+import * as lib from '../../packages/lib';
 import * as types from '../../packages/types';
 
 describe('interactions register', () => {
   it('prepares slash commands', () => {
-    const [command] = chooks.prepareCommands([
+    const [command] = lib.prepareCommands([
       {
         name: 'foo',
         description: 'foo',
@@ -18,7 +19,7 @@ describe('interactions register', () => {
   });
 
   it('prepares subcommands', () => {
-    const [command] = chooks.prepareCommands([
+    const [command] = lib.prepareCommands([
       {
         options: [
           {
@@ -52,6 +53,7 @@ describe('interactions register', () => {
       'SUB_COMMAND_GROUP',
       'USER',
     ] as types.ChooksCommandOptionType[];
+    const [command] = lib.prepareCommands([
       {
         options: options.map(option => ({ type: option })),
       } as never,
