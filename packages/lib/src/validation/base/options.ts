@@ -39,25 +39,6 @@ export function validateOptionWithChoices(
   );
 }
 
-export function validateOption(
-  option: types.ChooksCommandOption,
-): validate.ValidationError {
-  return validate.assert(
-    option,
-    option => {
-      if (optionIsType(TYPES_WITH_CHOICES, option)) {
-        return validateOptionWithChoices(option);
-      }
-
-      if (optionIsType(TYPES_WITHOUT_CHOICES, option)) {
-        return validateOptionWithoutChoice(option);
-      }
-
-      return 'Invalid option type.';
-    },
-  );
-}
-
 export function validateNonCommandOption(
   option: types.ChooksCommandOption,
 ): validate.ValidationError {
@@ -112,5 +93,29 @@ export function validateGroupCommandOption(
   validate.assert(
     option.options!,
     validate.testEach(validateSubCommandOption),
+  );
+}
+
+export function validateOption(
+  option: types.ChooksCommandOption,
+): validate.ValidationError {
+  return validate.assert(
+    option,
+    option => {
+      if (optionIsType(TYPES_WITH_CHOICES, option)) {
+        return validateOptionWithChoices(option);
+      }
+
+      if (optionIsType(TYPES_WITHOUT_CHOICES, option)) {
+        return validateOptionWithoutChoice(option);
+      }
+
+      return 'Invalid option type.';
+    },
+  ) ??
+  validate.assert(
+    option.options?.length ?? 0,
+    validate.inRange(0, 25),
+    'Invalid options size.',
   );
 }
