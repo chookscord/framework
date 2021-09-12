@@ -1,5 +1,6 @@
-import { assert, isType, testRegex } from '../tests';
+import { isType, testRegex } from '../utils';
 import type { ValidationError } from '../types';
+import { assert } from '../tests';
 
 export function testName(name: string): ValidationError {
   return (
@@ -19,7 +20,7 @@ export function testInteractionName(name: string): ValidationError {
 // different locales but its better to get an error rather than falsely blocking.
 export function testCommandName(name: string): ValidationError {
   return (
-    assert(name, testInteractionName) ??
-    assert(name, testRegex(/[A-Z]/), 'Name must not have uppercase letters!')
+    assert(name, testName) ??
+    assert(name, testRegex(/^[a-z-]{1,32}$/u), 'Name must not have uppercase letters!')
   );
 }
