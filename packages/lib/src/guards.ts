@@ -1,16 +1,16 @@
 import type { ChooksCommand, ChooksSlashCommand, ChooksSubCommand } from '@chookscord/types';
-import { commandHasExecute } from './validation/slash-commands/_execute';
+import { isType } from '@chookscord/validate';
 
 export function isCommand(
   command: { type?: string },
 ): command is ChooksCommand {
-  return !command.type || command.type === 'CHAT_INPUT';
+  return isType('undefined', command.type) || command.type === 'CHAT_INPUT';
 }
 
 export function isSlashCommand(
   command: ChooksCommand,
 ): command is ChooksSlashCommand {
-  return isCommand(command) && commandHasExecute(command);
+  return isCommand(command) && isType('function', command.execute);
 }
 
 export function isSubCommand(
