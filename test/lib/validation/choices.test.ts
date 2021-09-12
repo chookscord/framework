@@ -54,6 +54,15 @@ describe('validating choices', () => {
         });
         expect(error).toBeTruthy();
       });
+
+      test('too many choices', () => {
+        const error = lib.validateChoiceList(
+          Array
+            .from({ length: 26 })
+            .fill(choice) as types.DiscordCommandOptionChoice[],
+        );
+        expect(error).toBeTruthy();
+      });
     });
   });
 });
