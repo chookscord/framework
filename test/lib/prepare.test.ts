@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-explicit-any */
-import * as chooks from '@chookscord/lib';
+import * as types from '../../packages/types';
 
 describe('interactions register', () => {
   it('prepares slash commands', () => {
@@ -7,14 +6,14 @@ describe('interactions register', () => {
       {
         name: 'foo',
         description: 'foo',
-        execute() { /*  */ },
+        execute() {},
       },
     ]);
 
     expect(command).toEqual({
       name: 'foo',
       description: 'foo',
-      type: chooks.CommandType.CHAT_INPUT,
+      type: types.DiscordCommandType.CHAT_INPUT,
     });
   });
 
@@ -26,17 +25,17 @@ describe('interactions register', () => {
             name: 'foo',
             description: 'foo',
             type: 'SUB_COMMAND',
-            execute() { /*  */ },
+            execute() {},
           },
         ],
-      } as unknown as chooks.SlashSubCommand,
+      } as unknown as types.ChooksSlashCommand,
     ]);
 
     const [option] = command.options!;
     expect(option).toStrictEqual({
       name: 'foo',
       description: 'foo',
-      type: chooks.CommandOptionType.SUB_COMMAND,
+      type: types.DiscordCommandOptionType.SUB_COMMAND,
     });
   });
 
@@ -52,8 +51,7 @@ describe('interactions register', () => {
       'SUB_COMMAND',
       'SUB_COMMAND_GROUP',
       'USER',
-    ] as chooks.CommandOption['type'][];
-    const [command] = chooks.prepareCommands([
+    ] as types.ChooksCommandOptionType[];
       {
         options: options.map(option => ({ type: option })),
       } as never,
@@ -62,7 +60,7 @@ describe('interactions register', () => {
     for (let i = 0, n = options.length; i < n; i++) {
       const type = options[i];
       const option = command.options![i];
-      expect(option.type).toBe(chooks.CommandOptionType[type]);
+      expect(option.type).toBe(types.DiscordCommandOptionType[type]);
     }
   });
 });
