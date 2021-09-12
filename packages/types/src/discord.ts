@@ -1,7 +1,7 @@
 export interface DiscordCommand {
   type?: DiscordCommandType;
   name: string;
-  description: string;
+  description?: string;
   options?: DiscordCommandOption[];
   default_permission?: boolean;
 }
