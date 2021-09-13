@@ -115,5 +115,46 @@ describe('validating subcommands', () => {
         expect(error).toBeTruthy();
       });
     });
+
+    describe('invalid nesting', () => {
+      test('group in group', () => {
+        const error = lib.validateSubCommand({
+          ...command,
+          options: [
+            {
+              ...commandGroup,
+              options: [commandGroup],
+            },
+          ],
+        });
+        expect(error).toBeTruthy();
+      });
+
+      test('group in subcommand', () => {
+        const error = lib.validateSubCommand({
+          ...command,
+          options: [
+            {
+              ...subCommand,
+              options: [commandGroup],
+            },
+          ],
+        });
+        expect(error).toBeTruthy();
+      });
+
+      test('subcommand in subcommand', () => {
+        const error = lib.validateSubCommand({
+          ...command,
+          options: [
+            {
+              ...subCommand,
+              options: [subCommand],
+            },
+          ],
+        });
+        expect(error).toBeTruthy();
+      });
+    });
   });
 });
