@@ -96,6 +96,25 @@ export function validateGroupCommandOption(
   );
 }
 
+export function validateCommandOption(
+  option: types.ChooksCommandOption,
+): validate.ValidationError {
+  return validate.assert(
+    option,
+    option => {
+      if (optionIsType(['SUB_COMMAND_GROUP'], option)) {
+        return validateGroupCommandOption(option);
+      }
+
+      if (optionIsType(['SUB_COMMAND'], option)) {
+        return validateSubCommandOption(option);
+      }
+
+      return 'Invalid command type.';
+    },
+  );
+}
+
 export function validateOption(
   option: types.ChooksCommandOption,
 ): validate.ValidationError {
@@ -120,16 +139,7 @@ export function validateOption(
   ) ??
   validate.assert(
     option.options ?? [],
-    validate.testEach(option => {
-      if (optionIsType(['SUB_COMMAND_GROUP'], option)) {
-        return validateGroupCommandOption(option);
-      }
-
-      if (optionIsType(['SUB_COMMAND'], option)) {
-        return validateSubCommandOption(option);
-      }
-
-      return validateNonCommandOption(option);
-    }),
+    validate.testEach(option => validateCommandOption(option) &&
+      validateNonCommandOption(option)),
   );
 }

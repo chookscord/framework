@@ -6,6 +6,12 @@ const command: types.ChooksCommand = {
   description: 'foo',
 };
 
+const option: types.ChooksNonCommandOption = {
+  name: 'foo',
+  description: 'foo',
+  type: 'STRING',
+};
+
 const subCommand: types.ChooksSubCommandOption = {
   name: 'foo',
   description: 'foo',
@@ -60,7 +66,46 @@ describe('validating subcommands', () => {
         expect(error).toBeTruthy();
       });
 
-      test.todo('non-command options alongside subcommands');
+      test('non-command options alongside command groups', () => {
+        const error = lib.validateSubCommand({
+          ...command,
+          options: [
+            {
+              ...commandGroup,
+              options: [subCommand],
+            },
+            option,
+          ],
+        });
+        expect(error).toBeTruthy();
+      });
+
+      test('non-command options alongside subcommands', () => {
+        const error = lib.validateSubCommand({
+          ...command,
+          options: [
+            subCommand,
+            option,
+          ],
+        });
+        expect(error).toBeTruthy();
+      });
+
+      test('non-command options alongside nested subcommands', () => {
+        const error = lib.validateSubCommand({
+          ...command,
+          options: [
+            {
+              ...commandGroup,
+              options: [
+                subCommand,
+                option,
+              ],
+            },
+          ],
+        });
+        expect(error).toBeTruthy();
+      });
     });
   });
 });
