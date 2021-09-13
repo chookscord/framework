@@ -8,7 +8,7 @@ export type GetCooldown = (now: number) => number | null;
 export type RegisterInteraction = (
   commands: DiscordCommand[],
   cooldown?: GetCooldown,
-) => Promise<GetCooldown | null>;
+) => Promise<GetCooldown | boolean>;
 
 export interface InteractionRegisterConfig {
   token: string;
@@ -45,7 +45,7 @@ export function createInteractionRegister(
 
     if (response.ok) {
       options.logger?.info(`${commands.length} commands successfully registered.`);
-      return null;
+      return true;
     }
 
     const error = await getError(response);
@@ -56,6 +56,6 @@ export function createInteractionRegister(
     }
 
     options.logger?.error(new Error(`Failed to register interactions!\n${error}`));
-    return null;
+    return false;
   };
 }

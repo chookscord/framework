@@ -12,9 +12,9 @@ export async function registerCommands(
 
   try {
     logger.info(`Registering ${commands.length} commands...`);
-    const ok = await register(commands);
+    const res = await register(commands);
 
-    if (ok) {
+    if (res && typeof res !== 'function') {
       logger.success(`Successfully registered ${commands.length} commands.`);
     } else {
       logger.warn('Could not register commands.');
