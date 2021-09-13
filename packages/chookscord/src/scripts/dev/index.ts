@@ -26,7 +26,7 @@ function *loadModules(
   addedModules: (keyof typeof modules.commandModules)[],
   store: lib.Store<ChooksCommand>,
   register: () => unknown,
-): Iterable<Promise<types.ReloadModule> | null> {
+): Generator<Promise<types.ReloadModule>> {
   logger.info(`Loading ${addedModules.length} modules...`);
   const endTimer = utils.createTimer();
   for (const moduleName of addedModules) {
