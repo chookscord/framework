@@ -43,9 +43,23 @@ describe('validating subcommands', () => {
     });
   });
 
-  describe.skip('invalid structures', () => {
+  describe('invalid structures', () => {
     describe('invalid options', () => {
-      test.todo('non-command options alongside command groups');
+      test('missing subcommands', () => {
+        const error = lib.validateSubCommand(command);
+        expect(error).toBeTruthy();
+      });
+
+      test('too many subcommands', () => {
+        const error = lib.validateSubCommand({
+          ...command,
+          options: Array
+            .from({ length: 26 })
+            .fill(subCommand) as types.ChooksSubCommandOption[],
+        });
+        expect(error).toBeTruthy();
+      });
+
       test.todo('non-command options alongside subcommands');
     });
   });

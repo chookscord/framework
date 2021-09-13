@@ -8,5 +8,10 @@ export function validateSubCommand(
   return validate.assert(
     command,
     validateCommand,
+  ) ??
+  validate.assert(
+    command.options?.length ?? 0,
+    validate.inRange(1, 25),
+    'Invalid subcommands size.',
   );
 }
