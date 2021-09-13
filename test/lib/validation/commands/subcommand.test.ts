@@ -56,6 +56,14 @@ describe('validating subcommands', () => {
         expect(error).toBeTruthy();
       });
 
+      test('missing subcommands in group', () => {
+        const error = lib.validateSubCommand({
+          ...command,
+          options: [commandGroup],
+        });
+        expect(error).toBeTruthy();
+      });
+
       test('too many subcommands', () => {
         const error = lib.validateSubCommand({
           ...command,
