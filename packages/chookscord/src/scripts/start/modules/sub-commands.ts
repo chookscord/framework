@@ -100,7 +100,7 @@ export async function init(
       return;
     }
 
-    const validateError = lib.validateSlashSubCommand(command);
+    const validateError = lib.validateSubCommand(command);
     if (validateError) {
       logger.error(new Error(validateError));
       return;

@@ -76,7 +76,7 @@ export async function init(
       return;
     }
 
-    const validateError = lib.validateCommandInfo(command);
+    const validateError = lib.validateCommand(command);
     if (validateError) {
       logger.error(new Error(validateError));
       return;

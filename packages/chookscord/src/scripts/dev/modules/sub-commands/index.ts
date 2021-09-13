@@ -2,10 +2,10 @@ import * as lib from '@chookscord/lib';
 import * as types from '../../../../types';
 import * as utils from '../../../../utils';
 import type { Client, CommandInteraction, Interaction } from 'discord.js';
+import type { ChooksSubCommand } from '@chookscord/types';
 import { createOnCompile } from './_compile';
 import { createOnDelete } from './_delete';
 import { createWatchCompiler } from '../../compiler';
-import { ChooksSubCommand } from '@chookscord/types';
 
 const logger = lib.createLogger('[cli] Sub Commands');
 

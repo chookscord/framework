@@ -73,7 +73,7 @@ export async function run(): Promise<void> {
       const command = await utils.importDefault<ChooksCommand>(file.path);
 
       // @todo(Choooks22): Switch validation depending on module
-      const validationError = lib.validateCommandInfo(command);
+      const validationError = lib.validateCommand(command);
       if (validationError) {
         logger.error(new Error(validationError));
         continue;

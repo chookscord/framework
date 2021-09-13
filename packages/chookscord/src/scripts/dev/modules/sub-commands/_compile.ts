@@ -15,7 +15,7 @@ export function createOnCompile(
     const endTimer = utils.createTimer();
     const command = await utils.uncachedImportDefault<ChooksSubCommand>(filePath);
 
-    const errorMessage = lib.validateSlashSubCommand(command);
+    const errorMessage = lib.validateSubCommand(command);
     if (errorMessage) {
       logger.error(new Error(errorMessage));
       return;
