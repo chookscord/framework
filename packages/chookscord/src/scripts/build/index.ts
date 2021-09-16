@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion, complexity */
 process.env.NODE_ENV = 'production';
 import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
@@ -6,68 +5,86 @@ import * as utils from '../../utils';
 
 const logger = lib.createLogger('[cli] Chooks');
 
-// @todo(Choooks22): Move config filenames to enum
-// Partly duplicated from scripts/register
-async function findFiles(): Promise<[configPath: string, dirs: string[]]> {
-  const [configFile, dirs] = await tools.findFiles({
-    path: process.cwd(),
-    configFiles: ['chooks.config.ts', 'chooks.config.js'],
-    directories: ['events', 'commands', 'subcommands'],
-  });
+const configFiles = [
+  'chooks.config.ts',
+  'chooks.config.js',
+];
 
-  if (!configFile) {
-    logger.fatal(new Error('Config file does not exist!'));
-    process.exit();
-  }
-
-  return [configFile, dirs];
+function compileFile(filePath: string) {
+  const outFile = filePath.replace(/\.ts$/, '.js');
+  return tools.compile(
+    utils.appendPath.fromRoot(filePath),
+    utils.appendPath.fromOut(outFile),
+  );
 }
 
-function getOutPath(inPath: string): string {
-  const rootLength = utils.appendPath.fromRoot().length;
-  return utils.appendPath.fromOut(inPath.slice(rootLength));
+async function getRootFiles(
+  files: AsyncGenerator<lib.File> | Generator<lib.File>,
+  selectConfig: (file: lib.File, current: string | null) => boolean,
+  excludeFile: (file: lib.File) => boolean,
+) {
+  let config: string | null = null;
+  const project: string[] = [];
+
+  for await (const file of files) {
+    if (selectConfig(file, config)) {
+      config = file.path;
+    } else if (!excludeFile(file)) {
+      logger.info(`Added directory "${file.path}".`);
+      project.push(file.path);
+    }
+  }
+
+  return [config, project] as const;
 }
 
 export async function run(): Promise<void> {
   logger.info('Compiling project...');
   const endTimer = utils.createTimer();
 
-  logger.trace('Finding files.');
-  const [configFile, dirs] = await findFiles();
+  logger.info('Looking for project files...');
+  const [configFile, project] = await getRootFiles(
+    lib.loadDir('.'),
+    (file, current) => {
+      if (!configFiles.includes(file.path)) return false;
+      if (!current) return true;
 
-  logger.trace('Running compile job for config.');
-  const compileConfig = tools.compile(
-    utils.appendPath.fromRoot(configFile),
-    utils.appendPath.fromOut(configFile).replace(/\.ts$/, '.js'),
+      return configFiles.indexOf(file.path) < configFiles.indexOf(current);
+    },
+    file => !file.isDirectory || /^(?:\..*|node_modules)$/.test(file.path),
   );
 
-  logger.trace('Running compile jobs for loaded dirs.');
-  const jobs = dirs.map(async dir => {
-    logger.debug(`Creating compile jobs for "${dir}"...`);
-    const compileEnd = utils.createTimer();
-    const compileJobs: Promise<void>[] = [];
-    const path = utils.appendPath.fromRoot(dir);
-    const files = await lib.loadDir(path, { recursive: true });
+  if (!configFile) {
+    logger.fatal(new Error('No config file found!'));
+    process.exit();
+  }
 
-    for await (const file of files!) {
-      logger.debug(`Using file: "${file.path}"`);
-      if (file.isDirectory) continue;
-      const compileJob = tools.compile(
-        file.path,
-        getOutPath(file.path).replace(/\.ts$/, '.js'),
-      );
-      compileJobs.push(compileJob);
+  let compiledFiles = 1;
+
+  logger.info(`Selected config file "${configFile}".`);
+  const compileConfig = compileFile(configFile);
+
+  logger.info('Compiling project...');
+  const compileProject = project.map(async dir => {
+    const files = lib.loadDir(dir, { recursive: true });
+    const compileJobs: Promise<void>[] = [];
+
+    for await (const file of files) {
+      if (file.isDirectory || !/\.[tj]s$/.test(file.path)) continue;
+      const job = compileFile(file.path);
+      compileJobs.push(job);
+      compiledFiles++;
+      logger.debug(`Added compile job for "${file.path}".`);
     }
 
-    logger.debug(`Finished creating compile jobs for "${dir}". Time took: ${compileEnd().toLocaleString()}ms`);
     return Promise.all(compileJobs);
   });
 
-  logger.debug('Waiting for compile jobs to finish...');
-  const compileEnd = utils.createTimer();
-  const files = await Promise.all([compileConfig, ...jobs] as Promise<void>[]);
-  logger.debug(`Compile jobs finished. Time took: ${compileEnd().toLocaleString()}ms`);
+  await Promise.all([
+    ...compileProject as unknown[],
+    compileConfig,
+  ]);
 
   logger.success(`Finished compiling project. Time took: ${endTimer().toLocaleString()}ms`);
-  logger.info(`Total file count: ${files.flat().length}`);
+  logger.info(`Total file count: ${compiledFiles}`);
 }
