@@ -18,32 +18,12 @@ function compileFile(filePath: string) {
   );
 }
 
-async function getRootFiles(
-  files: AsyncGenerator<lib.File> | Generator<lib.File>,
-  selectConfig: (file: lib.File, current: string | null) => boolean,
-  excludeFile: (file: lib.File) => boolean,
-) {
-  let config: string | null = null;
-  const project: string[] = [];
-
-  for await (const file of files) {
-    if (selectConfig(file, config)) {
-      config = file.path;
-    } else if (!excludeFile(file)) {
-      logger.info(`Added directory "${file.path}".`);
-      project.push(file.path);
-    }
-  }
-
-  return [config, project] as const;
-}
-
 export async function run(): Promise<void> {
   logger.info('Compiling project...');
   const endTimer = utils.createTimer();
 
   logger.info('Looking for project files...');
-  const [configFile, project] = await getRootFiles(
+  const [configFile, project] = await tools.findProjectFiles(
     lib.loadDir('.'),
     (file, current) => {
       if (!configFiles.includes(file.path)) return false;
