@@ -1,4 +1,5 @@
 import * as lib from '@chookscord/lib';
+import { basename } from 'path';
 
 const logger = lib.createLogger('[cli] Loader');
 
@@ -39,11 +40,13 @@ export function findConfigFile(
 ): FindConfig {
   return (file, current) => {
     if (file.isDirectory) return false;
+    const fileName = basename(file.path);
 
-    const fileIndex = configFiles.indexOf(file.path);
+    const fileIndex = configFiles.indexOf(fileName);
     if (fileIndex === -1) return false;
     if (!current) return true;
 
-    return configFiles.indexOf(current) < fileIndex;
+    const currentFile = basename(current);
+    return configFiles.indexOf(currentFile) < fileIndex;
   };
 }
