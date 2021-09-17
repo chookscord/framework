@@ -89,7 +89,7 @@ export interface Config {
   /** The intents your bot will use. */
   intents: IntentsString[];
   /** The discord server to register your slash commands to while developing. */
-  devServer: string;
+  devServer?: string;
   /** Custom helpers for text commands. */
   // message?: MessageHelpers;
   /** Extra client options. */
