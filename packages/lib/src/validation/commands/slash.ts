@@ -3,7 +3,7 @@ import * as validate from '@chookscord/validate';
 import { validateCommand, validateNonCommandOption } from '../base';
 
 export function validateSlashCommand(
-  command: types.ChooksSlashCommand,
+  command: types.ChooksCommand,
 ): validate.ValidationError {
   return validate.assert(
     command,
