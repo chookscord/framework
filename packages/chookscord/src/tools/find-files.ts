@@ -7,9 +7,14 @@ export type FoundFiles = [
   directories: string[],
 ];
 
+export type FindConfig = (
+  file: lib.File,
+  current: string | null
+) => boolean;
+
 export async function findProjectFiles(
   files: AsyncGenerator<lib.File> | Generator<lib.File>,
-  selectConfig: (file: lib.File, current: string | null) => boolean,
+  selectConfig: FindConfig,
   excludeFile: (file: lib.File) => boolean,
 ): Promise<FoundFiles> {
   let config: string | null = null;
