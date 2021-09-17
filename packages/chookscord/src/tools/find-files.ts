@@ -33,3 +33,17 @@ export async function findProjectFiles(
   logger.success(`Selected config file "${config}".`);
   return [config, fileList];
 }
+
+export function findConfigFile(
+  configFiles: string[],
+): FindConfig {
+  return (file, current) => {
+    if (file.isDirectory) return false;
+
+    const fileIndex = configFiles.indexOf(file.path);
+    if (fileIndex === -1) return false;
+    if (!current) return true;
+
+    return configFiles.indexOf(current) < fileIndex;
+  };
+}
