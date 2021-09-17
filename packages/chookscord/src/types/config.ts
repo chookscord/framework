@@ -90,13 +90,6 @@ export interface Config {
   intents: IntentsString[];
   /** The discord server to register your slash commands to while developing. */
   devServer: string;
-  /**
-   * The default prefix for text commands.
-   *
-   * You will need to add `GUILDS` and `GUILD_MESSAGES`
-   * to your intents in order to recieve guild message events.
-   */
-  prefix?: string;
   /** Custom helpers for text commands. */
   // message?: MessageHelpers;
   /** Extra client options. */
