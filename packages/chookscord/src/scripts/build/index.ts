@@ -26,7 +26,7 @@ export async function run(): Promise<void> {
   const [configFile, project] = await tools.findProjectFiles(
     lib.loadDir('.'),
     (file, current) => {
-      if (!configFiles.includes(file.path)) return false;
+      if (file.isDirectory || !configFiles.includes(file.path)) return false;
       if (!current) return true;
 
       return configFiles.indexOf(file.path) < configFiles.indexOf(current);
