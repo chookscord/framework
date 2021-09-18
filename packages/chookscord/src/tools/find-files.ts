@@ -13,6 +13,13 @@ export type FindConfig = (
   current: string | null
 ) => boolean;
 
+function normalizeFile(file: lib.File): lib.File {
+  return {
+    path: basename(file.path),
+    isDirectory: file.isDirectory,
+  };
+}
+
 export async function findProjectFiles(
   files: AsyncGenerator<lib.File> | Generator<lib.File>,
   selectConfig: FindConfig,
@@ -21,7 +28,8 @@ export async function findProjectFiles(
   let config: string | null = null;
   const fileList: string[] = [];
 
-  for await (const file of files) {
+  for await (let file of files) {
+    file = normalizeFile(file);
     if (selectConfig(file, config)) {
       logger.info(`Found config file "${file.path}".`);
       config = file.path;
@@ -40,13 +48,11 @@ export function findConfigFile(
 ): FindConfig {
   return (file, current) => {
     if (file.isDirectory) return false;
-    const fileName = basename(file.path);
 
-    const fileIndex = configFiles.indexOf(fileName);
+    const fileIndex = configFiles.indexOf(file.path);
     if (fileIndex === -1) return false;
     if (!current) return true;
 
-    const currentFile = basename(current);
-    return configFiles.indexOf(currentFile) < fileIndex;
+    return configFiles.indexOf(current) < fileIndex;
   };
 }

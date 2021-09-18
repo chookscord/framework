@@ -2,7 +2,6 @@
 process.env.NODE_ENV = 'production';
 import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
-import { basename } from 'path';
 import { getCommands } from './get-command';
 import { getConfig } from './get-config';
 import { registerCommands } from './register-commands';
@@ -15,7 +14,7 @@ function findProjectFiles() {
   return tools.findProjectFiles(
     lib.loadDir('.chooks'),
     tools.findConfigFile([tools.ConfigFile.JS]),
-    file => !dirs.includes(basename(file.path)),
+    file => !dirs.includes(file.path),
   );
 }
 
@@ -43,10 +42,9 @@ export async function run(): Promise<void> {
   const start = Date.now();
   logger.info('Getting all commands...');
 
-  const [configFileName, projectFiles] = await findProjectFiles();
-  checkConfigFile(configFileName);
+  const [configFile, projectFiles] = await findProjectFiles();
+  checkConfigFile(configFile);
 
-  const configFile = basename(configFileName);
   const project = await getProject(configFile, projectFiles);
   await registerCommands(project, { logger });
 
