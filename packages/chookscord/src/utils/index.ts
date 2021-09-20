@@ -1,3 +1,4 @@
+export * from './checks';
 export * from './is-same';
 export * from './append-path';
 export * from './debounce';

@@ -1,30 +1,7 @@
 /* eslint-disable complexity */
 import type * as types from '@chookscord/types';
-
-function eq<A, B extends A>(a: A, b: B): a is B {
-  return a === b;
-}
-
-function eachBoth<T>(
-  a: T[],
-  b: T[],
-  check: (a: T, b: T) => boolean,
-): boolean {
-  for (let i = 0, n = a.length; i < n; i++) {
-    if (check(a[i], b[i])) return true;
-  }
-  return false;
-}
-
-export function isChoiceChanged(
-  choice1: types.ChooksCommandOptionChoice,
-  choice2: types.ChooksCommandOptionChoice,
-): boolean {
-  return (
-    !eq(choice1.name, choice2.name) ||
-    !eq(choice1.value, choice2.value)
-  );
-}
+import { eachBoth, eq } from '../../utils';
+import { isChoiceChanged } from './choices';
 
 export function isOptionChanged(
   option1: types.ChooksCommandOption,

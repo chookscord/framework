@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, complexity, array-bracket-newline */
 import { ChooksCommand, ChooksCommandOption } from '@chookscord/types';
-import { keysAreSame } from './_object';
+import { keysAreSame } from '../checks';
 
 // @todo(Choooks22): lots of duplicated code, extract to functions
 export function slashCommandOptionChanged(
