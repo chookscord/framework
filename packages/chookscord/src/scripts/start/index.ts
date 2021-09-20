@@ -1,11 +1,11 @@
 /* eslint-disable complexity, consistent-return */
 process.env.NODE_ENV = 'production';
 import * as lib from '@chookscord/lib';
-import * as modules from './modules';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
+import { Config, ModuleContext } from '../../types';
+import { ModuleName, createModuleLoader } from './modules';
 import { Client } from 'discord.js';
-import { Config } from '../../types';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;
@@ -42,6 +42,11 @@ function createClient(config: Config): Client {
   });
 }
 
+const moduleNames: ModuleName[] = ['events', 'commands', 'subcommands'];
+function isModule(name: string): name is ModuleName {
+  return moduleNames.includes(name as never);
+}
+
 export async function run(): Promise<void> {
   logger.info('Starting in production mode...');
   const endTimer = utils.createTimer();
@@ -61,13 +66,13 @@ export async function run(): Promise<void> {
   const client = createClient(config);
 
   logger.trace('Loading modules.');
-  for (const dir of projectFiles) {
-    if (!(dir in modules)) continue;
-    // @ts-ignore Should extract type and omit unneeded `register` method.
-    modules[dir as keyof typeof modules].init({
-      ctx: { client, config, fetch },
-      input: utils.appendPath.fromOut(dir),
-    });
+  const ctx: ModuleContext = { client, config, fetch };
+  const loadModule = createModuleLoader(ctx);
+
+  for (const moduleName of projectFiles) {
+    if (isModule(moduleName)) {
+      loadModule(moduleName);
+    }
   }
 
   logger.info('Client logging in...');

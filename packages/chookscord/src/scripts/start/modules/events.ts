@@ -26,14 +26,12 @@ function bindExecuteHandler(
   }) as (...args: unknown[]) => void;
 }
 
-export async function init(
-  config: Omit<types.ModuleConfig, 'output'>,
+export async function loadEvents(
+  ctx: types.ModuleContext,
+  rootPath: string,
 ): Promise<void> {
-  const ctx = config.ctx;
-  const files = lib.loadDir(config.input);
-
   const loadEvent = async (filePath: string): Promise<void> => {
-    const path = filePath.slice(config.input.length);
+    const path = filePath.slice(rootPath.length);
     logger.info(`Loading event file "${path}"...`);
     const endTimer = utils.createTimer();
 
@@ -53,6 +51,7 @@ export async function init(
   };
 
   logger.trace('Loading files.');
+  const files = lib.loadDir(rootPath);
   for await (const file of files) {
     if (file.isDirectory) continue;
     loadEvent(file.path);
