@@ -1,9 +1,9 @@
-import type { ChooksCommand, ChooksCommandOption, ChooksCommandOptionType } from './base';
+import type { ChooksCommand, ChooksCommandContext, ChooksCommandOption, ChooksCommandOptionType } from './base';
 
 export interface ChooksSlashCommand extends ChooksCommand {
   type?: 'CHAT_INPUT';
   options?: ChooksNonCommandOption[];
-  execute(ctx: ChooksSlashCommandContext): unknown;
+  execute(ctx: ChooksCommandContext): unknown;
 }
 
 export interface ChooksSubCommand extends ChooksCommand {
@@ -24,13 +24,10 @@ export type ChooksNonCommandOption = ChooksCommandOptionWithChoice | ChooksComma
 export interface ChooksSubCommandOption extends Omit<ChooksCommandOption, 'type' | 'choices'> {
   type: 'SUB_COMMAND';
   options?: ChooksNonCommandOption[];
-  execute(ctx: ChooksSlashCommandContext): unknown;
+  execute(ctx: ChooksCommandContext): unknown;
 }
 
 export interface ChooksGroupCommandOption extends Omit<ChooksCommandOption, 'type' | 'choices'> {
   type: 'SUB_COMMAND_GROUP';
   options: ChooksSubCommandOption[];
-}
-
-export interface ChooksSlashCommandContext {
 }

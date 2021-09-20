@@ -4,3 +4,4 @@ extends:
 rules:
   '@typescript-eslint/method-signature-style': 'off'
   camelcase: 'off'
+  object-curly-newline: 'off'
