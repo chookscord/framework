@@ -3,7 +3,7 @@ import type { Consola } from 'consola';
 import type { FetchUtil } from '@chookscord/lib';
 
 declare module '@chookscord/types' {
-  interface ChooksSlashCommandContext {
+  interface ChooksCommandContext {
     client: Client<true>;
     logger: Consola;
     fetch: FetchUtil;
