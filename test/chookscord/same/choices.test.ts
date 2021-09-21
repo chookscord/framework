@@ -17,6 +17,11 @@ describe('checking updated choices', () => {
   it('returns true for changed basic structure', () => {
     expect(tools.didChoiceChanged(
       choice,
+      null,
+    )).toBe(true);
+
+    expect(tools.didChoiceChanged(
+      choice,
       { ...choice, name: 'bar' },
     )).toBe(true);
 

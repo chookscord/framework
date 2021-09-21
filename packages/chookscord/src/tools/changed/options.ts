@@ -5,9 +5,10 @@ import { didChoiceChanged } from './choices';
 
 export function didOptionChanged(
   option1: types.ChooksCommandOption,
-  option2: types.ChooksCommandOption,
+  option2: types.ChooksCommandOption | null,
 ): boolean {
   return (
+    eq(option2, null) ||
     !eq(option1.name, option2.name) ||
     !eq(option1.description, option2.description) ||
     !eq(option1.type, option2.type) ||

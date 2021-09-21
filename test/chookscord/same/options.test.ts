@@ -33,6 +33,11 @@ describe('checking updated options', () => {
   it('returns true for changed basic structure', () => {
     expect(tools.didOptionChanged(
       opt,
+      null,
+    )).toBe(true);
+
+    expect(tools.didOptionChanged(
+      opt,
       { ...opt, name: 'bar' },
     )).toBe(true);
 

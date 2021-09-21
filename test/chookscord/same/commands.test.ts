@@ -43,6 +43,11 @@ describe('checking updated commands', () => {
   it('returns true for changed basic structure', () => {
     expect(tools.didCommandChanged(
       command,
+      null,
+    )).toBe(true);
+
+    expect(tools.didCommandChanged(
+      command,
       { ...command, name: 'bar' },
     )).toBe(true);
 
