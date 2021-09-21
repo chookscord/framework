@@ -1,4 +1,4 @@
-import type { Client } from 'discord.js';
+import type { Awaited, Client } from 'discord.js';
 import type { Config } from '.';
 import type { FetchUtil } from '@chookscord/lib';
 
@@ -16,3 +16,9 @@ export interface ModuleConfig {
 }
 
 export type ReloadModule = (ctx: ModuleContext) => unknown;
+
+export interface ModuleLoader {
+  init?: () => Awaited<void>;
+  update?: (filePath: string) => Awaited<void>;
+  remove?: (filePath: string) => Awaited<void>;
+}
