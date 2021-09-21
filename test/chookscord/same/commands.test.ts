@@ -14,59 +14,59 @@ const option: types.ChooksCommandOption = {
 
 describe('checking updated commands', () => {
   it('returns false for unchanged basic structure', () => {
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command },
     )).toBe(false);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command, type: 'CHAT_INPUT' },
     )).toBe(false);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command, execute() {} },
     )).toBe(false);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command, options: [] },
     )).toBe(false);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       { ...command, options: [option] },
       { ...command, options: [option] },
     )).toBe(false);
   });
 
   it('returns true for changed basic structure', () => {
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command, name: 'bar' },
     )).toBe(true);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command, description: 'bar' },
     )).toBe(true);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command, type: 'MESSAGE' },
     )).toBe(true);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command, defaultPermission: true },
     )).toBe(true);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       command,
       { ...command, options: [option] },
     )).toBe(true);
 
-    expect(tools.isCommandChanged(
+    expect(tools.didCommandChanged(
       { ...command, options: [option] },
       { ...command, options: [{ ...option, type: 'NUMBER' }] },
     )).toBe(true);

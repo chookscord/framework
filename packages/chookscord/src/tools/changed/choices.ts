@@ -1,7 +1,7 @@
 import type * as types from '@chookscord/types';
 import { eq } from '../../utils';
 
-export function isChoiceChanged(
+export function didChoiceChanged(
   choice1: types.ChooksCommandOptionChoice,
   choice2: types.ChooksCommandOptionChoice,
 ): boolean {

@@ -1,9 +1,9 @@
 /* eslint-disable complexity */
 import type * as types from '@chookscord/types';
 import { eachBoth, eq } from '../../utils';
-import { isChoiceChanged } from './choices';
+import { didChoiceChanged } from './choices';
 
-export function isOptionChanged(
+export function didOptionChanged(
   option1: types.ChooksCommandOption,
   option2: types.ChooksCommandOption,
 ): boolean {
@@ -17,12 +17,12 @@ export function isOptionChanged(
     eachBoth(
       option1.choices ?? [],
       option2.choices ?? [],
-      isChoiceChanged,
+      didChoiceChanged,
     ) ||
     eachBoth(
       option1.options ?? [],
       option2.options ?? [],
-      isOptionChanged,
+      didOptionChanged,
     )
   );
 }
