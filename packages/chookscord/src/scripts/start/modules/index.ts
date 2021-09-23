@@ -1,13 +1,10 @@
 import * as lib from '@chookscord/lib';
 import type * as types from '@chookscord/types';
 import * as utils from '../../../utils';
+import type { ModuleContext, ModuleName } from '../../../types';
 import type { CommandInteraction } from 'discord.js';
-import type { ModuleContext } from '../../../types';
 
 export type CommandHandler = Exclude<types.ChooksCommand['execute'], undefined>;
-
-export type InteractionName = 'commands' | 'subcommands';
-export type ModuleName = InteractionName | 'events';
 
 const logger = lib.createLogger('[cli] Modules');
 

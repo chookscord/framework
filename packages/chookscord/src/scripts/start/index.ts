@@ -3,9 +3,9 @@ process.env.NODE_ENV = 'production';
 import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
-import { Config, ModuleContext } from '../../types';
-import { ModuleName, createModuleLoader } from './modules';
+import type { Config, ModuleContext, ModuleName } from '../../types';
 import { Client } from 'discord.js';
+import { createModuleLoader } from './modules';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;

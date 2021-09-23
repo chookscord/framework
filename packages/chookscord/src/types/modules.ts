@@ -22,3 +22,5 @@ export interface ModuleLoader {
   update?: (filePath: string) => Awaited<void>;
   remove?: (filePath: string) => Awaited<void>;
 }
+
+export type ModuleName = 'commands' | 'subcommands' | 'events';
