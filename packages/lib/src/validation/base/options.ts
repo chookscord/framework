@@ -133,6 +133,19 @@ export function validateOption(
     },
   ) ??
   validate.assert(
+    option.name,
+    validate.testCommandName,
+  ) ??
+  validate.assert(
+    option.description,
+    validate.testDescription,
+  ) ??
+  validate.assert(
+    option.description.length ?? 0,
+    validate.inRange(0, 100),
+    'Invalid description length.',
+  ) ??
+  validate.assert(
     option.options?.length ?? 0,
     validate.inRange(0, 25),
     'Invalid options size.',

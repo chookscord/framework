@@ -49,6 +49,65 @@ describe('validating options', () => {
   });
 
   describe('invalid structures', () => {
+    describe('invalid name', () => {
+      test('no name', () => {
+        const error = lib.validateOption({
+          name: '',
+          description: 'foo',
+          type: 'STRING',
+        });
+        expect(error).toBeTruthy();
+      });
+
+      test('uppercase in name', () => {
+        const error = lib.validateOption({
+          name: 'Foo',
+          description: 'foo',
+          type: 'STRING',
+        });
+        expect(error).toBeTruthy();
+      });
+
+      test('invalid character in name', () => {
+        const error = lib.validateOption({
+          name: 'with space',
+          description: 'foo',
+          type: 'STRING',
+        });
+        expect(error).toBeTruthy();
+      });
+
+      test('long name', () => {
+        const error = lib.validateOption({
+          // length > 32
+          name: 'laoreetnoncurabiturgravidaarcuactortor',
+          description: 'foo',
+          type: 'STRING',
+        });
+        expect(error).toBeTruthy();
+      });
+    });
+
+    describe('invalid description', () => {
+      test('no description', () => {
+        const error = lib.validateOption({
+          name: 'foo',
+          description: '',
+          type: 'STRING',
+        });
+        expect(error).toBeTruthy();
+      });
+
+      test('long description', () => {
+        const error = lib.validateOption({
+          name: 'foo',
+          description: 'laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean et tortor at risus viverra adipiscing at in tellus integer',
+          type: 'STRING',
+        });
+        expect(error).toBeTruthy();
+      });
+    });
+
     describe('invalid nesting', () => {
       test('nesting group commands', () => {
         const error = lib.validateGroupCommandOption({
