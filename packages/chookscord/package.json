@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./discordjs": "./dist/djs.js"
+    "./discordjs": "./dist/djs.js",
+    "./types": "./dist/types/index.js"
   },
   "typesVersions": {
     "*": {
