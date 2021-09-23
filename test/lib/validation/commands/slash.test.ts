@@ -91,7 +91,6 @@ describe('validating slash commands', () => {
     });
 
     test('no execute', () => {
-      // @ts-expect-error testing
       const error = lib.validateSlashCommand({
         name: 'foo',
         description: 'foo',
@@ -103,7 +102,6 @@ describe('validating slash commands', () => {
       test('nested subcommand', () => {
         const error = lib.validateSlashCommand({
           ...command,
-          // @ts-expect-error testing
           options: [
             {
               name: 'foo',
@@ -119,7 +117,6 @@ describe('validating slash commands', () => {
       test('nested subcommand group', () => {
         const error = lib.validateSlashCommand({
           ...command,
-          // @ts-expect-error testing
           options: [
             {
               name: 'foo',
