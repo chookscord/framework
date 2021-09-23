@@ -1,4 +1,5 @@
 export * from './changed';
+export * from './client';
 export * from './compile';
 export * from './config';
 export * from './find-files';

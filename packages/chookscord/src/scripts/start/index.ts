@@ -34,14 +34,6 @@ function validateConfig(config: Config) {
   }
 }
 
-// Duplicated in scripts/dev
-function createClient(config: Config): Client {
-  return new Client({
-    ...config.client?.config,
-    intents: config.intents,
-  });
-}
-
 const moduleNames: ModuleName[] = ['events', 'commands', 'subcommands'];
 function isModule(name: string): name is ModuleName {
   return moduleNames.includes(name as never);
@@ -63,7 +55,7 @@ export async function run(): Promise<void> {
   validateConfig(config);
 
   logger.trace('Creating client.');
-  const client = createClient(config);
+  const client = tools.createClient(config);
 
   logger.trace('Loading modules.');
   const ctx: ModuleContext = { client, config, fetch };
