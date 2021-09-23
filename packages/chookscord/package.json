@@ -15,7 +15,7 @@
         "./dist/djs.d.ts"
       ],
       "types": [
-        "./dist/types/index.d.ts"
+        "./dist/types/public.d.ts"
       ]
     }
   },
