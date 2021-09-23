@@ -309,15 +309,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chookscord/lib@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@chookscord/lib/-/lib-0.10.0.tgz#ec62848d8c02ebcd39279ca3c99258565625cc30"
-  integrity sha512-uC3wI3u5JpmEybWXXuiq6HwPfly7cIDU5fx966zCWIcdAvgp+DaEdaLKZhjd3/UyBtuL2dZsjM+tZ1RwTuYmAg==
-  dependencies:
-    "@types/node-fetch" "^2.5.12"
-    chalk "^4.1.2"
-    consola "^2.15.3"
-
 "@chookslint/eslint-config-typescript@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@chookslint/eslint-config-typescript/-/eslint-config-typescript-1.0.2.tgz#296ad9612e542ef05b45f142aff9a49a6cf9a618"
