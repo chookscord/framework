@@ -5,19 +5,26 @@ export enum ConfigFile {
   JSDev = 'chooks.config.dev.js',
 }
 
-const devConfigFiles = [
-  ConfigFile.TSDev,
-  ConfigFile.JSDev,
-] as const;
-
-const configFiles = [
+export function getConfigFiles(dev?: false): [
   ConfigFile.TS,
   ConfigFile.JS,
-] as const;
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function getConfigFiles(dev: boolean) {
+];
+export function getConfigFiles(dev: true): [
+  ConfigFile.TSDev,
+  ConfigFile.JSDev,
+  ConfigFile.TS,
+  ConfigFile.JS,
+];
+export function getConfigFiles(dev?: boolean): ConfigFile[] {
   return dev
-    ? [...devConfigFiles, ...configFiles] as const
-    : configFiles;
+    ? [
+        ConfigFile.TSDev,
+        ConfigFile.JSDev,
+        ConfigFile.TS,
+        ConfigFile.JS,
+      ]
+    : [
+        ConfigFile.TS,
+        ConfigFile.JS,
+      ];
 }
