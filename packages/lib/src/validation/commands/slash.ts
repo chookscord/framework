@@ -1,6 +1,7 @@
 import type * as types from '@chookscord/types';
 import * as validate from '@chookscord/validate';
-import { validateCommand, validateNonCommandOption } from '../base';
+import { validateCommand } from '../base';
+import { validateNonCommandOption } from '../options';
 
 export function validateSlashCommand(
   command: types.ChooksCommand,
