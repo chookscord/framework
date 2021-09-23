@@ -61,6 +61,11 @@ export class Store<T> {
       : this._store.values();
   }
 
+  public entries(): Iterable<[key: string, value: T]> {
+    this._logger?.debug('Entries');
+    return this._store.entries();
+  }
+
   public toArray(opts?: GetOptions): T[] {
     this._logger?.debug('ToArray');
     return [...this.getAll(opts)];
