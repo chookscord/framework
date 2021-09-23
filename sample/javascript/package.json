@@ -9,6 +9,6 @@
     "register": "chooks register"
   },
   "dependencies": {
-    "chookscord": "^0.10.0"
+    "chookscord": "^0.11.0"
   }
 }
