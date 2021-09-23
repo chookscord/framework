@@ -1,5 +1,6 @@
-import { assert, inRange, isType } from '../tests';
+import { inRange, isType } from '../utils';
 import type { ValidationError } from '../types';
+import { assert } from '../tests';
 
 export function testDescription(desc: string): ValidationError {
   return (

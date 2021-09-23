@@ -1,119 +1,59 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion, prefer-const */
 process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
-import * as modules from './modules';
 import * as tools from '../../tools';
-import type * as types from '../../types';
 import * as utils from '../../utils';
-import { configFiles, createConfigLoader } from './config';
-import { Client } from 'discord.js';
+import type { ModuleName } from '../../types';
+import { WatchCompiler } from './compiler';
+import { createModuleLoader } from './loaders/modules';
+import { loadConfig } from './loaders/config';
 
 const logger = lib.createLogger('[cli] Chooks');
-const fetch = lib.fetch;
 
-function createClient(config: types.Config): Client {
-  const client = new Client({
-    ...config.client?.config,
-    intents: config.intents,
-  });
-
-  return client;
+function findFiles() {
+  return tools.findProjectFiles(
+    lib.loadDir('.'),
+    tools.findConfigFile(tools.getConfigFiles(true)),
+    file => !file.isDirectory || /^(\..*|node_modules$)/.test(file.path),
+  );
 }
 
-function *loadModules(
-  ctx: types.ModuleContext,
-  addedModules: (keyof typeof modules.commandModules)[],
-  store: lib.Store<lib.SlashCommand>,
-  register: () => unknown,
-): Iterable<Promise<types.ReloadModule> | null> {
-  logger.info(`Loading ${addedModules.length} modules...`);
-  const endTimer = utils.createTimer();
-  for (const moduleName of addedModules) {
-    logger.info(`Loading "${moduleName}"...`);
-
-    const config: types.ModuleConfig = {
-      ctx: { ...ctx },
-      input: utils.appendPath.fromRoot(moduleName),
-      output: utils.appendPath.fromOut(moduleName),
-      register,
-    };
-
-    yield (moduleName as string) === 'events'
-      ? modules.loadEvents(config)
-      : modules.loadCommands(config, moduleName, store);
-  }
-
-  logger.success(`Loaded ${addedModules.length} modules. Time took: ${endTimer().toLocaleString()}`);
+const modules: ModuleName[] = ['events', 'commands', 'subcommands'];
+function isModule(moduleName: string): moduleName is ModuleName {
+  return modules.includes(moduleName as never);
 }
 
 export async function run(): Promise<void> {
-  logger.info('Starting...');
   const endTimer = utils.createTimer();
+  logger.info('Starting...');
 
-  // @todo(Choooks22): Fix this this is ugly
-  logger.trace('Creating commands store...');
-  const store = new lib.Store<lib.SlashCommand>('Commands');
+  logger.trace('Loading files...');
+  const [configFile, projectFiles] = await findFiles();
 
-  logger.trace('Finding files...');
-  const [configFile, addedModules] = await tools.findFiles({
-    path: process.cwd(),
-    configFiles,
-    directories: ['events', ...Object.keys(modules.commandModules)],
-  });
-  logger.debug(`Config file: "${configFile}"`);
-  logger.debug(`Modules loaded: ${addedModules.map(module => `[${module}]`).join(' ')}`);
+  logger.trace('Loading config...');
+  const config = await loadConfig(configFile);
 
-  if (!configFile) {
-    logger.fatal(new Error('Could not find a config file!'));
-    process.exit();
-  }
+  logger.trace('Creating client...');
+  const client = tools.createClient(config);
+  const login = client.login(config.credentials.token);
 
-  let client: Client;
-  let register: lib.RegisterInteraction;
-  const loadedModules: (types.ReloadModule | null)[] = [];
-  const _reload = (config: types.Config) => {
-    // @todo(Choooks22): Detect changes in config relevant for the client
-    // and recreate it if necessary.
-    for (const reloadModule of loadedModules) {
-      reloadModule?.({ client, config, fetch });
+  logger.trace('Loading modules...');
+  const loadModule = createModuleLoader(client, config);
+
+  for (const moduleName of projectFiles) {
+    if (isModule(moduleName)) {
+      loadModule(moduleName);
+    } else {
+      // eslint-disable-next-line no-new
+      new WatchCompiler({
+        root: utils.appendPath.fromRoot(),
+        input: moduleName,
+        output: `.chooks/${moduleName}`,
+      });
     }
-  };
-
-  logger.trace('Creating config loader.');
-  const config = await createConfigLoader({
-    inputFile: utils.appendPath.fromRoot(configFile),
-    outputPath: utils.appendPath.fromOut(),
-    onReload: _reload,
-  });
-
-  register = lib.createInteractionRegister({
-    ...config.credentials,
-    guildId: config.devServer,
-  });
-
-  const registerCommands = utils.debounce(
-    utils.registerCommands,
-    250,
-    register,
-    store,
-  );
-
-  logger.trace('Creating client.');
-  client = createClient(config);
-  const ctx = { client, config, fetch };
-
-  // @todo(Choooks22): Cleanup on this part
-  for (const reloadModule of loadModules(
-    ctx,
-    addedModules as (keyof typeof modules.commandModules)[],
-    store,
-    registerCommands,
-  )) {
-    loadedModules.push(await reloadModule);
   }
 
-  logger.info('Client logging in...');
-  await client.login(config.credentials.token);
-  logger.success('Client successfully logged in!');
-  logger.info(`Startup time: ${endTimer().toLocaleString()}ms`);
+  logger.debug('Waiting for login...');
+  await login;
+
+  logger.success(`Startup time: ${endTimer().toLocaleString()}ms`);
 }

@@ -1,54 +1,59 @@
 import * as lib from '..';
-import { logger } from './_logger';
-import { validateOption } from '../validation/slash-commands/_option';
+import {
+  ChooksCommand,
+  ChooksCommandOption,
+  DiscordCommand, DiscordCommandOption, DiscordCommandOptionType, DiscordCommandType,
+} from '@chookscord/types';
 
-function prepareOption(option: lib.CommandOption & { choices?: lib.CommandChoice[] }): lib.ApplicationOption {
-  const error = validateOption(option);
-  if (error) {
-    throw new Error(error);
-  }
-
-  const subOptions = (option as lib.SubCommandOption).options;
-
-  return {
-    name: option.name,
-    description: option.description,
-    type: lib.CommandOptionType[option.type],
-    choices: option.choices,
-    required: option.required,
-    options: subOptions?.length
-      ? subOptions.map(prepareOption)
-      : undefined,
-  };
+function condAppend<T, K extends keyof T>(
+  object: T,
+  key: K,
+  value: T[K] | undefined,
+): T {
+  return value === undefined
+    ? object
+    : { ...object, [key]: value };
 }
 
-function prepareCommand(command: lib.SlashCommand): lib.ApplicationSlashCommand {
-  const error = lib.validateBaseCommand(command);
-  if (error) {
-    throw new Error(error);
-  }
+function prepareOption(option: ChooksCommandOption): DiscordCommandOption {
+  let appOption = {} as DiscordCommandOption;
 
-  return {
-    type: lib.CommandType.CHAT_INPUT,
-    description: command.description,
-    name: command.name,
-    options: command.options?.length
-      ? command.options.map(prepareOption)
-      : undefined,
-  };
+  appOption = condAppend(appOption, 'name', option.name);
+  appOption = condAppend(appOption, 'description', option.description);
+  appOption = condAppend(appOption, 'type', DiscordCommandOptionType[option.type]);
+  appOption = condAppend(appOption, 'choices', option.choices);
+  appOption = condAppend(appOption, 'required', option.required);
+  appOption = condAppend(appOption, 'options', option.options?.length
+    ? option.options.map(prepareOption)
+    : undefined);
+
+  return appOption;
+}
+
+function prepareCommand(command: ChooksCommand): DiscordCommand {
+  let appCommand = { type: DiscordCommandType.CHAT_INPUT } as DiscordCommand;
+
+  appCommand = condAppend(appCommand, 'name', command.name);
+  appCommand = condAppend(appCommand, 'description', command.description);
+  appCommand = condAppend(appCommand, 'options', command.options?.length
+    ? command.options.map(prepareOption)
+    : undefined);
+
+  return appCommand;
 }
 
 export function prepareCommands(
-  commands: Iterable<lib.SlashCommand>,
-): lib.BaseApplicationCommand[] {
-  logger.info('Preparing commands...');
+  commands: Iterable<ChooksCommand>,
+  options: Partial<lib.Logger> = {},
+): DiscordCommand[] {
+  options.logger?.info('Preparing commands...');
   let counter = 0;
-  const preparedCommands: lib.ApplicationSlashCommand[] = [];
+  const preparedCommands: DiscordCommand[] = [];
   for (const command of commands) {
     const appCommand = prepareCommand(command);
     preparedCommands.push(appCommand);
-    logger.debug(`Prepared ${++counter} commands.`);
+    options.logger?.debug(`Prepared ${++counter} commands.`);
   }
-  logger.info(`${counter} commands prepared.`);
+  options.logger?.info(`${counter} commands prepared.`);
   return preparedCommands;
 }

@@ -41,7 +41,7 @@ export interface File {
 export async function *loadDir(
   dirPath: string,
   options?: LoadDirOptions,
-): AsyncIterable<File> | Promise<null> {
+): AsyncGenerator<File> {
   logger.debug(`Reading ${dirPath}...`);
   const dir = await openDir(dirPath);
 

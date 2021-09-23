@@ -16,11 +16,26 @@ export default defineSubCommand({
     },
     {
       name: 'hello',
+      type: 'SUB_COMMAND_GROUP', // Mixing subcommand groups are OK!
       description: 'Says hello.',
-      type: 'SUB_COMMAND',
-      async execute({ interaction }) {
-        await interaction.reply('Hello!');
-      },
+      options: [
+        {
+          name: 'there',
+          description: 'Says hello there.',
+          type: 'SUB_COMMAND',
+          async execute({ interaction }) {
+            await interaction.reply('Hello there!');
+          },
+        },
+        {
+          name: 'world',
+          description: 'Says hello world.',
+          type: 'SUB_COMMAND',
+          async execute({ interaction }) {
+            await interaction.reply('Hello, world!');
+          },
+        },
+      ],
     },
   ],
 });

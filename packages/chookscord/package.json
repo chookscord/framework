@@ -1,9 +1,24 @@
 {
   "name": "chookscord",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "The Easiest Discord.JS Framework by far.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./discordjs": "./dist/djs.js",
+    "./types": "./dist/types/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "discordjs": [
+        "./dist/djs.d.ts"
+      ],
+      "types": [
+        "./dist/types/public.d.ts"
+      ]
+    }
+  },
   "bin": {
     "chooks": "dist/bin/chooks.js"
   },
@@ -16,7 +31,8 @@
     "dev": "yarn build --watch"
   },
   "dependencies": {
-    "@chookscord/lib": "^0.10.0",
+    "@chookscord/lib": "^0.11.0",
+    "@chookscord/types": "^0.2.0",
     "@swc/core": "^1.2.81",
     "@swc/helpers": "^0.2.13",
     "chokidar": "^3.5.2",

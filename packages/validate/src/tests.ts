@@ -1,21 +1,47 @@
-import type { Primitive, ValidationError } from './types';
+import type { ValidationError } from './types';
+import { isType } from './utils';
 
-export function testRegex(regex: RegExp): (value: string) => boolean {
-  return value => regex.test(value);
-}
-
-export function inRange(min: number, max: number): (value: number) => boolean {
-  return value => min <= value && value <= max;
-}
-
-export function isType<T>(type: Primitive): (value: T) => boolean {
-  return value => typeof value === type;
-}
-
-export function assert<T>(value: T, test: (value: T) => ValidationError): ValidationError;
-export function assert<T>(value: T, test: (value: T) => boolean, message: string): ValidationError;
-export function assert<T>(value: T, test: (value: T) => (ValidationError | boolean), message?: string): ValidationError {
-  return message
-    ? test(value) ? null : message
+export function assert<T>(
+  value: T,
+  test: (value: T) => ValidationError
+): ValidationError;
+export function assert<T>(
+  value: T,
+  test: (value: T) => boolean,
+  message: string
+): ValidationError;
+export function assert<T>(
+  value: T,
+  test: (value: T) => (ValidationError | boolean),
+  message?: string,
+): ValidationError {
+  return arguments.length === 3
+    ? test(value) ? null : message!
     : test(value) as ValidationError;
+}
+
+export function testEach<T>(
+  validate: (option: T) => ValidationError,
+): (options: T[]) => ValidationError;
+export function testEach<T>(
+  validate: (option: T) => ValidationError,
+  list: T[],
+): ValidationError;
+export function testEach<T>(
+  validate: (option: T) => ValidationError,
+  list?: T[],
+): ValidationError | ((options: T[]) => ValidationError) {
+  if (!list) {
+    return x => testEach(validate, x);
+  }
+
+  const errors = list.map(validate);
+  return errors.some(isType('string'))
+    ? errors.reduce(
+      (messages, message, i) => message
+        ? `${messages}\n  [${i}] ${message}`
+        : messages,
+      'Errors:',
+    )
+    : null;
 }

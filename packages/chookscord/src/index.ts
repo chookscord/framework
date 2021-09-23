@@ -1,3 +1,2 @@
-export * from './types';
+export * from './types/public';
 export * from './definitions';
-export * from 'discord.js';

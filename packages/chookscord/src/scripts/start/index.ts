@@ -1,65 +1,42 @@
 /* eslint-disable complexity, consistent-return */
 process.env.NODE_ENV = 'production';
 import * as lib from '@chookscord/lib';
-import * as modules from './modules';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
+import type { Config, ModuleContext, ModuleName } from '../../types';
 import { Client } from 'discord.js';
-import { Config } from '../../types';
+import { createModuleLoader } from './modules';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;
 
-// Duplicated code again, from scripts/dev
-async function findFiles(): Promise<[configFile: string, dirs: string[]]> {
-  try {
-    const [configFile, dirs] = await tools.findFiles({
-      path: utils.appendPath.fromOut(),
-      configFiles: ['chooks.config.js'],
-      directories: ['commands', 'events', 'subcommands'],
-    });
+function findFiles() {
+  return tools.findProjectFiles(
+    lib.loadDir('.chooks'),
+    tools.findConfigFile([tools.ConfigFile.JS]),
+    () => false,
+  );
+}
 
-    if (!configFile) {
-      logger.fatal('Config file does not exist!');
-      process.exit();
-    }
-
-    return [configFile, dirs];
-  } catch (error) {
-    logger.fatal(error);
+// Duplicated in scripts/register
+function checkConfigFile(fileName: string | null): asserts fileName {
+  if (!fileName) {
+    logger.fatal(new Error('Missing config file!'));
     process.exit();
   }
 }
 
-// Duplicated in scripts/register
-function validateConfig(config: Config): string | null {
-  if (JSON.stringify(config) === '{}') {
-    return 'Config file does not have a default export!';
+function validateConfig(config: Config) {
+  const validationError = tools.validateConfig(config, false);
+  if (validationError) {
+    logger.fatal(new Error(validationError));
+    process.exit();
   }
-
-  if (!config.credentials) {
-    return 'No credentials found in config!';
-  }
-
-  if (!config.credentials.token || !config.credentials.applicationId) {
-    return 'Missing credentials!';
-  }
-
-  if (!Array.isArray(config.intents)) {
-    return 'No intents provided!';
-  }
-
-  return null;
 }
 
-// Duplicated in scripts/dev
-function createclient(config: Config): Client {
-  const client = new Client({
-    ...config.client?.config,
-    intents: config.intents,
-  });
-
-  return client;
+const moduleNames: ModuleName[] = ['events', 'commands', 'subcommands'];
+function isModule(name: string): name is ModuleName {
+  return moduleNames.includes(name as never);
 }
 
 export async function run(): Promise<void> {
@@ -67,30 +44,27 @@ export async function run(): Promise<void> {
   const endTimer = utils.createTimer();
 
   logger.trace('Finding files.');
-  const [configFile, dirs] = await findFiles();
+  const [configFile, projectFiles] = await findFiles();
+  checkConfigFile(configFile);
 
   logger.trace('Loading config.');
   const configPath = utils.appendPath.fromOut(configFile);
   const config = await utils.importDefault<Config>(configPath);
 
   logger.trace('Validating config.');
-  const configError = validateConfig(config);
-  if (configError) {
-    logger.fatal(new Error(configError));
-    process.exit();
-  }
+  validateConfig(config);
 
   logger.trace('Creating client.');
-  const client = createclient(config);
+  const client = tools.createClient(config);
 
   logger.trace('Loading modules.');
-  for (const dir of dirs) {
-    if (!(dir in modules)) continue;
-    // @ts-ignore Should extract type and omit unneeded `register` method.
-    modules[dir as keyof typeof modules].init({
-      ctx: { client, config, fetch },
-      input: utils.appendPath.fromOut(dir),
-    });
+  const ctx: ModuleContext = { client, config, fetch };
+  const loadModule = createModuleLoader(ctx);
+
+  for (const moduleName of projectFiles) {
+    if (isModule(moduleName)) {
+      loadModule(moduleName);
+    }
   }
 
   logger.info('Client logging in...');

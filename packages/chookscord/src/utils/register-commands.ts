@@ -1,9 +1,10 @@
 import * as lib from '@chookscord/lib';
+import { ChooksCommand } from '@chookscord/types';
 
 const logger = lib.createLogger('[cli] Register');
 export async function registerCommands(
   register: lib.RegisterInteraction,
-  store: lib.Store<lib.SlashCommand>,
+  store: lib.Store<ChooksCommand>,
 ): Promise<void> {
   logger.info('Preparing commands...');
   const commands = lib.prepareCommands(store.getAll());
@@ -11,9 +12,9 @@ export async function registerCommands(
 
   try {
     logger.info(`Registering ${commands.length} commands...`);
-    const ok = await register(commands);
+    const res = await register(commands);
 
-    if (ok) {
+    if (res && typeof res !== 'function') {
       logger.success(`Successfully registered ${commands.length} commands.`);
     } else {
       logger.warn('Could not register commands.');

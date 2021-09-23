@@ -1,0 +1,24 @@
+{
+  "name": "@chookscord/types",
+  "version": "0.2.0",
+  "main": "dist/discord.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chookscord/framework.git",
+    "directory": "packages/types"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc --outDir dist",
+    "build:decl": "npx tsc --outDir dist -p tsconfig.types.json",
+    "clean-build": "rm -rf dist && yarn build && yarn build:decl",
+    "dev": "concurrently 'yarn build --watch' 'yarn build:decl --watch'"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

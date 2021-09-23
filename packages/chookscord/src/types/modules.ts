@@ -1,6 +1,14 @@
-import { EventContext } from '@chookscord/lib';
+import type { Awaited, Client } from 'discord.js';
+import type { ChooksCommand } from '@chookscord/types';
+import type { Config } from '.';
+import type { FetchUtil } from '@chookscord/lib';
 
-export type ModuleContext = Omit<EventContext, 'logger'>;
+export interface ModuleContext {
+  client: Client;
+  config: Config;
+  fetch: FetchUtil;
+}
+
 export interface ModuleConfig {
   input: string;
   output: string;
@@ -9,3 +17,16 @@ export interface ModuleConfig {
 }
 
 export type ReloadModule = (ctx: ModuleContext) => unknown;
+
+export interface ModuleHandler {
+  init?: () => Awaited<void>;
+  update?: (filePath: string) => Awaited<void>;
+  remove?: (filePath: string) => Awaited<void>;
+}
+
+export type ModuleName = 'commands' | 'subcommands' | 'events';
+
+export interface CommandModule {
+  data: ChooksCommand;
+  execute: Exclude<ChooksCommand['execute'], undefined>;
+}

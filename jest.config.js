@@ -1,6 +1,9 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
-  preset: 'ts-jest',
+  transform: {
+    '\\.(t|j)s$': [
+      '@swc/jest',
+      { configFile: './.swcrc.json' },
+    ],
+  },
   testEnvironment: 'node',
-  setupFiles: ['dotenv/config'],
 };

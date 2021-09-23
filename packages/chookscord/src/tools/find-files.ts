@@ -1,46 +1,58 @@
 import * as lib from '@chookscord/lib';
 import { basename } from 'path';
-import { configFiles } from '../scripts/dev/config';
-
-interface FindFilesConfig {
-  path: string;
-  configFiles: string[];
-  directories: string[];
-}
 
 const logger = lib.createLogger('[cli] Loader');
 
-// eslint-disable-next-line complexity
-export async function findFiles(config: FindFilesConfig): Promise<[
+export type FoundFiles = [
   configFile: string | null,
   directories: string[],
-]> {
-  const files = await lib.loadDir(config.path);
+];
 
-  if (!files) {
-    throw new Error(`"${config.path}" does not exist!`);
+export type FindConfig = (
+  file: lib.File,
+  current: string | null
+) => boolean;
+
+function normalizeFile(file: lib.File): lib.File {
+  return {
+    path: basename(file.path),
+    isDirectory: file.isDirectory,
+  };
+}
+
+export async function findProjectFiles(
+  files: AsyncGenerator<lib.File> | Generator<lib.File>,
+  selectConfig: FindConfig,
+  excludeFile: (file: lib.File) => boolean,
+): Promise<FoundFiles> {
+  let config: string | null = null;
+  const fileList: string[] = [];
+
+  for await (let file of files) {
+    file = normalizeFile(file);
+    if (selectConfig(file, config)) {
+      logger.info(`Found config file "${file.path}".`);
+      config = file.path;
+    } else if (!excludeFile(file)) {
+      logger.info(`Added file "${file.path}".`);
+      fileList.push(file.path);
+    }
   }
 
-  let configFile = Infinity;
-  const directories: string[] = [];
-  for await (const file of files) {
-    const fileName = basename(file.path);
+  logger.success(`Selected config file "${config}".`);
+  return [config, fileList];
+}
 
-    if (file.isDirectory && config.directories.includes(fileName)) {
-      logger.info(`Found "${fileName}" directory.`);
-      directories.push(fileName);
-      continue;
-    }
+export function findConfigFile(
+  configFiles: string[],
+): FindConfig {
+  return (file, current) => {
+    if (file.isDirectory) return false;
 
-    // Select config file based on priority.
-    // Lower index = Higher priority.
-    if (configFiles.includes(fileName)) {
-      logger.info(`Found config file "${fileName}".`);
-      configFile = Math.min(configFiles.indexOf(fileName));
-    }
-  }
+    const fileIndex = configFiles.indexOf(file.path);
+    if (fileIndex === -1) return false;
+    if (!current) return true;
 
-  const configFileName = configFiles[configFile] ?? null;
-  logger.success(`Selected config file "${configFileName}".`);
-  return [configFileName, directories];
+    return configFiles.indexOf(current) < fileIndex;
+  };
 }

@@ -1,11 +1,6 @@
-import type {
-  BaseSlashCommand,
-  Event,
-  SlashSubCommand,
-  SlashSubCommandGroup,
-} from '@chookscord/lib';
+import type { ChooksSlashCommand, ChooksSubCommand } from '@chookscord/types';
+import type { Config, Event } from './types';
 import type { ClientEvents } from 'discord.js';
-import type { Config } from './types';
 
 export function defineConfig(
   config: Config,
@@ -20,21 +15,14 @@ export function defineEvent<T extends keyof ClientEvents>(
 }
 
 export function defineCommand(
-  command: BaseSlashCommand,
-): BaseSlashCommand {
+  command: ChooksSlashCommand,
+): ChooksSlashCommand {
   return command;
 }
 
 export function defineSubCommand(
-  command: SlashSubCommand,
-): SlashSubCommand {
-  return command;
-}
-
-// @todo(Choooks22): Implement slash command groups
-function defineCommandGroup(
-  command: SlashSubCommandGroup,
-): SlashSubCommandGroup {
+  command: ChooksSubCommand,
+): ChooksSubCommand {
   return command;
 }
 

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import * as chooks from '@chookscord/lib';
+import * as chooks from '../../packages/lib';
 import * as fs from 'fs/promises';
 import { Dir, Dirent } from 'fs';
 
