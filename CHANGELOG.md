@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.11.0 - 24/09/21
+
+### Fixed
+
+- Non framework-related files not being built.
+
+### Added
+
+- Better validation.
+- Types re-exports path.
+
+### Changed
+
+- Split discord.js reexport to subpath.
+
 ## 0.10.0 - 05/09/21
 
 ### Added
