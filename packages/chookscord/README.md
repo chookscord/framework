@@ -174,7 +174,7 @@ The `subcommands` folder is where you would put your subcommands.
 
 It has the same context as `commands`.
 
-#### Subcommands `/say hi` and `/say hello`
+#### Subcommands `/say hi` and `/say hello there`
 
 ```js
 // subcommands/greet.js
@@ -194,11 +194,18 @@ module.exports = defineSubCommand({
     },
     {
       name: 'hello',
+      type: 'SUB_COMMAND_GROUP', // Mixing subcommand groups are OK!
       description: 'Says hello.',
-      type: 'SUB_COMMAND',
-      async execute({ interaction }) {
-        await interaction.reply('Hello!');
-      },
+      options: [
+        {
+          name: 'there',
+          description: 'Says hello there.',
+          type: 'SUB_COMMAND',
+          async execute({ interaction }) {
+            await interaction.reply('Hello there!');
+          },
+        },
+      ],
     },
   ],
 });
