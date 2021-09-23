@@ -63,7 +63,7 @@ export function createModuleLoader(
     moduleStore = new lib.Store();
     const register = createRegister(config, commandStore, { logger });
 
-    attachInteractionListener(client, moduleStore);
+    attachInteractionListener(client, moduleStore, { logger });
 
     const deleteCommand = (oldCommand: types.ChooksCommand) => {
       for (const [key, mod] of moduleStore.entries()) {
