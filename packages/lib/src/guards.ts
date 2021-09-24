@@ -1,4 +1,4 @@
-import type { ChooksCommand, ChooksSlashCommand } from '@chookscord/types';
+import type { ChooksCommand, ChooksInteractionCommand, ChooksSlashCommand } from '@chookscord/types';
 import { isType } from '@chookscord/validate';
 
 export function isCommand(
@@ -11,4 +11,11 @@ export function isSlashCommand(
   command: { type?: string; execute?: (...args: never[]) => unknown },
 ): command is ChooksSlashCommand {
   return isCommand(command) && isType('function', command.execute);
+}
+
+export function isInteraction(
+  command: { type?: string; execute?: (...args: never[]) => unknown },
+): command is ChooksInteractionCommand {
+  return (command.type === 'USER' || command.type === 'MESSAGE') &&
+    isType('function', command.execute);
 }
