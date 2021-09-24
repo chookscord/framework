@@ -17,6 +17,14 @@ describe('validating message commands', () => {
         execute() {},
       })).toBeNull();
     });
+
+    it('accepts spaces in name', () => {
+      expect(lib.validateMessageCommand({
+        name: 'With Space',
+        type: 'MESSAGE',
+        execute() {},
+      })).toBeNull();
+    });
   });
 
   describe('invalid structures', () => {
@@ -40,7 +48,7 @@ describe('validating message commands', () => {
 
       test('invalid character', () => {
         expect(lib.validateMessageCommand({
-          name: 'with space',
+          name: 'with/slash',
           type: 'MESSAGE',
           execute() {},
         })).toBeTruthy();
