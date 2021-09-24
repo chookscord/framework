@@ -9,8 +9,7 @@ export interface DiscordCommand {
 export interface DiscordInteraction {
   type: Exclude<DiscordCommandType, DiscordCommandType.CHAT_INPUT>;
   name: string;
-  options?: DiscordCommandOption[];
-  defaultPermission?: boolean;
+  default_permission?: boolean;
 }
 
 export enum DiscordCommandType {

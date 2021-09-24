@@ -1,3 +1,5 @@
+export type ChooksInteractionCommand = ChooksUserCommand | ChooksMessageCommand;
+
 export interface ChooksUserCommand {
   name: string;
   type: 'USER';

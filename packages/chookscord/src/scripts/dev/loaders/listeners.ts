@@ -60,6 +60,7 @@ export function attachInteractionListener(
   store: lib.Store<CommandModule>,
   options: Partial<lib.Logger> = {},
 ): void {
+  // @todo(Choooks22): This should be generalized further to make it reusable
   const handleCommand = (interaction: CommandInteraction) => {
     const { key, command } = getCommandRef(store, interaction);
     if (command) {
@@ -76,6 +77,25 @@ export function attachInteractionListener(
   };
 
   client.on('interactionCreate', interaction => {
-    if (interaction.isCommand()) handleCommand(interaction);
+    if (interaction.isCommand()) {
+      handleCommand(interaction);
+    } else if (interaction.isContextMenu()) {
+      // @todo(Choooks22): Extract this to handle command
+      const key = interaction.commandName;
+      const command = store.get(key);
+      if (command) {
+        executeCommand(
+          key,
+          command.execute.bind(command, {
+            client,
+            fetch: lib.fetch,
+            interaction,
+            logger: lib.createLogger(`[commands] ${key}`),
+          }),
+        );
+      } else {
+        options.logger?.warn(`Command "${key}" was execute, but no handlers were registered.`);
+      }
+    }
   });
 }

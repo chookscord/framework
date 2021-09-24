@@ -4,8 +4,8 @@ import { eachBoth, eq } from '../../utils';
 import { didOptionChanged } from './options';
 
 export function didCommandChanged(
-  command1: types.ChooksCommand,
-  command2: types.ChooksCommand | null,
+  command1: Omit<types.ChooksCommand, 'execute'>,
+  command2: Omit<types.ChooksCommand, 'execute'> | null,
 ): boolean {
   return (
     eq(command2, null) ||

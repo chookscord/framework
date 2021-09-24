@@ -2,12 +2,14 @@ import type { ChooksCommand, ChooksCommandContext, ChooksCommandOption, ChooksCo
 
 export interface ChooksSlashCommand extends ChooksCommand {
   type?: 'CHAT_INPUT';
+  description: string;
   options?: ChooksNonCommandOption[];
   execute(ctx: ChooksCommandContext): unknown;
 }
 
-export interface ChooksSubCommand extends ChooksCommand {
+export interface ChooksSubCommand extends Omit<ChooksCommand, 'execute'> {
   type?: 'CHAT_INPUT';
+  description: string;
   options: (ChooksSubCommandOption | ChooksGroupCommandOption)[];
 }
 
