@@ -11,13 +11,6 @@ export interface ChooksCommand {
   defaultPermission?: boolean;
 }
 
-export interface ChooksInteraction {
-  type: Exclude<ChooksCommandType, 'CHAT_INPUT'>;
-  name: string;
-  options?: ChooksCommandOption[];
-  defaultPermission?: boolean;
-}
-
 export type ChooksCommandOptionType = keyof typeof DiscordCommandOptionType;
 
 export interface ChooksCommandOption {
