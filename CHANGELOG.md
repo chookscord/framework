@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.12.1 - 25/09/21
+
+### Fixed
+
+- Forgot to update package dependency versions.
+
+## 0.12.0 - 25/09/21
+
+### Fixed
+
+- Default permissions not registering.
+
+### Added
+
+- Support for message commands.
+
 ## 0.11.0 - 24/09/21
 
 ### Fixed
