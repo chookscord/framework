@@ -21,6 +21,6 @@ export function testInteractionName(name: string): ValidationError {
 export function testCommandName(name: string): ValidationError {
   return (
     assert(name, testName) ??
-    assert(name, testRegex(/^[a-z-]{1,32}$/u), 'Name must not have uppercase letters!')
+    assert(name, testRegex(/^[0-9a-z-]{1,32}$/u), 'Name must not have uppercase letters!')
   );
 }
