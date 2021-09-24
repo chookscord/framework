@@ -8,7 +8,7 @@ export function isCommand(
 }
 
 export function isSlashCommand(
-  command: ChooksCommand,
+  command: { type?: string; execute?: (...args: never[]) => unknown },
 ): command is ChooksSlashCommand {
   return isCommand(command) && isType('function', command.execute);
 }
