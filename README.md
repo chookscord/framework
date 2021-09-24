@@ -211,6 +211,29 @@ module.exports = defineSubCommand({
 });
 ```
 
+### Message commands
+
+The `messages` folder is where you would put your message commands.
+
+The `interaction` in this context is a `ContextMenuInteraction` object.
+
+```js
+// messages/first-word.js
+const { defineMessageCommand } = require('chookscord');
+
+module.exports = defineMessageCommand({
+  name: 'First Word', // Uppercase and spaces are allowed.
+  type: 'MESSAGE', // Specifying type MESSAGE is required.
+  async execute({ interaction }) {
+    // Fetch the message from where this command was ran
+    const message = interaction.options.getMessage('message');
+
+    const firstWord = message.content.split(' ')[0];
+    await interaction.reply(`The first word was "${firstWord}"!`);
+  },
+});
+```
+
 ### Events
 
 The `events` folder should contain all your event handlers.
@@ -240,6 +263,8 @@ Once all that is set up, your project should now look a bit like this:
 │   └── ready.js
 ├── subcommands
 │   └── greet.js
+├── messages
+│   └── first-word.js
 ├── .env
 ├── chooks.config.js
 ├── package.json
