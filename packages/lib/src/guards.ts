@@ -1,4 +1,4 @@
-import type { ChooksCommand, ChooksSlashCommand, ChooksSubCommand } from '@chookscord/types';
+import type { ChooksCommand, ChooksSlashCommand } from '@chookscord/types';
 import { isType } from '@chookscord/validate';
 
 export function isCommand(
@@ -11,10 +11,4 @@ export function isSlashCommand(
   command: ChooksCommand,
 ): command is ChooksSlashCommand {
   return isCommand(command) && isType('function', command.execute);
-}
-
-export function isSubCommand(
-  command: ChooksCommand,
-): command is ChooksSubCommand {
-  return !isSlashCommand(command) && command.options?.[0].type === 'SUB_COMMAND';
 }
