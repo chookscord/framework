@@ -2,14 +2,25 @@
 # yarn lockfile v1
 
 
-"@chookscord/lib@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@chookscord/lib/-/lib-0.10.0.tgz#ec62848d8c02ebcd39279ca3c99258565625cc30"
-  integrity sha512-uC3wI3u5JpmEybWXXuiq6HwPfly7cIDU5fx966zCWIcdAvgp+DaEdaLKZhjd3/UyBtuL2dZsjM+tZ1RwTuYmAg==
+"@chookscord/lib@^0.12.0":
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/@chookscord/lib/-/lib-0.12.1.tgz#b6cc647ac962264e7329064ba5b55ab47f784804"
+  integrity sha512-JgcJgrLnY56CMtolUGGfwSN0C96yRr01T1BMRCpX4I5D5CvnBJtlsTiDL8A1NenDz4fyGBprI3HHdnG8eAdCvQ==
   dependencies:
+    "@chookscord/validate" "^0.3.2"
     "@types/node-fetch" "^2.5.12"
     chalk "^4.1.2"
     consola "^2.15.3"
+
+"@chookscord/types@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@chookscord/types/-/types-0.2.1.tgz#b6bb473a06ad5bc6e19ce4a55cbb4acc92011ff5"
+  integrity sha512-81NtJtw4ApDQlq5DC/+NiPiMwP1j9zlI85984U2Y25ZtFUn1zW5KY27fw7iXshAndKSPnMCGPSxHRJ2zJTiXsA==
+
+"@chookscord/validate@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@chookscord/validate/-/validate-0.3.2.tgz#2e576580519a05f2a5ca2d460c625d1f32c09605"
+  integrity sha512-keR3a7ipjHyvMFaAPednKhXXV9/NbXWlbpsnQSHyJE5enLywT2g179PBj2jcuENZCcwfs/6/lXBAy8bEmJRCmQ==
 
 "@discordjs/builders@^0.5.0":
   version "0.5.0"
@@ -223,12 +234,13 @@ chokidar@^3.5.2:
   optionalDependencies:
     fsevents "~2.3.2"
 
-chookscord@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/chookscord/-/chookscord-0.10.0.tgz#b5de3f5e90be8879501d6ec83f9d9cd57ed80bc8"
-  integrity sha512-QTCjNjP6pzrbiW0Pxiseyhapklz33Lo6aYMgFmg6InP6Zt8T9g0UopbohSBTMZe+xkrfP7FlCFFh27Qg+B2png==
+chookscord@^0.12.1:
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/chookscord/-/chookscord-0.12.1.tgz#db076273a9dcc650eae76aedeb56117a3ebd4e81"
+  integrity sha512-PLHj9f+XM2dRZ3N8a86QZ97eIcelY7T4YaiqrsBtvcvIC/vEytGiXDGGGrmSnSDl7WRuzvRfiItRZqTXp/4K1g==
   dependencies:
-    "@chookscord/lib" "^0.10.0"
+    "@chookscord/lib" "^0.12.0"
+    "@chookscord/types" "^0.2.1"
     "@swc/core" "^1.2.81"
     "@swc/helpers" "^0.2.13"
     chokidar "^3.5.2"
