@@ -17,7 +17,12 @@ function findFiles() {
   );
 }
 
-const modules: ModuleName[] = ['events', 'commands', 'subcommands'];
+const modules: ModuleName[] = [
+  'events',
+  'commands',
+  'subcommands',
+  'messages',
+];
 function isModule(moduleName: string): moduleName is ModuleName {
   return modules.includes(moduleName as never);
 }
