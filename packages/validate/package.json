@@ -1,6 +1,6 @@
 {
   "name": "@chookscord/validate",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Small validation utility for Discord application commands.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
