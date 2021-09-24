@@ -18,6 +18,21 @@ describe('interactions register', () => {
     });
   });
 
+  it('prepares interactions', () => {
+    const [command] = lib.prepareCommands([
+      {
+        name: 'Foo',
+        type: 'USER',
+        execute() {},
+      },
+    ]);
+
+    expect(command).toEqual({
+      name: 'Foo',
+      type: types.DiscordCommandType.USER,
+    });
+  });
+
   it('prepares subcommands', () => {
     const [command] = lib.prepareCommands([
       {

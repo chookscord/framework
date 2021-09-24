@@ -1,9 +1,13 @@
-import * as lib from '..';
 import {
   ChooksCommand,
   ChooksCommandOption,
-  DiscordCommand, DiscordCommandOption, DiscordCommandOptionType, DiscordCommandType,
+  ChooksInteractionCommand,
+  DiscordCommand,
+  DiscordCommandOption,
+  DiscordCommandOptionType,
+  DiscordCommandType,
 } from '@chookscord/types';
+import { Logger } from '../utils';
 
 function condAppend<T, K extends keyof T>(
   object: T,
@@ -33,18 +37,18 @@ function prepareOption(option: ChooksCommandOption): DiscordCommandOption {
 function prepareCommand(command: ChooksCommand): DiscordCommand {
   let appCommand = { type: DiscordCommandType.CHAT_INPUT } as DiscordCommand;
 
+  appCommand = condAppend(appCommand, 'type', DiscordCommandType[command.type ?? 'CHAT_INPUT']);
   appCommand = condAppend(appCommand, 'name', command.name);
   appCommand = condAppend(appCommand, 'description', command.description);
-  appCommand = condAppend(appCommand, 'options', command.options?.length
-    ? command.options.map(prepareOption)
-    : undefined);
+  appCommand = condAppend(appCommand, 'default_permission', command.defaultPermission);
+  appCommand = condAppend(appCommand, 'options', command.options?.map(prepareOption));
 
   return appCommand;
 }
 
 export function prepareCommands(
-  commands: Iterable<ChooksCommand>,
-  options: Partial<lib.Logger> = {},
+  commands: Iterable<ChooksCommand | ChooksInteractionCommand>,
+  options: Partial<Logger> = {},
 ): DiscordCommand[] {
   options.logger?.info('Preparing commands...');
   let counter = 0;
