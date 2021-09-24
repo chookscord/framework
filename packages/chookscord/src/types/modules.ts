@@ -1,5 +1,5 @@
 import type { Awaited, Client } from 'discord.js';
-import type { ChooksCommand } from '@chookscord/types';
+import type { ChooksCommand, ChooksInteractionCommand } from '@chookscord/types';
 import type { Config } from '.';
 import type { FetchUtil } from '@chookscord/lib';
 
@@ -24,9 +24,9 @@ export interface ModuleHandler {
   remove?: (filePath: string) => Awaited<void>;
 }
 
-export type ModuleName = 'commands' | 'subcommands' | 'events';
+export type ModuleName = 'commands' | 'subcommands' | 'events' | 'messages';
 
 export interface CommandModule {
-  data: ChooksCommand;
+  data: ChooksCommand | ChooksInteractionCommand;
   execute: Exclude<ChooksCommand['execute'], undefined>;
 }
