@@ -1,4 +1,4 @@
-import type { ChooksSlashCommand, ChooksSubCommand } from '@chookscord/types';
+import type * as types from '@chookscord/types';
 import type { Config, Event } from './types';
 import type { ClientEvents } from 'discord.js';
 
@@ -15,16 +15,21 @@ export function defineEvent<T extends keyof ClientEvents>(
 }
 
 export function defineCommand(
-  command: ChooksSlashCommand,
-): ChooksSlashCommand {
+  command: types.ChooksSlashCommand,
+): types.ChooksSlashCommand {
   return command;
 }
 
 export function defineSubCommand(
-  command: ChooksSubCommand,
-): ChooksSubCommand {
+  command: types.ChooksSubCommand,
+): types.ChooksSubCommand {
+  return command;
+}
+
+export function defineMessageCommand(
+  command: types.ChooksMessageCommand,
+): types.ChooksMessageCommand {
   return command;
 }
 
 // @todo(Choooks22): Define context command
-// @todo(Choooks22): Define message command
