@@ -1,11 +1,11 @@
 import * as lib from '@chookscord/lib';
-import type { ChooksCommand, ChooksInteractionCommand } from '@chookscord/types';
+import type { ChooksCommand } from '@chookscord/types';
 import type { Config } from '../../types';
 import { debounceAsync } from '../../utils';
 
 export function createRegister(
   config: Config,
-  store: lib.Store<ChooksCommand | ChooksInteractionCommand>,
+  store: lib.Store<ChooksCommand>,
   options: Partial<lib.Logger> = {},
 ): () => Promise<void> {
   const _register = lib.createInteractionRegister(

@@ -8,9 +8,9 @@ export class MessageCommandHandler implements ModuleHandler {
   private _logger = lib.createLogger('[cli] UserCommands');
   private _paths: Record<string, string> = {};
 
-  constructor(private store: lib.Store<types.ChooksInteractionCommand>) { }
+  constructor(private store: lib.Store<types.ChooksCommand>) { }
 
-  private _isCommandInvalid(command: types.ChooksMessageCommand): boolean {
+  private _isCommandInvalid(command: types.ChooksContextCommand): boolean {
     const validationError = lib.validateMessageCommand(command);
     if (validationError) {
       this._logger.error(new Error(validationError));
@@ -23,7 +23,7 @@ export class MessageCommandHandler implements ModuleHandler {
     const endTimer = utils.createTimer();
     this._logger.info(`"${fileName}" updated.`);
 
-    const command = await utils.uncachedImportDefault<types.ChooksMessageCommand>(filePath);
+    const command = await utils.uncachedImportDefault<types.ChooksContextCommand>(filePath);
     if (this._isCommandInvalid(command)) return;
 
     this.store.set(command.name, command);

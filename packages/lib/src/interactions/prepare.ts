@@ -1,7 +1,6 @@
 import {
   ChooksCommand,
   ChooksCommandOption,
-  ChooksInteractionCommand,
   DiscordCommand,
   DiscordCommandOption,
   DiscordCommandOptionType,
@@ -35,7 +34,7 @@ function prepareOption(option: ChooksCommandOption): DiscordCommandOption {
 }
 
 function prepareCommand(command: ChooksCommand): DiscordCommand {
-  let appCommand = { type: DiscordCommandType.CHAT_INPUT } as DiscordCommand;
+  let appCommand = {} as DiscordCommand;
 
   appCommand = condAppend(appCommand, 'type', DiscordCommandType[command.type ?? 'CHAT_INPUT']);
   appCommand = condAppend(appCommand, 'name', command.name);
@@ -47,7 +46,7 @@ function prepareCommand(command: ChooksCommand): DiscordCommand {
 }
 
 export function prepareCommands(
-  commands: Iterable<ChooksCommand | ChooksInteractionCommand>,
+  commands: Iterable<ChooksCommand>,
   options: Partial<Logger> = {},
 ): DiscordCommand[] {
   options.logger?.info('Preparing commands...');

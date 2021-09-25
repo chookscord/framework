@@ -1,9 +1,9 @@
 import type * as types from '@chookscord/types';
 import * as validate from '@chookscord/validate';
-import { validateInteraction } from '..';
+import { validateContext } from '../base';
 
 export function validateMessageCommand(
-  command: types.ChooksMessageCommand,
+  command: types.ChooksContextCommand,
 ): validate.ValidationError {
   return validate.assert(
     command.type,
@@ -12,6 +12,6 @@ export function validateMessageCommand(
   ) ??
   validate.assert(
     command,
-    validateInteraction,
+    validateContext,
   );
 }

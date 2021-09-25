@@ -27,13 +27,13 @@ export function defineSubCommand(
 }
 
 export function defineMessageCommand(
-  command: types.ChooksMessageCommand,
-): types.ChooksMessageCommand {
+  command: types.ChooksContextCommand,
+): types.ChooksContextCommand {
   return command;
 }
 
 export function defineUserCommand(
-  command: types.ChooksUserCommand,
-): types.ChooksUserCommand {
+  command: types.ChooksContextCommand,
+): types.ChooksContextCommand {
   return command;
 }

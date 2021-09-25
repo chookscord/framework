@@ -55,7 +55,7 @@ export function createModuleLoader(
   client: Client,
   config: Config,
 ): (moduleName: ModuleName) => Promise<void> {
-  let commandStore: lib.Store<types.ChooksCommand | types.ChooksInteractionCommand>;
+  let commandStore: lib.Store<types.ChooksCommand>;
   let moduleStore: lib.Store<CommandModule>;
 
   const initCommands = () => {
@@ -65,7 +65,7 @@ export function createModuleLoader(
 
     attachInteractionListener(client, moduleStore, { logger });
 
-    const deleteCommand = (oldCommand: types.ChooksCommand | types.ChooksInteractionCommand) => {
+    const deleteCommand = (oldCommand: types.ChooksCommand) => {
       for (const [key, mod] of moduleStore.entries()) {
         if (mod.data === oldCommand) {
           moduleStore.delete(key);
@@ -87,7 +87,7 @@ export function createModuleLoader(
         moduleStore.set(key, { data: command, execute });
       };
 
-      if (lib.isSlashCommand(command) || lib.isInteraction(command)) {
+      if (lib.isSlashCommand(command) || lib.isContextCommand(command)) {
         set(command.name, command.execute.bind(command));
       } else {
         for (const [key, execute] of extractCommandHandlers(command)) {
@@ -123,12 +123,12 @@ export function createModuleLoader(
     switch (moduleName) {
       case 'commands': {
         const { CommandHandler } = await import('../modules/commands');
-        const handler = new CommandHandler(getCommandStore() as lib.Store<types.ChooksCommand>);
+        const handler = new CommandHandler(getCommandStore());
         createWatcher(handler, moduleName);
       } return;
       case 'subcommands': {
         const { SubCommandHandler } = await import('../modules/sub-commands');
-        const handler = new SubCommandHandler(getCommandStore() as lib.Store<types.ChooksCommand>);
+        const handler = new SubCommandHandler(getCommandStore());
         createWatcher(handler, moduleName);
       } return;
       case 'events': {
@@ -138,12 +138,12 @@ export function createModuleLoader(
       } return;
       case 'messages': {
         const { MessageCommandHandler } = await import('../modules/message-commands');
-        const handler = new MessageCommandHandler(getCommandStore() as lib.Store<types.ChooksInteractionCommand>);
+        const handler = new MessageCommandHandler(getCommandStore());
         createWatcher(handler, moduleName);
       } return;
       case 'users': {
         const { UserCommandHandler } = await import('../modules/user-commands');
-        const handler = new UserCommandHandler(getCommandStore() as lib.Store<types.ChooksInteractionCommand>);
+        const handler = new UserCommandHandler(getCommandStore());
         createWatcher(handler, moduleName);
       }
     }

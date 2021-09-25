@@ -10,7 +10,7 @@ export class UserCommandHandler implements ModuleHandler {
 
   constructor(private store: lib.Store<types.ChooksCommand>) { }
 
-  private _isCommandInvalid(command: types.ChooksUserCommand): boolean {
+  private _isCommandInvalid(command: types.ChooksContextCommand): boolean {
     const validationError = lib.validateUserCommand(command);
     if (validationError) {
       this._logger.error(new Error(validationError));
@@ -23,7 +23,7 @@ export class UserCommandHandler implements ModuleHandler {
     const endTimer = utils.createTimer();
     this._logger.info(`"${fileName}" updated.`);
 
-    const command = await utils.uncachedImportDefault<types.ChooksUserCommand>(filePath);
+    const command = await utils.uncachedImportDefault<types.ChooksContextCommand>(filePath);
     if (this._isCommandInvalid(command)) return;
 
     this.store.set(command.name, command);

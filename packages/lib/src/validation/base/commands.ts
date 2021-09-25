@@ -1,8 +1,8 @@
 import type * as types from '@chookscord/types';
 import * as validate from '@chookscord/validate';
 
-export function validateInteraction(
-  interaction: Partial<types.ChooksInteractionCommand>,
+export function validateContext(
+  interaction: Partial<types.ChooksContextCommand>,
 ): validate.ValidationError {
   return validate.assert(
     interaction.name!,
