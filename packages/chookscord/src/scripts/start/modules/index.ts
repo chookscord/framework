@@ -12,7 +12,23 @@ function attachListener(
   ctx: ModuleContext,
   store: lib.Store<CommandHandler>,
 ) {
-  const handleCommands = async (interaction: CommandInteraction) => {
+  // @todo(Choooks22): Cleanup this mess
+  const executeHandler = async (
+    commandName: string,
+    execute: () => unknown,
+  ) => {
+    try {
+      logger.info(`Executing command "${commandName}"...`);
+      const endTimer = utils.createTimer();
+      await execute();
+      logger.success(`Finished executing command "${commandName}". Time took: ${endTimer().toLocaleString()}ms`);
+    } catch (error) {
+      logger.error(new Error(`Failed to execute command "${commandName}"!`));
+      logger.error(error);
+    }
+  };
+
+  const handleCommands = (interaction: CommandInteraction) => {
     const commandKey = lib.createCommandKey(
       interaction.commandName,
       interaction.options.getSubcommandGroup(false),
@@ -26,26 +42,39 @@ function attachListener(
       return;
     }
 
-    try {
-      logger.info(`Executing command "${commandKey}"...`);
-      const stopTimer = utils.createTimer();
-      await execute({
-        logger: lib.createLogger(`[commands] ${commandKey}`),
-        client: ctx.client,
-        fetch: ctx.fetch,
-        interaction,
-      });
-
-      logger.success(`Finished executing command "${commandKey}". Time took: ${stopTimer().toLocaleString()}ms`);
-    } catch (error) {
-      logger.error(new Error(`Failed to execute command "${commandKey}"!`));
-      logger.error(error);
-    }
+    executeHandler(
+      commandKey,
+      async () => {
+        await execute({
+          logger: lib.createLogger(`[commands] ${commandKey}`),
+          client: ctx.client,
+          fetch: ctx.fetch,
+          interaction,
+        });
+      },
+    );
   };
 
   ctx.client.on('interactionCreate', interaction => {
     if (interaction.isCommand()) {
       handleCommands(interaction);
+    } else if (interaction.isContextMenu()) {
+      const commandName = interaction.commandName;
+      const execute = store.get(commandName);
+
+      if (!execute) {
+        logger.warn(`Command "${commandName}" was executed, but not handler was found!`);
+        return;
+      }
+
+      executeHandler(commandName, async () => {
+        await execute({
+          logger: lib.createLogger(`[commands] ${commandName}`),
+          client: ctx.client,
+          fetch: ctx.fetch,
+          interaction,
+        });
+      });
     }
   });
 }
@@ -84,6 +113,13 @@ export function createModuleLoader(
         const store = getCommandStore();
         const { getSubCommands } = await import('./sub-commands');
         for await (const [key, command] of getSubCommands(modulePath)) {
+          store.set(key, command.execute);
+        }
+      } return;
+      case 'messages': {
+        const store = getCommandStore();
+        const { getMessageCommands } = await import('./message-commands');
+        for await (const [key, command] of getMessageCommands(modulePath)) {
           store.set(key, command.execute);
         }
       }
