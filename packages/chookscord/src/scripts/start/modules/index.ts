@@ -122,6 +122,13 @@ export function createModuleLoader(
         for await (const [key, command] of getMessageCommands(modulePath)) {
           store.set(key, command.execute);
         }
+      } return;
+      case 'users': {
+        const store = getCommandStore();
+        const { getUserCommands } = await import('./user-commands');
+        for await (const [key, command] of getUserCommands(modulePath)) {
+          store.set(key, command.execute);
+        }
       }
     }
   };

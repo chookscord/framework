@@ -225,11 +225,39 @@ module.exports = defineMessageCommand({
   name: 'First Word', // Uppercase and spaces are allowed.
   type: 'MESSAGE', // Specifying type MESSAGE is required.
   async execute({ interaction }) {
-    // Fetch the message from where this command was ran
+    // Get the message from where this command was ran
     const message = interaction.options.getMessage('message');
 
     const firstWord = message.content.split(' ')[0];
     await interaction.reply(`The first word was "${firstWord}"!`);
+  },
+});
+```
+
+### User commands
+
+The `users` folder is where you would put your user commands.
+
+It has the same context as `messages`.
+
+```js
+// users/high-five.js
+const { defineUserCommand } = require('chookscord');
+
+module.exports = defineUserCommand({
+  name: 'High Five',
+  type: 'USER', // Specifying the type as USER is required here as well.
+  async execute({ interaction }) {
+    // Get the user where this command was ran
+    const target = interaction.options.getUser('user');
+    const user = interaction.user;
+
+    await interaction.reply({
+      content: `<@${user.id}> high fived <@${target.id}>!`,
+      allowedMentions: {
+        users: [],
+      },
+    });
   },
 });
 ```
@@ -265,6 +293,8 @@ Once all that is set up, your project should now look a bit like this:
 │   └── greet.js
 ├── messages
 │   └── first-word.js
+├── users
+│   └── high-five.js
 ├── .env
 ├── chooks.config.js
 ├── package.json

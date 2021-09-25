@@ -32,4 +32,8 @@ export function defineMessageCommand(
   return command;
 }
 
-// @todo(Choooks22): Define context command
+export function defineUserCommand(
+  command: types.ChooksUserCommand,
+): types.ChooksUserCommand {
+  return command;
+}

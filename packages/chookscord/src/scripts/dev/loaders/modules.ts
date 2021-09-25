@@ -140,6 +140,11 @@ export function createModuleLoader(
         const { MessageCommandHandler } = await import('../modules/message-commands');
         const handler = new MessageCommandHandler(getCommandStore() as lib.Store<types.ChooksInteractionCommand>);
         createWatcher(handler, moduleName);
+      } return;
+      case 'users': {
+        const { UserCommandHandler } = await import('../modules/user-commands');
+        const handler = new UserCommandHandler(getCommandStore() as lib.Store<types.ChooksInteractionCommand>);
+        createWatcher(handler, moduleName);
       }
     }
   };
