@@ -33,6 +33,7 @@ export async function getCommands(
     if (file.isDirectory) continue;
     const command = await utils.importDefault<ChooksCommand>(file.path);
 
+    // @ts-ignore @todo(Choooks22): Fix validator types here
     if (isCommandInvalid(command, validator, this)) continue;
 
     commands.push(command);
