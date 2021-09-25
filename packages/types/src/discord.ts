@@ -6,12 +6,6 @@ export interface DiscordCommand {
   default_permission?: boolean;
 }
 
-export interface DiscordInteraction {
-  type: Exclude<DiscordCommandType, DiscordCommandType.CHAT_INPUT>;
-  name: string;
-  default_permission?: boolean;
-}
-
 export enum DiscordCommandType {
   CHAT_INPUT = 1,
   USER = 2,
