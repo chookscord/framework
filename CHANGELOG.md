@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.2 - 25/09/21
+
+### Fixed
+
+- Missing message command support for register and production.
+
 ## 0.12.1 - 25/09/21
 
 ### Fixed
