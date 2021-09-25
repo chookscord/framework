@@ -16,4 +16,11 @@ declare module '@chookscord/types' {
     fetch: FetchUtil;
     interaction: ContextMenuInteraction;
   }
+
+  interface ChooksUserCommandContext {
+    client: Client<true>;
+    logger: Consola;
+    fetch: FetchUtil;
+    interaction: ContextMenuInteraction;
+  }
 }
