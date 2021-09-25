@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0 - 25/09/21
+
+### Added
+
+- Support for user commands.
+
 ## 0.12.2 - 25/09/21
 
 ### Fixed
