@@ -1,7 +1,63 @@
 import type * as types from '@chookscord/types';
 import * as validate from '@chookscord/validate';
-import { optionIsType } from '../checks';
-import { validateOption } from '../base';
+import { isOptionWithChoice, isOptionWithoutChoice } from '../guards';
+import { validateChoiceList } from './choices';
+
+export function validateOptionWithoutChoice(
+  option: types.ChooksCommandOption,
+): validate.ValidationError {
+  return validate.assert(
+    option.choices,
+    validate.isType('undefined'),
+    'Unexpected choices in option.',
+  );
+}
+
+export function validateOptionWithChoices(
+  option: types.ChooksCommandOption,
+): validate.ValidationError {
+  return validate.assert(
+    option.choices ?? [],
+    validateChoiceList,
+  );
+}
+
+export function validateOption(
+  option: types.ChooksCommandOption,
+): validate.ValidationError {
+  return validate.assert(
+    option.name,
+    validate.testCommandName,
+  ) ??
+  validate.assert(
+    option.description,
+    validate.testDescription,
+  ) ??
+  validate.assert(
+    option.description.length ?? 0,
+    validate.inRange(0, 100),
+    'Invalid description length.',
+  ) ??
+  validate.assert(
+    option.options?.length ?? 0,
+    validate.inRange(0, 25),
+    'Invalid options size.',
+  ) ??
+  validate.assert(
+    option,
+    option => {
+      if (isOptionWithChoice(option)) {
+        return validateOptionWithChoices(option);
+      }
+
+      if (isOptionWithoutChoice(option)) {
+        return validateOptionWithoutChoice(option);
+      }
+
+      return 'Invalid option type.';
+    },
+  );
+}
 
 export function validateNonCommandOption(
   option: types.ChooksCommandOption,
@@ -11,8 +67,8 @@ export function validateNonCommandOption(
     validateOption,
   ) ??
   validate.assert(
-    option,
-    option => !optionIsType(['SUB_COMMAND_GROUP', 'SUB_COMMAND'], option),
+    option.type,
+    type => !['SUB_COMMAND', 'SUB_COMMAND_GROUP'].includes(type),
     'Invalid option type.',
   ) ?? validate.assert(
     option.options,
@@ -29,8 +85,8 @@ export function validateSubCommandOption(
     validateOption,
   ) ??
   validate.assert(
-    option,
-    optionIsType(['SUB_COMMAND']),
+    option.type,
+    type => type === 'SUB_COMMAND',
     'Invalid option type.',
   ) ??
   validate.assert(
@@ -52,12 +108,13 @@ export function validateGroupCommandOption(
     validateOption,
   ) ??
   validate.assert(
-    option,
-    optionIsType(['SUB_COMMAND_GROUP']),
+    option.type,
+    type => type === 'SUB_COMMAND_GROUP',
     'Invalid option type.',
   ) ??
   validate.assert(
-    (option as any).execute,
+    // @ts-expect-error validation
+    option.execute,
     execute => !validate.isType('function', execute),
     'Subcommand groups cannot have execute handlers.',
   ) ??
@@ -78,11 +135,11 @@ export function validateCommandOption(
   return validate.assert(
     option,
     option => {
-      if (optionIsType(['SUB_COMMAND_GROUP'], option)) {
+      if (option.type === 'SUB_COMMAND_GROUP') {
         return validateGroupCommandOption(option);
       }
 
-      if (optionIsType(['SUB_COMMAND'], option)) {
+      if (option.type === 'SUB_COMMAND') {
         return validateSubCommandOption(option);
       }
 
