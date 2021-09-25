@@ -1,4 +1,4 @@
-import type { ChooksCommand, ChooksCommandContext, ChooksCommandOption, ChooksCommandOptionType } from './base';
+import type { ChooksCommand, ChooksCommandOption, ChooksCommandOptionType, ChooksContext } from './base';
 
 export interface ChooksSlashCommand extends ChooksCommand {
   type?: 'CHAT_INPUT';
@@ -32,4 +32,7 @@ export interface ChooksSubCommandOption extends Omit<ChooksCommandOption, 'type'
 export interface ChooksGroupCommandOption extends Omit<ChooksCommandOption, 'type' | 'choices'> {
   type: 'SUB_COMMAND_GROUP';
   options: ChooksSubCommandOption[];
+}
+
+export interface ChooksCommandContext extends ChooksContext {
 }

@@ -6,7 +6,7 @@ export interface ChooksCommand {
   type?: ChooksCommandType;
   name: string;
   description?: string;
-  execute?(ctx: ChooksCommandContext): unknown;
+  execute?(ctx: ChooksContext): unknown;
   options?: ChooksCommandOption[];
   defaultPermission?: boolean;
 }
@@ -27,5 +27,5 @@ export interface ChooksCommandOptionChoice {
   value: string | number;
 }
 
-export interface ChooksCommandContext {
+export interface ChooksContext {
 }
