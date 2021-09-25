@@ -1,9 +1,9 @@
 import * as lib from '../../packages/lib';
 import * as types from '../../packages/types';
 
-describe('interactions register', () => {
-  it('prepares slash commands', () => {
-    const [command] = lib.prepareCommands([
+describe('transforming commands', () => {
+  it('transforms slash commands', () => {
+    const [command] = lib.transformCommandList([
       {
         name: 'foo',
         description: 'foo',
@@ -14,12 +14,11 @@ describe('interactions register', () => {
     expect(command).toEqual({
       name: 'foo',
       description: 'foo',
-      type: types.DiscordCommandType.CHAT_INPUT,
     });
   });
 
-  it('prepares interactions', () => {
-    const [command] = lib.prepareCommands([
+  it('transforms context commands', () => {
+    const [command] = lib.transformCommandList([
       {
         name: 'Foo',
         type: 'USER',
@@ -33,8 +32,8 @@ describe('interactions register', () => {
     });
   });
 
-  it('prepares subcommands', () => {
-    const [command] = lib.prepareCommands([
+  it('transforms subcommands', () => {
+    const [command] = lib.transformCommandList([
       {
         options: [
           {
@@ -68,7 +67,7 @@ describe('interactions register', () => {
       'SUB_COMMAND_GROUP',
       'USER',
     ] as types.ChooksCommandOptionType[];
-    const [command] = lib.prepareCommands([
+    const [command] = lib.transformCommandList([
       {
         options: options.map(option => ({ type: option })),
       } as never,
