@@ -4,7 +4,6 @@ import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
 import type { Config, ModuleContext, ModuleName } from '../../types';
-import { Client } from 'discord.js';
 import { createModuleLoader } from './modules';
 
 const logger = lib.createLogger('[cli] Chooks');
@@ -34,7 +33,12 @@ function validateConfig(config: Config) {
   }
 }
 
-const moduleNames: ModuleName[] = ['events', 'commands', 'subcommands'];
+const moduleNames: ModuleName[] = [
+  'events',
+  'commands',
+  'subcommands',
+  'messages',
+];
 function isModule(name: string): name is ModuleName {
   return moduleNames.includes(name as never);
 }
