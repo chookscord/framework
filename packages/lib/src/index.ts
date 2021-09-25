@@ -1,5 +1,5 @@
 export * from './utils';
-export * from './interactions';
+export * from './register';
 
 export * from './validation';
 export * from './guards';
