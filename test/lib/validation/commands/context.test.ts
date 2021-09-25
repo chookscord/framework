@@ -1,17 +1,25 @@
 import * as lib from '../../../../packages/lib';
 
-describe('validating message commands', () => {
+describe('validating context commands', () => {
   describe('proper structures', () => {
-    it('accepts base structure', () => {
-      expect(lib.validateUserCommand({
+    it('accepts base structure for user commands', () => {
+      expect(lib.validateContextCommand({
         name: 'foo',
         type: 'USER',
         execute() {},
       })).toBeNull();
     });
 
+    it('accepts base structure for message commands', () => {
+      expect(lib.validateContextCommand({
+        name: 'foo',
+        type: 'MESSAGE',
+        execute() {},
+      })).toBeNull();
+    });
+
     it('accepts uppercase in name', () => {
-      expect(lib.validateUserCommand({
+      expect(lib.validateContextCommand({
         name: 'Foo',
         type: 'USER',
         execute() {},
@@ -19,7 +27,7 @@ describe('validating message commands', () => {
     });
 
     it('accepts spaces in name', () => {
-      expect(lib.validateUserCommand({
+      expect(lib.validateContextCommand({
         name: 'With Space',
         type: 'USER',
         execute() {},
@@ -30,15 +38,14 @@ describe('validating message commands', () => {
   describe('invalid structures', () => {
     describe('invalid names', () => {
       test('missing name', () => {
-        // @ts-expect-error testing
-        expect(lib.validateUserCommand({
+        expect(lib.validateContextCommand({
           type: 'USER',
           execute() {},
         })).toBeTruthy();
       });
 
       test('long name', () => {
-        expect(lib.validateUserCommand({
+        expect(lib.validateContextCommand({
           // length > 32
           name: 'laoreetnoncurabiturgravidaarcuactortor',
           type: 'USER',
@@ -47,7 +54,7 @@ describe('validating message commands', () => {
       });
 
       test('invalid character', () => {
-        expect(lib.validateUserCommand({
+        expect(lib.validateContextCommand({
           name: 'with/slash',
           type: 'USER',
           execute() {},
@@ -57,18 +64,16 @@ describe('validating message commands', () => {
 
     describe('invalid type', () => {
       test('wrong type', () => {
-        expect(lib.validateUserCommand({
+        expect(lib.validateContextCommand({
           // @ts-expect-error testing
-          type: 'MESSAGE',
+          type: 'CHAT_INPUT',
           name: 'foo',
           execute() {},
         })).toBeTruthy();
       });
 
       test('missing type', () => {
-        expect(lib.validateUserCommand({
-          // @ts-expect-error testing
-          type: '',
+        expect(lib.validateContextCommand({
           name: 'foo',
           execute() {},
         })).toBeTruthy();
@@ -76,7 +81,7 @@ describe('validating message commands', () => {
     });
 
     test('invalid description', () => {
-      expect(lib.validateUserCommand({
+      expect(lib.validateContextCommand({
         // @ts-expect-error testing
         description: 'foo',
         name: 'foo',
@@ -86,8 +91,7 @@ describe('validating message commands', () => {
     });
 
     test('missing execute', () => {
-      // @ts-expect-error testing
-      expect(lib.validateUserCommand({
+      expect(lib.validateContextCommand({
         name: 'foo',
         type: 'USER',
       }));
