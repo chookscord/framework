@@ -38,6 +38,7 @@ const moduleNames: ModuleName[] = [
   'commands',
   'subcommands',
   'messages',
+  'users',
 ];
 function isModule(name: string): name is ModuleName {
   return moduleNames.includes(name as never);
