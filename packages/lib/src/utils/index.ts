@@ -1,4 +1,3 @@
-export * from './store';
 export * from './fetch';
 export * from './file-loader';
 export * from './logger';
