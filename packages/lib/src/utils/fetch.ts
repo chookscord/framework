@@ -3,78 +3,41 @@ import _fetch, { RequestInfo, RequestInit, Response } from 'node-fetch';
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 type FetchParams = [url: RequestInfo, init?: RequestInit];
 
-export interface ErrorResponse {
-  ok: 0;
-  status: number;
-  error: Error;
-}
+export type WrappedRequest<T = unknown> = PromiseLike<Response> & { json: () => Promise<T> };
+export type WrappedFetch = <T = unknown>(...args: FetchParams) => WrappedRequest<T>;
+export type FetchUtil = WrappedFetch & Record<Lowercase<Method>, WrappedFetch>;
 
-export interface SuccessResponse<T> {
-  ok: 1;
-  status: number;
-  data: T;
-}
-
-export type WrappedFetch = <T = unknown>(
-  url: RequestInfo,
-  init?: Omit<RequestInit, 'method'>
-) => Promise<ErrorResponse | SuccessResponse<T>>;
-
-export type FetchUtil =
-  ((...args: FetchParams) => Promise<Response>) &
-  Record<Lowercase<Method>, WrappedFetch>;
-
-const createErrorResponse = (
-  status: number,
-  error: Error,
-): ErrorResponse => {
-  return { ok: 0, status, error };
-};
-
-const createSuccessResponse = <T>(
-  status: number,
-  data: T,
-): SuccessResponse<T> => {
-  return { ok: 1, status, data };
-};
-
-export const fetch: FetchUtil = (url, init = {}) => {
-  return _fetch(url, init);
-};
-
-const createFetchWrapper = (method: Method): WrappedFetch => {
-  return async (url, init = {}) => {
-    const response = await _fetch(url, {
-      ...init,
-      method,
-      headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Accept: 'application/json',
-        ...init?.headers,
-      },
-    });
-
-    if (response.status < 200 && response.status >= 400) {
-      return createErrorResponse(
-        response.status,
-        new Error(`${response.status} ${response.statusText}`),
-      );
-    }
-
-    try {
-      const data = await response.json();
-      return createSuccessResponse(response.status, data);
-    } catch {
-      return createErrorResponse(
-        response.status,
-        new Error('Failed to convert response data! Are you sure you\'re fetching JSON? If not then manually use ctx.fetch().'),
-      );
-    }
+function wrapResponse<T>(request: Promise<Response>): WrappedRequest<T> {
+  return {
+    async json() {
+      const res = await request;
+      return res.json();
+    },
+    then(onfulfilled, onrejected) {
+      return request
+        .then(onfulfilled)
+        .catch(onrejected);
+    },
   };
-};
+}
 
-fetch.get = createFetchWrapper('GET');
-fetch.post = createFetchWrapper('POST');
-fetch.put = createFetchWrapper('PUT');
-fetch.patch = createFetchWrapper('PATCH');
-fetch.delete = createFetchWrapper('DELETE');
+function wrapFetch(method: Method): WrappedFetch {
+  return (url, init = {}) => wrapResponse(_fetch(url, {
+    ...init,
+    method,
+  }));
+}
+
+export const fetch: FetchUtil = (() => {
+  const fetchUtil: FetchUtil = (...args) => {
+    return wrapResponse(_fetch(...args));
+  };
+
+  fetchUtil.get = wrapFetch('GET');
+  fetchUtil.post = wrapFetch('POST');
+  fetchUtil.put = wrapFetch('PUT');
+  fetchUtil.patch = wrapFetch('PATCH');
+  fetchUtil.delete = wrapFetch('DELETE');
+
+  return fetchUtil;
+})();
