@@ -2,8 +2,6 @@ import * as fs from 'fs/promises';
 import { createLogger } from './logger';
 import { join } from 'path';
 
-const logger = createLogger('[lib] Loader');
-
 export interface LoadDirOptions {
   /** Resolve files nested in directories. */
   recursive?: boolean;
@@ -15,6 +13,13 @@ export interface LoadDirOptions {
   depth?: number;
 }
 
+export interface File {
+  path: string;
+  isDirectory: boolean;
+}
+
+const logger = createLogger('[lib] Loader');
+
 async function openDir(path: string) {
   logger.debug('Opening dir:', path);
   try {
@@ -25,11 +30,6 @@ async function openDir(path: string) {
     logger.debug('Could not open dir.');
     return null;
   }
-}
-
-export interface File {
-  path: string;
-  isDirectory: boolean;
 }
 
 /**
