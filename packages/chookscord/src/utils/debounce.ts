@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
+import type { FlattenPromise } from './types';
+
 export function debounce<T extends [...args: unknown[]]>(
   fn: (...args: T) => unknown,
   ms: number
@@ -22,22 +24,20 @@ export function debounce<T extends [...args: unknown[]]>(
   };
 }
 
-type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
-
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   ms: number
-): (...args: T) => Promise<UnwrapPromise<R>>;
+): (...args: T) => FlattenPromise<R>;
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   ms: number,
   ...args: T
-): () => Promise<UnwrapPromise<R>>;
+): () => FlattenPromise<R>;
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   ms: number,
   ...args: T
-): (...args: T) => Promise<UnwrapPromise<R>> {
+): (...args: T) => FlattenPromise<R> {
   let timeout: NodeJS.Timeout;
   return (...a) => {
     if (timeout) {
@@ -45,10 +45,10 @@ export function debounceAsync<T extends [...args: unknown[]], R>(
     }
     return new Promise(res => {
       timeout = setTimeout(
-        (...args: T) => { res(fn(...args) as never) },
+        (...args: T) => { res(fn(...args)) },
         ms,
         ...args.length ? args : a,
       );
-    });
+    }) as FlattenPromise<R>;
   };
 }
