@@ -1,5 +1,4 @@
 import type { Consola } from 'consola';
-import type { ExtractArgs } from './utils/types/_extract';
 import { createLogger } from './utils';
 
 export type StoreSetListener<T> = (
@@ -83,11 +82,11 @@ export class Store<T> {
 
   private _emit(
     event: 'set',
-    ...args: ExtractArgs<StoreSetListener<T>>
+    ...args: Parameters<StoreSetListener<T>>
   ): void;
   private _emit(
     event: 'remove',
-    ...args: ExtractArgs<StoreRemoveListener<T>>
+    ...args: Parameters<StoreRemoveListener<T>>
   ): void;
   private _emit(
     event: 'set' | 'remove',

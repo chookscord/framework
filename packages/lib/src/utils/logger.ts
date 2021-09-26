@@ -1,8 +1,8 @@
 import * as chalk from 'chalk';
-import * as consola from 'consola';
+import { Consola, default as consola } from 'consola';
 
 export interface Logger {
-  logger: consola.Consola;
+  logger: Consola;
 }
 
 const COLORS = [
@@ -31,7 +31,7 @@ function getTotalCharCode(string: string): number {
   return average;
 }
 
-export function createLogger(name: string): consola.Consola {
+export function createLogger(name: string): Consola {
   const color = COLORS[getTotalCharCode(name.toUpperCase()) % COLORS.length];
   return consola.create({
     defaults: {
