@@ -99,27 +99,34 @@ export class Store<T> {
     }
   }
 
-  public addEventListener<Event extends 'set' | 'remove'>(
-    event: Event,
-    listener: Event extends 'set'
-      ? StoreSetListener<T>
-      : Event extends 'remove'
-        ? StoreRemoveListener<T>
-        : never,
+  public addEventListener(
+    event: 'set',
+    listener: StoreSetListener<T>,
+  ): void
+  public addEventListener(
+    event: 'remove',
+    listener: StoreRemoveListener<T>
+  ): void
+  public addEventListener(
+    event: 'set' | 'remove',
+    listener: StoreSetListener<T> | StoreRemoveListener<T>,
   ): void {
     const listenerName = `_${event}Listeners` as const;
     // @ts-ignore This is logically correct and type-safe, but TS doesn't agree >:(
     this[listenerName].add(listener);
     this._logger?.trace('Listener added.');
   }
-
-  public removeEventListener<Event extends 'set' | 'remove'>(
-    event: Event,
-    listener: Event extends 'set'
-      ? StoreSetListener<T>
-      : Event extends 'remove'
-        ? StoreRemoveListener<T>
-        : never,
+  public removeEventListener(
+    event: 'set',
+    listener: StoreSetListener<T>
+  ): void
+  public removeEventListener(
+    event: 'remove',
+    listener: StoreRemoveListener<T>
+  ): void
+  public removeEventListener(
+    event: 'set' | 'remove',
+    listener: StoreSetListener<T> | StoreRemoveListener<T>,
   ): void {
     const listenerName = `_${event}Listeners` as const;
     // @ts-ignore See reason above
