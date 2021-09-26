@@ -3,12 +3,13 @@ import * as lib from '@chookscord/lib';
 import type { ChooksCommand } from '@chookscord/types';
 
 const logger = lib.createLogger('[cli] Register');
+
 export async function registerCommands(
   register: lib.InteractionRegister,
   store: lib.Store<ChooksCommand>,
 ): Promise<lib.RegisterCooldown | null> {
   logger.info('Preparing commands...');
-  const commands = lib.transformCommandList(store.getAll());
+  const commands = lib.transformCommandList(store.getAll({ unique: true }));
   logger.success(`Prepared ${commands.length} commands.`);
 
   try {
