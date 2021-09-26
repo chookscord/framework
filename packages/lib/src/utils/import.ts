@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-var-requires */
 
+export type MaybeDefault<T> = T | { default: T };
+
 // @Choooks22: Not sure how correct this is exactly, or if it overshoots what it's supposed to do.
 // Maybe someone could come and clean this up later, and maybe add esm support here, idk
 function clearChildren(mod: NodeJS.Module) {
@@ -30,9 +32,8 @@ export function uncachedImport<T>(path: string): T {
   return imported;
 }
 
-export function uncachedImportDefault<T>(path: string): T {
-  const imported = uncachedImport<T | { default: T }>(path);
-  return 'default' in imported
-    ? imported.default
-    : imported;
+export function pickDefault<T>(data: MaybeDefault<T>): T {
+  return 'default' in data
+    ? data.default
+    : data;
 }
