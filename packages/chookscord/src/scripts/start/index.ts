@@ -54,7 +54,7 @@ export async function run(): Promise<void> {
 
   logger.trace('Loading config.');
   const configPath = utils.appendPath.fromOut(configFile);
-  const config = await utils.importDefault<Config>(configPath);
+  const config = lib.pickDefault(await import(configPath) as Config);
 
   logger.trace('Validating config.');
   validateConfig(config);

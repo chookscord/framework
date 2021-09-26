@@ -23,7 +23,7 @@ export async function *getMessageCommands(
     const fileName = basename(file.path);
     logger.info(`Loading command "${fileName}"...`);
 
-    const command = await utils.importDefault<ChooksContextCommand>(file.path);
+    const command = lib.pickDefault(await import(file.path) as ChooksContextCommand);
     logger.success(`Loaded command "${command.name}". Time took: ${endTimer().toLocaleString()}ms`);
     yield prepareCommand(command);
   }

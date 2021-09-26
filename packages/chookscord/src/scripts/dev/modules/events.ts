@@ -55,11 +55,11 @@ export class EventHandler implements types.ModuleHandler {
     return Boolean(validationError);
   }
 
-  public async update(filePath: string): Promise<void> {
+  public update(filePath: string): void {
     const fileName = basename(filePath);
     this._logger.info(`"${fileName}" updated.`);
 
-    const event = await utils.uncachedImportDefault<types.Event>(filePath);
+    const event = lib.pickDefault(lib.uncachedImport<types.Event>(filePath));
     if (this._isEventInvalid(event)) return;
 
     this.store.set(event.name, event);

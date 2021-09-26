@@ -23,7 +23,7 @@ export async function *getCommands(
     const fileName = basename(file.path);
     logger.info(`Loading command "${fileName}"...`);
 
-    const command = await utils.importDefault<ChooksSlashCommand>(file.path);
+    const command = lib.pickDefault(await import(file.path) as ChooksSlashCommand);
     logger.success(`Loaded command "${command.name}". Time took: ${endTimer().toLocaleString()}ms`);
     yield prepareCommand(command);
   }

@@ -1,9 +1,9 @@
 import * as lib from '@chookscord/lib';
 import type { Client, CommandInteraction } from 'discord.js';
+import { createCommandKey, createTimer } from '../../../utils';
 import type { ChooksCommandContext } from '@chookscord/types';
 import type { CommandModule } from '../../../types';
 import type { Consola } from 'consola';
-import { createTimer } from '../../../utils';
 
 interface CommandReference {
   key: string;
@@ -28,7 +28,7 @@ function getCommandRef(
   store: lib.Store<CommandModule>,
   interaction: CommandInteraction,
 ): CommandReference | { key: string; command: null } {
-  const key = lib.createCommandKey(
+  const key = createCommandKey(
     interaction.commandName,
     interaction.options.getSubcommandGroup(false),
     interaction.options.getSubcommand(false),

@@ -29,7 +29,7 @@ function attachListener(
   };
 
   const handleCommands = (interaction: CommandInteraction) => {
-    const commandKey = lib.createCommandKey(
+    const commandKey = utils.createCommandKey(
       interaction.commandName,
       interaction.options.getSubcommandGroup(false),
       interaction.options.getSubcommand(false),

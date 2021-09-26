@@ -1,7 +1,7 @@
 import * as tools from '../../tools';
 import * as utils from '../../utils';
+import { Logger, pickDefault } from '@chookscord/lib';
 import type { Config } from '../../types';
-import type { Logger } from '@chookscord/lib';
 
 function validateConfig(
   config: Config,
@@ -19,7 +19,7 @@ export async function getConfig(
   options: Partial<Logger> = {},
 ): Promise<Config> {
   const configPath = utils.appendPath.fromOut(configFile);
-  const config = await utils.importDefault<Config>(configPath);
+  const config = pickDefault(await import(configPath) as Config);
 
   validateConfig(config, options);
   return config;

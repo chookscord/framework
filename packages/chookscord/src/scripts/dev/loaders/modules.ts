@@ -31,7 +31,7 @@ function *extractCommandHandlers(
 ): Generator<[string, (ctx: types.ChooksCommandContext) => unknown]> {
   for (const option of command.options ?? []) {
     if (isSubCommandOption(option)) {
-      const key = lib.createCommandKey(
+      const key = utils.createCommandKey(
         command.name,
         option.name,
       );
@@ -39,7 +39,7 @@ function *extractCommandHandlers(
     } else if (isGroupOption(option)) {
       for (const subCommand of option.options) {
         if (isSubCommandOption(subCommand)) {
-          const key = lib.createCommandKey(
+          const key = utils.createCommandKey(
             command.name,
             option.name,
             subCommand.name,
@@ -61,7 +61,7 @@ export function createModuleLoader(
   const initCommands = () => {
     commandStore = new lib.Store();
     moduleStore = new lib.Store();
-    const register = createRegister(config, commandStore, { logger });
+    const register = createRegister(config, commandStore);
 
     attachInteractionListener(client, moduleStore, { logger });
 

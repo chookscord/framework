@@ -9,8 +9,8 @@ export async function registerCommands(
   options: Partial<lib.Logger> = {},
 ): Promise<void> {
   const [config, commands] = project;
-  const interactions = lib.prepareCommands(commands);
-  const register = lib.createInteractionRegister(config.credentials);
+  const interactions = lib.transformCommandList(commands);
+  const register = lib.createRegister(config.credentials);
   const ok = await register(interactions);
 
   if (!ok || typeof ok === 'function') {

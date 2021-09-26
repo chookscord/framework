@@ -1,6 +1,6 @@
 import * as lib from '@chookscord/lib';
 import type * as types from '@chookscord/types';
-import { createTimer, importDefault } from '../../../utils';
+import { createCommandKey, createTimer } from '../../../utils';
 import { basename } from 'path';
 
 const logger = lib.createLogger('[cli] SubCommands');
@@ -36,7 +36,7 @@ function *extractOptions(
 
   if (subCommand) {
     const names = [command.name, subOption.name, subCommand.name] as const;
-    const commandKey = lib.createCommandKey(...names);
+    const commandKey = createCommandKey(...names);
     yield [commandKey, createCommandReference(command, subCommand.execute)];
     return;
   }
@@ -44,7 +44,7 @@ function *extractOptions(
   switch (subOption.type) {
     case 'SUB_COMMAND': {
       const names = [command.name, subOption.name] as const;
-      const commandKey = lib.createCommandKey(...names);
+      const commandKey = createCommandKey(...names);
       yield [commandKey, createCommandReference(command, subOption.execute)];
       return;
     }
@@ -65,7 +65,7 @@ export async function *getSubCommands(
     const fileName = basename(rootPath);
     logger.info(`Loading command "${fileName}"...`);
 
-    const command = await importDefault<types.ChooksSubCommand>(file.path);
+    const command = lib.pickDefault(await import(file.path) as types.ChooksSubCommand);
     logger.success(`Loaded command "${command.name}". Time took: ${endTimer().toLocaleString()}ms`);
     yield* extractOptions(command);
   }

@@ -1,30 +1,34 @@
+/* eslint-disable require-atomic-updates */
 import * as lib from '@chookscord/lib';
 import type { ChooksCommand } from '@chookscord/types';
 import type { Config } from '../../types';
 import { debounceAsync } from '../../utils';
+import { registerCommands } from '../../tools';
+
+const logger = lib.createLogger('[cli] Register');
 
 export function createRegister(
   config: Config,
   store: lib.Store<ChooksCommand>,
-  options: Partial<lib.Logger> = {},
 ): () => Promise<void> {
-  const _register = lib.createInteractionRegister(
-    {
-      ...config.credentials,
-      guildId: config.devServer,
-    },
-    options,
-  );
+  const _register = lib.createRegister({
+    ...config.credentials,
+    guildId: config.devServer,
+  });
 
-  const register = debounceAsync(_register, 250);
-  let cooldown: lib.GetCooldown;
+  const register = debounceAsync(registerCommands, 250, _register, store);
+  let onCooldown: lib.RegisterCooldown = () => null;
 
   return async () => {
-    const commands = lib.prepareCommands(store.getAll({ unique: true }));
-    const res = await register(commands, cooldown);
-    if (typeof res === 'function') {
-      // eslint-disable-next-line require-atomic-updates
-      cooldown = res;
+    const cooldown = onCooldown(Date.now());
+    if (cooldown) {
+      logger.warn(`You are still under rate limit! Try again in ${cooldown / 1000}s.`);
+      return;
+    }
+
+    const newCooldown = await register();
+    if (newCooldown) {
+      onCooldown = newCooldown;
     }
   };
 }

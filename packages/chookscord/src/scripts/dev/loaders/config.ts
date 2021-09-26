@@ -1,9 +1,9 @@
+import * as lib from '@chookscord/lib';
 import * as tools from '../../../tools';
 import type * as types from '../../../types';
 import * as utils from '../../../utils';
-import { createLogger } from '@chookscord/lib';
 
-const logger = createLogger('[cli] Config');
+const logger = lib.createLogger('[cli] Config');
 
 function checkConfigFile(configFile: string | null): asserts configFile is string {
   if (!configFile) {
@@ -31,7 +31,7 @@ export async function loadConfig(configFile: string | null): Promise<types.Confi
     .replace(/\.ts$/, '.js');
 
   await tools.compile(inPath, outPath);
-  const config = await utils.uncachedImportDefault<types.Config>(outPath);
+  const config = lib.pickDefault(lib.uncachedImport<types.Config>(outPath));
 
   logger.trace('Validating config file.');
   validateConfig(config);
