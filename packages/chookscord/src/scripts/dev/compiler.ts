@@ -24,7 +24,7 @@ export interface WatchCompilerConfig extends Partial<Logger> {
   output: string;
   compilerOptions?: swc.Options;
   compile?: UpdateListener;
-  delete?: UpdateListener;
+  unlink?: UpdateListener;
 }
 
 interface Settings {
@@ -143,7 +143,7 @@ export function createWatchCompiler(
   }
 
   const compile = createCompile(createSettings(config.compile), options);
-  const unlink = createUnlink(createSettings(config.delete));
+  const unlink = createUnlink(createSettings(config.unlink));
 
   watcher.on('add', compile);
   watcher.on('change', compile);

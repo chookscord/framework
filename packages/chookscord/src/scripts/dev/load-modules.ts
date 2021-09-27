@@ -113,7 +113,7 @@ export function createModuleLoader(
       input: moduleName,
       output: `.chooks/${moduleName}`,
       compile: handler.update?.bind(handler),
-      delete: handler.remove?.bind(handler),
+      unlink: handler.remove?.bind(handler),
     });
   };
 
