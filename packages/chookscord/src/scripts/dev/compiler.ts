@@ -69,7 +69,7 @@ async function compileFile(
   options?: swc.Options,
 ): Promise<void> {
   const emit = transformFile(filePath, options);
-  await mkdir(dirname(filePath));
+  await mkdir(dirname(outPath));
   await emit(outPath);
 }
 
@@ -135,7 +135,7 @@ export function createWatchCompiler(
       ? paths.out
       : join(paths.out, filePath.slice(paths.in.length));
 
-    return path.replace(/^\.ts$/, '.js');
+    return path.replace(/\.ts$/, '.js');
   }
 
   function createSettings(listener?: UpdateListener): Settings {
