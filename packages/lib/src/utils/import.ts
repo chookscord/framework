@@ -20,7 +20,8 @@ function removeFromMain(mod: NodeJS.Module) {
   }
 }
 
-export function uncachedImport<T>(path: string): T {
+export async function uncachedImport<T>(path: string): Promise<T> {
+  await Promise.resolve(); // Avoids race conditions
   const imported = require(path);
   const cacheId = require.resolve(path);
   const mod = require.cache[cacheId]!;
