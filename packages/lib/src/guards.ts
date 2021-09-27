@@ -42,3 +42,21 @@ export function isOptionWithoutChoice(
 ): option is types.ChooksCommandOptionWithoutChoice {
   return TYPES_WITHOUT_CHOICES.includes(option.type);
 }
+
+export function isSubCommandOption(
+  option: types.ChooksCommandOption,
+): option is types.ChooksSubCommandOption {
+  return option.type === 'SUB_COMMAND';
+}
+
+export function isGroupOption(
+  option: types.ChooksCommandOption,
+): option is types.ChooksGroupCommandOption {
+  return option.type === 'SUB_COMMAND_GROUP';
+}
+
+export function isNonCommandOption(
+  option: types.ChooksCommandOption,
+): option is types.ChooksNonCommandOption {
+  return !isSubCommandOption(option) && !isGroupOption(option);
+}
