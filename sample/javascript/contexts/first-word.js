@@ -1,6 +1,6 @@
-const { defineMessageCommand } = require('chookscord');
+const { defineContextCommand } = require('chookscord');
 
-module.exports = defineMessageCommand({
+module.exports = defineContextCommand({
   name: 'First Word', // Uppercase and spaces are allowed.
   type: 'MESSAGE', // Specifying the type is MESSAGE is required as well.
   async execute({ interaction }) {

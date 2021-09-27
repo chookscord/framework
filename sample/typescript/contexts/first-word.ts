@@ -1,6 +1,6 @@
-import { defineMessageCommand } from 'chookscord';
+import { defineContextCommand } from 'chookscord';
 
-export default defineMessageCommand({
+export default defineContextCommand({
   name: 'First Word', // Uppercase and spaces are allowed.
   type: 'MESSAGE', // Specifying the type is MESSAGE is required as well.
   async execute({ interaction }) {

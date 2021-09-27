@@ -1,6 +1,6 @@
-import { defineUserCommand } from 'chookscord';
+const { defineContextCommand } = require('chookscord');
 
-export default defineUserCommand({
+module.exports = defineContextCommand({
   name: 'High Five',
   type: 'USER',
   async execute({ interaction }) {
