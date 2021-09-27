@@ -85,7 +85,7 @@ export function createModuleLoader(
         moduleStore.set(key, { data: command, execute });
       };
 
-      if (lib.isSlashCommand(command) || lib.isContextCommand(command)) {
+      if (typeof command.execute === 'function') {
         set(command.name, command.execute.bind(command));
       } else {
         for (const [key, execute] of extractCommandHandlers(command)) {
