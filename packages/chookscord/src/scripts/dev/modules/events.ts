@@ -34,7 +34,7 @@ export async function update(
   }
 }
 
-export function unlink(
+export function remove(
   paths: Record<string, string>,
   store: Store,
   filePath: string,
@@ -45,4 +45,19 @@ export function unlink(
 
   store.delete(eventName);
   logger?.success(`Event "${eventName}" deleted.`);
+}
+
+export function createModule(
+  store: Store,
+  logger?: Consola,
+): Record<'unlink' | 'compile', (filePath: string) => void | Promise<void>> {
+  const paths = {};
+  return {
+    async compile(filePath: string) {
+      await update(paths, store, filePath, logger);
+    },
+    unlink(filePath: string) {
+      remove(paths, store, filePath, logger);
+    },
+  };
 }

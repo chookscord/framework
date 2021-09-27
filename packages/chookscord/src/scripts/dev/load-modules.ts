@@ -1,58 +1,19 @@
+/* eslint-disable complexity */
 import * as lib from '@chookscord/lib';
-import * as tools from '../../tools';
-import type * as types from '@chookscord/types';
+import type * as types from '../../types';
 import * as utils from '../../utils';
-import type {
-  CommandModule,
-  Config,
-  Event,
-  ModuleName,
-} from '../../types';
 import { UpdateListener, createWatchCompiler } from './compiler';
-import { attachEventListener, attachInteractionListener } from './listeners';
+import type { ChooksCommand } from '@chookscord/types';
 import type { Client } from 'discord.js';
 import type { Consola } from 'consola';
 import { createRegister } from './register';
 
-// Move this to lib
-function isSubCommandOption(option: types.ChooksCommandOption): option is types.ChooksSubCommandOption {
-  return option.type === 'SUB_COMMAND';
-}
-
-function isGroupOption(option: types.ChooksCommandOption): option is types.ChooksGroupCommandOption {
-  return option.type === 'SUB_COMMAND_GROUP';
-}
-
-// eslint-disable-next-line complexity
-function *extractCommandHandlers(
-  command: types.ChooksCommand,
-): Generator<[string, (ctx: types.ChooksCommandContext) => unknown]> {
-  for (const option of command.options ?? []) {
-    if (isSubCommandOption(option)) {
-      const key = utils.createCommandKey(
-        command.name,
-        option.name,
-      );
-      yield [key, option.execute];
-    } else if (isGroupOption(option)) {
-      for (const subCommand of option.options) {
-        if (isSubCommandOption(subCommand)) {
-          const key = utils.createCommandKey(
-            command.name,
-            option.name,
-            subCommand.name,
-          );
-          yield [key, subCommand.execute];
-        }
-      }
-    }
-  }
-}
+export type Module = Partial<Record<'compile' | 'unlink', (filePath: string) => void | Promise<void>>>;
 
 function createWatcher(
-  moduleName: ModuleName,
-  compile: UpdateListener,
-  unlink: UpdateListener,
+  moduleName: types.ModuleName,
+  compile?: UpdateListener,
+  unlink?: UpdateListener,
   logger?: Consola,
 ): void {
   createWatchCompiler({
@@ -65,111 +26,69 @@ function createWatcher(
   });
 }
 
+function loadModule<T>(
+  moduleName: types.ModuleName,
+  createModule: (store: T, logger?: Consola) => Module,
+  store: T,
+  loggerName: string | Consola,
+): void {
+  const logger = typeof loggerName === 'string'
+    ? lib.createLogger(loggerName)
+    : loggerName;
+  const { compile, unlink } = createModule(store, logger);
+  createWatcher(moduleName, compile, unlink);
+}
+
 export function createModuleLoader(
   client: Client,
-  config: Config,
-): (moduleName: ModuleName) => Promise<void> {
-  let commandStore: lib.Store<types.ChooksCommand>;
-  let moduleStore: lib.Store<CommandModule>;
+  config: types.Config,
+): (moduleName: types.ModuleName) => Promise<void> {
+  let commandStore: lib.Store<ChooksCommand>;
 
-  const initCommands = () => {
-    const logger = lib.createLogger('[cli] Modules');
+  const initCommands = async () => {
     commandStore = new lib.Store();
-    moduleStore = new lib.Store();
+    const logger = lib.createLogger('[cli] Modules');
+    const moduleStore = new lib.Store<types.CommandModule>();
     const register = createRegister(config, commandStore);
 
+    // Even tho this is async, event loop is still blocked until this part is reached,
+    // so race conditions with initializing store and returning undefined isn't possible
+    const { attachInteractionListener, attachModuleHandler } = await import('./listeners');
+
     attachInteractionListener(client, moduleStore, logger);
-
-    const deleteCommand = (oldCommand: types.ChooksCommand) => {
-      for (const [key, mod] of moduleStore.entries()) {
-        if (mod.data === oldCommand) {
-          moduleStore.delete(key);
-        }
-      }
-    };
-
-    // eslint-disable-next-line complexity
-    commandStore.addEventListener('set', (command, oldCommand) => {
-      if (tools.didCommandChanged(command, oldCommand)) {
-        register();
-      }
-
-      if (oldCommand) {
-        deleteCommand(oldCommand);
-      }
-
-      const set = (key: string, execute: (ctx: never) => unknown) => {
-        moduleStore.set(key, { data: command, execute });
-      };
-
-      if (typeof command.execute === 'function') {
-        set(command.name, command.execute.bind(command));
-      } else {
-        for (const [key, execute] of extractCommandHandlers(command)) {
-          set(key, execute);
-        }
-      }
-    });
-
-    commandStore.addEventListener('remove', deleteCommand);
+    attachModuleHandler(register, commandStore, moduleStore);
   };
 
-  const getCommandStore = () => {
-    if (!commandStore) initCommands();
-    return commandStore;
+  const mods = {
+    commands: {
+      get store() {
+        if (!commandStore) initCommands();
+        return commandStore;
+      },
+    },
   };
 
-  // eslint-disable-next-line complexity
   return async moduleName => {
     switch (moduleName) {
-      case 'commands': {
-        const { update, unlink } = await import('./modules/commands');
-        const paths = {};
-        const store = getCommandStore();
-        const logger = lib.createLogger('[cli] Commands');
-        createWatcher(
-          moduleName,
-          filePath => update(paths, store, filePath, logger),
-          filePath => { unlink(paths, store, filePath, logger) },
-          logger,
-        );
-      } return;
-      case 'subcommands': {
-        const { update, unlink } = await import('./modules/subcommands');
-        const paths = {};
-        const store = getCommandStore();
-        const logger = lib.createLogger('[cli] SubCommands');
-        createWatcher(
-          moduleName,
-          filePath => update(paths, store, filePath, logger),
-          filePath => { unlink(paths, store, filePath, logger) },
-          logger,
-        );
-      } return;
       case 'events': {
-        const { update, unlink } = await import ('./modules/events');
-        const paths = {};
-        const store = new lib.Store<Event>();
+        const { createModule } = await import('./modules/events');
+        const { attachEventListener } = await import('./listeners/events');
+        const store = new lib.Store<types.Event>();
         const logger = lib.createLogger('[cli] Events');
         attachEventListener(store, client, config, logger);
-        createWatcher(
-          moduleName,
-          filePath => update(paths, store, filePath, logger),
-          filePath => { unlink(paths, store, filePath, logger) },
-          logger,
-        );
+        loadModule(moduleName, createModule, store, logger);
+      } return;
+      case 'commands': {
+        const { createModule } = await import('./modules/commands');
+        loadModule(moduleName, createModule, mods.commands.store, '[cli] Commands');
+      } return;
+      case 'subcommands': {
+        const { createModule } = await import('./modules/subcommands');
+        loadModule(moduleName, createModule, mods.commands.store, '[cli] SubCommands');
       } return;
       case 'contexts': {
-        const { update, unlink } = await import('./modules/contexts');
-        const paths = {};
-        const store = getCommandStore();
-        const logger = lib.createLogger('[cli] Contexts');
-        createWatcher(
-          moduleName,
-          filePath => update(paths, store, filePath, logger),
-          filePath => { unlink(paths, store, filePath, logger) },
-          logger,
-        );
+        const { createModule } = await import('./modules/contexts');
+        loadModule(moduleName, createModule, mods.commands.store, '[cli] Contexts');
       }
     }
   };
