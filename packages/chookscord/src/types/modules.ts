@@ -24,7 +24,7 @@ export interface ModuleHandler {
   remove?: (filePath: string) => Awaited<void>;
 }
 
-export type ModuleName = 'commands' | 'subcommands' | 'events' | 'messages' | 'users';
+export type ModuleName = 'commands' | 'subcommands' | 'events' | 'contexts';
 
 export interface CommandModule {
   data: ChooksCommand;

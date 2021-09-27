@@ -10,14 +10,7 @@ declare module '@chookscord/types' {
     interaction: CommandInteraction;
   }
 
-  interface ChooksMessageCommandContext {
-    client: Client<true>;
-    logger: Consola;
-    fetch: FetchUtil;
-    interaction: ContextMenuInteraction;
-  }
-
-  interface ChooksUserCommandContext {
+  interface ChooksContextCommandContext {
     client: Client<true>;
     logger: Consola;
     fetch: FetchUtil;

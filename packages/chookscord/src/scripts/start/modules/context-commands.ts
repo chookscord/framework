@@ -3,7 +3,7 @@ import * as utils from '../../../utils';
 import type { ChooksContextCommand } from '@chookscord/types';
 import { basename } from 'path';
 
-const logger = lib.createLogger('[cli] MessageCommands');
+const logger = lib.createLogger('[cli] ContextCommands');
 
 // @todo(Choooks22): Bind dependencies to 'this'
 function prepareCommand(
@@ -13,7 +13,7 @@ function prepareCommand(
   return [command.name, { ...command, execute }];
 }
 
-export async function *getMessageCommands(
+export async function *getContextCommands(
   rootPath: string,
 ): AsyncGenerator<[key: string, command: ChooksContextCommand]> {
   for await (const file of lib.loadDir(rootPath)) {

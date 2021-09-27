@@ -21,8 +21,7 @@ const modules: ModuleName[] = [
   'events',
   'commands',
   'subcommands',
-  'messages',
-  'users',
+  'contexts',
 ];
 function isModule(moduleName: string): moduleName is ModuleName {
   return modules.includes(moduleName as never);

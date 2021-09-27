@@ -136,14 +136,9 @@ export function createModuleLoader(
         const handler = new EventHandler(client, config, new lib.Store());
         createWatcher(handler, moduleName);
       } return;
-      case 'messages': {
-        const { MessageCommandHandler } = await import('../modules/message-commands');
-        const handler = new MessageCommandHandler(getCommandStore());
-        createWatcher(handler, moduleName);
-      } return;
-      case 'users': {
-        const { UserCommandHandler } = await import('../modules/user-commands');
-        const handler = new UserCommandHandler(getCommandStore());
+      case 'contexts': {
+        const { ContextCommandHandler } = await import('../modules/context-commands');
+        const handler = new ContextCommandHandler(getCommandStore());
         createWatcher(handler, moduleName);
       }
     }

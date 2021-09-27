@@ -4,8 +4,8 @@ import * as utils from '../../../utils';
 import { ModuleHandler } from '../../../types';
 import { basename } from 'path';
 
-export class UserCommandHandler implements ModuleHandler {
-  private _logger = lib.createLogger('[cli] UserCommands');
+export class ContextCommandHandler implements ModuleHandler {
+  private _logger = lib.createLogger('[cli] ContextCommands');
   private _paths: Record<string, string> = {};
 
   constructor(private store: lib.Store<types.ChooksCommand>) { }
@@ -23,7 +23,7 @@ export class UserCommandHandler implements ModuleHandler {
     const endTimer = utils.createTimer();
     this._logger.info(`"${fileName}" updated.`);
 
-    const command = lib.pickDefault(lib.uncachedImport(filePath) as types.ChooksContextCommand);
+    const command = lib.pickDefault(lib.uncachedImport<types.ChooksContextCommand>(filePath));
     if (this._isCommandInvalid(command)) return;
 
     this.store.set(command.name, command);

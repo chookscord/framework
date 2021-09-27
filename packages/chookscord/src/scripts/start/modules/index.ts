@@ -116,17 +116,10 @@ export function createModuleLoader(
           store.set(key, command.execute);
         }
       } return;
-      case 'messages': {
+      case 'contexts': {
         const store = getCommandStore();
-        const { getMessageCommands } = await import('./message-commands');
-        for await (const [key, command] of getMessageCommands(modulePath)) {
-          store.set(key, command.execute);
-        }
-      } return;
-      case 'users': {
-        const store = getCommandStore();
-        const { getUserCommands } = await import('./user-commands');
-        for await (const [key, command] of getUserCommands(modulePath)) {
+        const { getContextCommands } = await import('./context-commands');
+        for await (const [key, command] of getContextCommands(modulePath)) {
           store.set(key, command.execute);
         }
       }

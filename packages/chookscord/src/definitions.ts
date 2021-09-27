@@ -26,13 +26,7 @@ export function defineSubCommand(
   return command;
 }
 
-export function defineMessageCommand(
-  command: types.ChooksContextCommand,
-): types.ChooksContextCommand {
-  return command;
-}
-
-export function defineUserCommand(
+export function defineContextCommand(
   command: types.ChooksContextCommand,
 ): types.ChooksContextCommand {
   return command;
