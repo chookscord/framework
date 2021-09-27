@@ -1,4 +1,3 @@
-/* eslint-disable no-new */
 import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import type * as types from '@chookscord/types';
@@ -10,9 +9,9 @@ import type {
   ModuleName,
 } from '../../types';
 import type { Client } from 'discord.js';
-import { WatchCompiler } from './compiler';
 import { attachInteractionListener } from './loaders/listeners';
 import { createRegister } from './register';
+import { createWatchCompiler } from './compiler';
 
 const logger = lib.createLogger('[cli] Chooks');
 
@@ -109,7 +108,7 @@ export function createModuleLoader(
     moduleName: ModuleName,
   ) => {
     handler.init?.();
-    new WatchCompiler({
+    createWatchCompiler({
       root: utils.appendPath.fromRoot(),
       input: moduleName,
       output: `.chooks/${moduleName}`,

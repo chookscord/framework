@@ -3,8 +3,8 @@ import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
 import type { ModuleName } from '../../types';
-import { WatchCompiler } from './compiler';
 import { createModuleLoader } from './load-modules';
+import { createWatchCompiler } from './compiler';
 import { loadConfig } from './loaders/config';
 
 const logger = lib.createLogger('[cli] Chooks');
@@ -49,7 +49,7 @@ export async function run(): Promise<void> {
       loadModule(moduleName);
     } else {
       // eslint-disable-next-line no-new
-      new WatchCompiler({
+      createWatchCompiler({
         root: utils.appendPath.fromRoot(),
         input: moduleName,
         output: `.chooks/${moduleName}`,
