@@ -1,4 +1,4 @@
-import * as lib from '../../packages/lib/src';
+import * as lib from '../../packages/lib';
 import type * as types from '../../packages/types';
 import * as utils from '../../packages/chookscord/src/utils';
 import { Client, CommandInteraction } from 'discord.js';
