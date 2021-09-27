@@ -1,6 +1,6 @@
 import type { ChooksCommand } from '@chookscord/types';
 import type { Interaction } from 'discord.js';
-import type { Store } from '@chookscord/lib/src/store';
+import type { Store } from '@chookscord/lib';
 
 export function createCommandKey(
   commandName: string,
