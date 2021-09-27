@@ -13,7 +13,9 @@ export interface BotCredentials {
    * const { defineConfig } = require('chookscord');
    *
    * module.exports = defineConfig({
-   *   token: process.env.DISCORD_BOT_TOKEN,
+   *   authorization: {
+   *     token: process.env.DISCORD_BOT_TOKEN,
+   *   },
    * });
    */
   token: string;
