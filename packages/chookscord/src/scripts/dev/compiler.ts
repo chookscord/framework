@@ -1,15 +1,15 @@
 import * as fs from 'fs/promises';
 import * as swc from '@swc/core';
-import { FSWatcher, watch } from 'chokidar';
 import { Stats, statSync } from 'fs';
-import { dirname, join } from 'path';
-import { createLogger } from '@chookscord/lib';
-import { createTimer } from '../../utils';
+import { basename, dirname, join } from 'path';
+import type { Consola } from 'consola';
+import type { Logger } from '@chookscord/lib';
+import { watch } from 'chokidar';
 
 export type WriteFile = (outPath: string) => Promise<void>;
 export type UpdateListener = (filePath: string) => unknown;
 
-export interface WatchCompilerConfig {
+export interface WatchCompilerConfig extends Partial<Logger> {
   /**
    * The root absolute path
    */
@@ -25,6 +25,12 @@ export interface WatchCompilerConfig {
   compilerOptions?: swc.Options;
   compile?: UpdateListener;
   delete?: UpdateListener;
+}
+
+interface Settings {
+  getOutPath: (filePath: string) => string;
+  listener?: UpdateListener;
+  logger?: Consola;
 }
 
 const defaultOptions: Readonly<swc.Options> = {
@@ -46,106 +52,104 @@ async function mkdir(dir: string) {
   await fs.mkdir(dir, { recursive: true });
 }
 
-async function deleteFile(path: string) {
+function transformFile(
+  filePath: string,
+  options: swc.Options = defaultOptions,
+): (outPath: string) => Promise<void> {
+  const transform = swc.transformFile(filePath, options);
+  return async outPath => {
+    const output = await transform;
+    await fs.writeFile(outPath, output.code, 'utf-8');
+  };
+}
+
+async function compileFile(
+  filePath: string,
+  outPath: string,
+  options?: swc.Options,
+): Promise<void> {
+  const emit = transformFile(filePath, options);
+  await mkdir(dirname(filePath));
+  await emit(outPath);
+}
+
+async function deleteFile(path: string): Promise<void> {
   await fs.rm(path, { recursive: true, force: true });
 }
 
-// @Choooks22: Still feels kinda sus making this a class, rewriting it just exposes methods
-// that could be extract to its own functions again, just passing the options as params
-export class WatchCompiler {
-  protected static _logger = createLogger('[cli] Compiler');
-  private _options = this.config.compilerOptions ?? defaultOptions;
-  private _watcher: FSWatcher;
-  private _isFile: boolean;
-  private _paths = {
-    in: join(this.config.root, this.config.input),
-    out: join(this.config.root, this.config.output),
+function createCompile(
+  settings: Settings,
+  options?: swc.Config,
+): (filePath: string, stats?: Stats) => Promise<void> {
+  const { getOutPath, logger, listener } = settings;
+  return async (filePath, stats) => {
+    if (!stats?.isFile()) return;
+    logger?.debug('Emit:', filePath);
+    const fileName = basename(filePath);
+    const outPath = getOutPath(filePath);
+
+    try {
+      await compileFile(filePath, outPath, options);
+      logger?.success(`Compiled file "${fileName}".`);
+      await listener?.(outPath);
+    } catch (error) {
+      if (error) logger?.error(error);
+      logger?.error(`Could not compile file "${filePath}"!`);
+    }
   };
+}
 
-  // eslint-disable-next-line class-methods-use-this
-  private get _logger() {
-    return WatchCompiler._logger;
-  }
-
-  constructor(private config: WatchCompilerConfig) {
-    this._watcher = watch(this._paths.in);
-    this._isFile = statSync(this._paths.in).isFile();
-
-    const compile = async (filePath: string, stats?: Stats) => {
-      if (!stats?.isFile()) return;
-      this._logger.debug('Emit:', filePath);
-      const outPath = await this._compile(filePath);
-      config.compile?.(outPath);
-    };
-
-    const remove = async (filePath: string) => {
-      this._logger.debug('Delete:', filePath);
-      const outPath = await this._delete(filePath);
-      config.delete?.(outPath);
-    };
-
-    const watcher = this._watcher;
-    watcher.on('add', compile);
-    watcher.on('change', compile);
-
-    watcher.on('unlink', remove);
-    watcher.on('unlinkDir', remove);
-  }
-
-  private _getOutPath(inPath: string): string {
-    const path = this._isFile
-      ? this._paths.out
-      : join(this._paths.out, inPath.slice(this._paths.in.length));
-
-    return path.replace(/\.ts/, '.js');
-  }
-
-  private _compileFile(inPath: string): (outPath: string) => Promise<void> {
-    const transform = swc.transformFile(inPath, this._options);
-    return async outPath => {
-      const output = await transform;
-      await fs.writeFile(outPath, output.code, 'utf-8');
-    };
-  }
-
-  private async _compile(filePath: string): Promise<string> {
-    const outPath = this._getOutPath(filePath);
-    const outDir = dirname(outPath);
+function createUnlink(
+  settings: Settings,
+): (filePath: string) => Promise<void> {
+  const { getOutPath, logger, listener } = settings;
+  return async filePath => {
+    logger?.debug('Unlink:', filePath);
+    const fileName = basename(filePath);
+    const outPath = getOutPath(filePath);
 
     try {
-      const endTimer = createTimer();
-      this._logger.debug(`Emitting "${filePath}"...`);
-
-      const writeFile = this._compileFile(filePath);
-      await mkdir(outDir);
-      await writeFile(outPath);
-
-      this._logger.debug(`Emitted file. Time took: ${endTimer().toLocaleString()}ms`);
-    } catch (error) {
-      this._logger.error(error);
-      this._logger.error(`Could not emit file "${filePath}"!`);
-    }
-
-    return outPath;
-  }
-
-  private async _delete(filePath: string): Promise<string> {
-    const outPath = this._getOutPath(filePath);
-
-    try {
-      const endTimer = createTimer();
-      this._logger.debug(`Deleting "${filePath}"...`);
       await deleteFile(outPath);
-      this._logger.debug(`File deleted. Time took: ${endTimer().toLocaleString()}ms`);
+      logger?.success(`Deleted file "${fileName}".`);
+      await listener?.(outPath);
     } catch (error) {
-      this._logger.error(error);
-      this._logger.error(`Failed to delete file "${outPath}"!`);
+      if (error) logger?.error(error);
+      logger?.error(`Could not delete file "${filePath}"!`);
     }
+  };
+}
 
-    return outPath;
+export function createWatchCompiler(
+  config: WatchCompilerConfig,
+): () => void {
+  const { logger, compilerOptions: options } = config;
+  const paths = {
+    in: join(config.root, config.input),
+    out: join(config.root, config.output),
+  };
+  const isFile = statSync(paths.in).isFile();
+  const watcher = watch(paths.in);
+
+  function getOutPath(filePath: string): string {
+    const path = isFile
+      ? paths.out
+      : join(paths.out, filePath.slice(paths.in.length));
+
+    return path.replace(/^\.ts$/, '.js');
   }
 
-  public close(): void {
-    this._watcher.close();
+  function createSettings(listener?: UpdateListener): Settings {
+    return { getOutPath, listener, logger };
   }
+
+  const compile = createCompile(createSettings(config.compile), options);
+  const unlink = createUnlink(createSettings(config.delete));
+
+  watcher.on('add', compile);
+  watcher.on('change', compile);
+
+  watcher.on('unlink', unlink);
+  watcher.on('unlinkDir', unlink);
+
+  return watcher.close;
 }
