@@ -18,12 +18,12 @@ export class ContextCommandHandler implements ModuleHandler {
     return Boolean(validationError);
   }
 
-  public update(filePath: string): void {
+  public async update(filePath: string): Promise<void> {
     const fileName = basename(filePath);
     const endTimer = utils.createTimer();
     this._logger.info(`"${fileName}" updated.`);
 
-    const command = lib.pickDefault(lib.uncachedImport<types.ChooksContextCommand>(filePath));
+    const command = lib.pickDefault(await lib.uncachedImport<types.ChooksContextCommand>(filePath));
     if (this._isCommandInvalid(command)) return;
 
     this.store.set(command.name, command);

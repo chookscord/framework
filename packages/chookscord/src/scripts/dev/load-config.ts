@@ -23,7 +23,7 @@ export async function loadConfig(
     .replace(/\.ts$/, '.js');
 
   await tools.compile(inPath, outPath);
-  const config = lib.pickDefault(lib.uncachedImport<Config>(outPath));
+  const config = lib.pickDefault(await lib.uncachedImport<Config>(outPath));
 
   logger?.trace('Validating config file.');
   validateConfig(config, logger);
