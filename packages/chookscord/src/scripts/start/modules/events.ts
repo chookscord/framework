@@ -51,7 +51,7 @@ export async function loadEvents(
   };
 
   logger.trace('Loading files.');
-  const files = lib.loadDir(rootPath);
+  const files = lib.loadDir(rootPath, { recursive: true });
   for await (const file of files) {
     if (file.isDirectory) continue;
     loadEvent(file.path);

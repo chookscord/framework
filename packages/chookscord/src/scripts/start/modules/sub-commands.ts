@@ -58,7 +58,7 @@ function *extractOptions(
 export async function *getSubCommands(
   rootPath: string,
 ): AsyncGenerator<[key: string, command: SubCommandReference]> {
-  for await (const file of lib.loadDir(rootPath)) {
+  for await (const file of lib.loadDir(rootPath, { recursive: true })) {
     if (file.isDirectory) continue;
     const endTimer = createTimer();
 

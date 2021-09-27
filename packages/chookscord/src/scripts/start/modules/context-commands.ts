@@ -16,7 +16,7 @@ function prepareCommand(
 export async function *getContextCommands(
   rootPath: string,
 ): AsyncGenerator<[key: string, command: ChooksContextCommand]> {
-  for await (const file of lib.loadDir(rootPath)) {
+  for await (const file of lib.loadDir(rootPath, { recursive: true })) {
     if (file.isDirectory) continue;
     const endTimer = utils.createTimer();
 
