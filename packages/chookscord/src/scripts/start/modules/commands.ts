@@ -16,14 +16,14 @@ function prepareCommand(
 export async function *getCommands(
   rootPath: string,
 ): AsyncGenerator<[key: string, command: ChooksSlashCommand]> {
-  for await (const file of lib.loadDir(rootPath)) {
+  for await (const file of lib.loadDir(rootPath, { recursive: true })) {
     if (file.isDirectory) continue;
     const endTimer = utils.createTimer();
 
     const fileName = basename(file.path);
     logger.info(`Loading command "${fileName}"...`);
 
-    const command = await utils.importDefault<ChooksSlashCommand>(file.path);
+    const command = lib.pickDefault(await import(file.path) as ChooksSlashCommand);
     logger.success(`Loaded command "${command.name}". Time took: ${endTimer().toLocaleString()}ms`);
     yield prepareCommand(command);
   }

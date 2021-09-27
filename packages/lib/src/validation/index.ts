@@ -1,4 +1,3 @@
-export * from './base';
+export * from './choices';
 export * from './commands';
 export * from './options';
-export * from './checks';

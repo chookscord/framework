@@ -36,7 +36,7 @@ export async function loadEvents(
     const endTimer = utils.createTimer();
 
     logger.trace('Loading event.');
-    const event = await utils.importDefault<types.Event>(filePath);
+    const event = lib.pickDefault(await import(filePath) as types.Event);
 
     logger.trace('Validating event.');
     if (isEventInvalid(event)) return;
@@ -51,7 +51,7 @@ export async function loadEvents(
   };
 
   logger.trace('Loading files.');
-  const files = lib.loadDir(rootPath);
+  const files = lib.loadDir(rootPath, { recursive: true });
   for await (const file of files) {
     if (file.isDirectory) continue;
     loadEvent(file.path);

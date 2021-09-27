@@ -31,7 +31,7 @@ export async function getCommands(
 
   for await (const file of files) {
     if (file.isDirectory) continue;
-    const command = await utils.importDefault<ChooksCommand>(file.path);
+    const command = lib.pickDefault(await import(file.path) as ChooksCommand);
 
     // @ts-ignore @todo(Choooks22): Fix validator types here
     if (isCommandInvalid(command, validator, this)) continue;

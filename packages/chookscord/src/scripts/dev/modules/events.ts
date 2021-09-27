@@ -1,76 +1,63 @@
 import * as lib from '@chookscord/lib';
-import type * as types from '../../../types';
-import * as utils from '../../../utils';
-import type { Client } from 'discord.js';
+import type { Consola } from 'consola';
+import type { Event } from '../../../types';
 import { basename } from 'path';
 import { validateEvent } from '../../../tools';
 
-export class EventHandler implements types.ModuleHandler {
-  private _logger = lib.createLogger('[cli] Events');
-  private _paths: Record<string, string> = {};
+type Store = lib.Store<Event>;
 
-  constructor(
-    private client: Client,
-    private config: types.Config,
-    private store: lib.Store<types.Event>,
-  ) { }
-
-  private _removeListener(event: types.Event) {
-    this.client.removeListener(
-      event.name,
-      event.execute as never,
-    );
-    this._logger.debug(`Event "${event.name}" removed.`);
+function isEventValid(
+  event: Event,
+  logger?: Consola,
+): boolean {
+  const validationError = validateEvent(event);
+  if (validationError) {
+    logger?.error(new Error(validationError));
   }
+  return !validationError;
+}
 
-  private _addListener(event: types.Event) {
-    this._logger.debug(`Adding event "${event.name}".`);
-    const frequency = event.once ? 'once' : 'on';
-    const ctx: types.EventContext = {
-      client: this.client,
-      config: this.config,
-      fetch: lib.fetch,
-      logger: lib.createLogger(`[events] ${event.name}`),
-    };
+export async function update(
+  paths: Record<string, string>,
+  store: Store,
+  filePath: string,
+  logger?: Consola,
+): Promise<void> {
+  const fileName = basename(filePath);
+  logger?.info(`"${fileName}" updated.`);
 
-    // Overwrite handler and bind context. Needed to remove listener later.
-    // Cheap way to bind context without adding another store, might be fragile.
-    event.execute = event.execute.bind(event, ctx) as never;
-    this.client[frequency](event.name, event.execute as never);
-    this._logger.debug(`Event "${event.name}" added.`);
+  const event = lib.pickDefault(await lib.uncachedImport<Event>(filePath));
+  if (isEventValid(event)) {
+    store.set(event.name, event);
+    paths[filePath] = event.name;
+    logger?.success(`"${event.name}" updated.`);
   }
+}
 
-  public init(): void {
-    this.store.addEventListener('set', (a, b) => {
-      if (b) this._removeListener(b);
-      this._addListener(a);
-    });
-  }
+export function remove(
+  paths: Record<string, string>,
+  store: Store,
+  filePath: string,
+  logger?: Consola,
+): void {
+  const eventName = paths[filePath];
+  delete paths[filePath];
 
-  private _isEventInvalid(event: types.Event): boolean {
-    const validationError = validateEvent(event);
-    if (validationError) {
-      this._logger.error(new Error(validationError));
-    }
-    return Boolean(validationError);
-  }
+  store.delete(eventName);
+  logger?.success(`Event "${eventName}" deleted.`);
+}
 
-  public async update(filePath: string): Promise<void> {
-    const fileName = basename(filePath);
-    this._logger.info(`"${fileName}" updated.`);
-
-    const event = await utils.uncachedImportDefault<types.Event>(filePath);
-    if (this._isEventInvalid(event)) return;
-
-    this.store.set(event.name, event);
-    this._paths[filePath] = event.name;
-  }
-
-  public remove(filePath: string): void {
-    const eventName = this._paths[filePath];
-    delete this._paths[filePath];
-
-    this.store.delete(eventName);
-    this._logger.success(`types.Event "${eventName}" deleted.`);
-  }
+export function createModule(
+  store: Store,
+  logger?: Consola,
+): Record<'unlink' | 'compile', (filePath: string) => void | Promise<void>> {
+  const paths = {};
+  return {
+    async compile(filePath: string) {
+      await update(paths, store, filePath, logger);
+    },
+    unlink(filePath: string) {
+      remove(paths, store, filePath, logger);
+    },
+  };
 }

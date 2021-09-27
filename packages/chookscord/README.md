@@ -1,6 +1,6 @@
 # chookscord
 
-The **Easiest** Discord.JS Framework by far.
+The next generation Discord.JS Framework for advanced and rapid development.
 
 [![npm (scoped)](https://img.shields.io/npm/v/chookscord)](https://npmjs.com/package/chookscord)
 [![npm](https://img.shields.io/npm/dt/chookscord)](https://npmjs.com/package/chookscord)
@@ -11,23 +11,77 @@ A lot of stuff is still under construction, and documentation is still very
 lacking. Stuff may change at any moment without warning, so consider holding
 on to deploying to production until **v1.x.x** is up!
 
-### Todo list
+## Features
 
-Check the [issues](https://github.com/chookscord/framework/issues) tab in the repository.
+- First class TypeScript support
+- Support for slash commands and context menus
+- Hot command reloading. Instantly reloads even your TypeScript files
+- Zero boilerplate. No constructing classes, no unnecessary imports
+- Auto registers interactions
 
-## Installation
+## Modules
+
+Exporting untyped interactions objects are accepted, meaning you don't need to
+import/declare any useless boilerplate, you just define what your interactions to
+look like.
+
+- Minimal sample command:
+
+```js
+// commands/hello.js
+module.exports = {
+  name: 'hello',
+  description: 'My basic command.',
+  async execute(ctx) {
+    await ctx.interaction.reply('Hello, world!');
+  },
+};
+```
+
+But of course, working blind isn't really productive, so you can import helper
+functions that will provide you with types!
+
+- Minimal typed sample command:
+
+```js
+// commands/hello-world.js
+const { defineCommand } = require('chookscord');
+
+module.exports = defineCommand({
+  // Now you can see what fields you need to add!
+  name: 'hello',
+  description: 'My basic command.',
+  async execute(ctx) {
+    // You can also see what the "ctx" context contains and their properties!
+    await ctx.interaction.reply('Hello, world!');
+  },
+});
+```
+
+- Minimal sample command in TypeScript:
+
+```ts
+// commands/hello-world.ts
+import { defineCommand } from 'chookscord';
+
+// The same thing above but in TypeScript
+export default defineCommand({
+  name: 'hello',
+  description: 'My basic command.',
+  async execute(ctx) {
+    await ctx.interaction.reply('Hello, world!');
+  },
+});
+```
+
+## Getting started
 
 This project recommends using [**yarn**](https://yarnpkg.com/) as your package
 manager for a better dev experience.
 
 ```bash
 $ yarn add chookscord
-
-# OR using npm
-$ npm i chookscord
 ```
-
-## Usage
 
 In your `package.json` file, add the following lines to your scripts:
 
@@ -46,70 +100,26 @@ These should expose all the commands the framework has included.
 
 ### Scripts
 
-`yarn dev` would start your bot in `development` mode, meaning it'll have
-<u>Hot Reload</u> and <u>Auto Interaction Register</u> enabled. **This should
-only be used while developing your bot since it registers interactions on startup
-and will not register your interactions globally!**
+```bash
+# Start your bot in development mode
+$ chooks
 
-`yarn build` will build your project without running your bot. Useful for
-deploying to production.
+# Start your bot in production mode
+$ chooks start
 
-`yarn start` will start your bot in `production` mode. This will be a bit more
-efficient that development mode since there's no file watching and other
-unnecessary overheads, and doesn't register interactions on startup!
+# Compile your bot's source for production
+$ chooks build
 
-`yarn register` will register your built commands globally.
-
-To start developing your bot, run `yarn dev`!
+# Register your commands globally (needs files to be built first)
+$ chooks register
+```
 
 ## Directory Structure
 
 The framework automatically loads files from specific directories, so no need
 to implement your own handlers.
 
-While `module.exports = {}` are enough to define files, this framework contains
-utilities to provide type support, so you know what things are available in the
-current context!
-
-### Sample File
-
-This framework only relies on exporting objects, so you can make commands without
-having to import anything!
-
-* Example minimal command:
-
-```js
-// commands/hello-world.js
-module.exports = {
-  name: 'hello',
-  description: 'My basic command.',
-  execute(ctx) {
-    ctx.interaction.reply('Hello, world!');
-  },
-};
-```
-
-But of course, working blind isn't really productive, so you can import helper
-functions that will provide you with types!
-
-* Example minimal command with types:
-
-```js
-// commands/hello-world.js
-const { defineCommand } = require('chookscord');
-
-module.exports = defineCommand({
-  // Now you can see what fields you need to add!
-  name: 'hello',
-  description: 'My basic command.',
-  execute(ctx) {
-    // You can also see what the "ctx" context contains and their properties!
-    ctx.interaction.reply('Hello, world!');
-  },
-})
-```
-
-### Config
+### Config file
 
 At the root of your project, there should be a `chooks.config.js` or
 `chooks.config.ts` file, or `chooks.config.dev.js` or `chooks.config.dev.ts`
@@ -211,19 +221,24 @@ module.exports = defineSubCommand({
 });
 ```
 
-### Message commands
+### Context commands
 
-The `messages` folder is where you would put your message commands.
+The `contexts` folder is where you would put your context commands.
+
+Context commands shows up when you open up the context menu on messages or users
+(right click or tapping a message or user).
 
 The `interaction` in this context is a `ContextMenuInteraction` object.
 
-```js
-// messages/first-word.js
-const { defineMessageCommand } = require('chookscord');
+#### Message command `First Word`
 
-module.exports = defineMessageCommand({
+```js
+// contexts/first-word.js
+const { defineContextCommand } = require('chookscord');
+
+module.exports = defineContextCommand({
   name: 'First Word', // Uppercase and spaces are allowed.
-  type: 'MESSAGE', // Specifying type MESSAGE is required.
+  type: 'MESSAGE', // Specifying type MESSAGE makes this available in messages contexts.
   async execute({ interaction }) {
     // Get the message from where this command was ran
     const message = interaction.options.getMessage('message');
@@ -234,19 +249,15 @@ module.exports = defineMessageCommand({
 });
 ```
 
-### User commands
-
-The `users` folder is where you would put your user commands.
-
-It has the same context as `messages`.
+#### User command `High Five`
 
 ```js
-// users/high-five.js
-const { defineUserCommand } = require('chookscord');
+// contexts/high-five.js
+const { defineContextCommand } = require('chookscord');
 
-module.exports = defineUserCommand({
+module.exports = defineContextCommand({
   name: 'High Five',
-  type: 'USER', // Specifying the type as USER is required here as well.
+  type: 'USER', // Specify the type as USER to make it show up in users instead.
   async execute({ interaction }) {
     // Get the user where this command was ran
     const target = interaction.options.getUser('user');
@@ -265,6 +276,8 @@ module.exports = defineUserCommand({
 ### Events
 
 The `events` folder should contain all your event handlers.
+
+Attaching multiple listeners to a single event is not supported.
 
 ```js
 // commands/ready.js
@@ -287,29 +300,21 @@ Once all that is set up, your project should now look a bit like this:
 ├── node_modules
 ├── commands
 │   └── ping.js
+├── contexts
+│   ├── first-word.js
+│   └── high-five.js
 ├── events
 │   └── ready.js
 ├── subcommands
 │   └── greet.js
-├── messages
-│   └── first-word.js
-├── users
-│   └── high-five.js
 ├── .env
 ├── chooks.config.js
-├── package.json
-└── yarn.lock
+└── package.json
 ```
 
 Now you can start your bot using `yarn dev`!
 
 ## Extras
-
-### TypeScript
-
-This framework supports working with `.ts` files out of the box!  
-Running dev mode with typescript files will make it automatically compile it to javascript
-without any extra config.
 
 ### Sample Projects
 

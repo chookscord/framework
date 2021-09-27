@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.14.0 - 28/09/21
+
+### Fixed
+
+- Inconsistent module loading in production.
+
+### Changed
+
+- Made `fetch` util less opinionated.
+- Added helper getters in `fetch` util's response.
+- Merged User and Message commands to Context commands.
+- Merged `users` and `messages` directory to `contexts` directory.
+
 ## 0.13.0 - 25/09/21
 
 ### Added

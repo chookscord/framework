@@ -1,21 +1,62 @@
-import type { ChooksCommand, ChooksInteractionCommand, ChooksSlashCommand } from '@chookscord/types';
+import type * as types from '@chookscord/types';
 import { isType } from '@chookscord/validate';
 
-export function isCommand(
-  command: { type?: string },
-): command is ChooksCommand {
-  return isType('undefined', command.type) || command.type === 'CHAT_INPUT';
-}
+// Maybe expose these somewhere, idk.
+const TYPES_WITH_CHOICES: types.ChooksCommandOptionType[] = [
+  'STRING',
+  'INTEGER',
+  'NUMBER',
+];
+
+const TYPES_WITHOUT_CHOICES: types.ChooksCommandOptionType[] = [
+  'BOOLEAN',
+  'CHANNEL',
+  'MENTIONABLE',
+  'ROLE',
+  'SUB_COMMAND',
+  'SUB_COMMAND_GROUP',
+  'USER',
+];
 
 export function isSlashCommand(
-  command: { type?: string; execute?: (...args: never[]) => unknown },
-): command is ChooksSlashCommand {
-  return isCommand(command) && isType('function', command.execute);
+  command: types.ChooksCommand,
+): command is types.ChooksSlashCommand {
+  return (command.type ?? 'CHAT_INPUT') === 'CHAT_INPUT' && isType('function', command.execute);
 }
 
-export function isInteraction(
-  command: { type?: string; execute?: (...args: never[]) => unknown },
-): command is ChooksInteractionCommand {
+export function isContextCommand(
+  command: types.ChooksCommand,
+): command is types.ChooksContextCommand {
   return (command.type === 'USER' || command.type === 'MESSAGE') &&
     isType('function', command.execute);
+}
+
+export function isOptionWithChoice(
+  option: types.ChooksCommandOption,
+): option is types.ChooksCommandOptionWithChoice {
+  return TYPES_WITH_CHOICES.includes(option.type);
+}
+
+export function isOptionWithoutChoice(
+  option: types.ChooksCommandOption,
+): option is types.ChooksCommandOptionWithoutChoice {
+  return TYPES_WITHOUT_CHOICES.includes(option.type);
+}
+
+export function isSubCommandOption(
+  option: types.ChooksCommandOption,
+): option is types.ChooksSubCommandOption {
+  return option.type === 'SUB_COMMAND';
+}
+
+export function isGroupOption(
+  option: types.ChooksCommandOption,
+): option is types.ChooksGroupCommandOption {
+  return option.type === 'SUB_COMMAND_GROUP';
+}
+
+export function isNonCommandOption(
+  option: types.ChooksCommandOption,
+): option is types.ChooksNonCommandOption {
+  return !isSubCommandOption(option) && !isGroupOption(option);
 }
