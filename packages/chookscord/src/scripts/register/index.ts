@@ -38,7 +38,7 @@ export async function run(): Promise<void> {
   const [configFile, projectFiles] = await findProjectFiles();
 
   const project = await getProject(configFile, projectFiles);
-  await registerCommands(project, { logger });
+  await registerCommands(project, logger);
 
   const end = Date.now() - start;
   const commandCount = project[1].length;
