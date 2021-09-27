@@ -5,13 +5,14 @@ import * as utils from '../../utils';
 import type {
   CommandModule,
   Config,
-  ModuleHandler,
+  Event,
   ModuleName,
 } from '../../types';
+import { UpdateListener, createWatchCompiler } from './compiler';
+import { attachEventListener, attachInteractionListener } from './listeners';
 import type { Client } from 'discord.js';
-import { attachInteractionListener } from './loaders/listeners';
+import type { Consola } from 'consola';
 import { createRegister } from './register';
-import { createWatchCompiler } from './compiler';
 
 // Move this to lib
 function isSubCommandOption(option: types.ChooksCommandOption): option is types.ChooksSubCommandOption {
@@ -46,6 +47,22 @@ function *extractCommandHandlers(
       }
     }
   }
+}
+
+function createWatcher(
+  moduleName: ModuleName,
+  compile: UpdateListener,
+  unlink: UpdateListener,
+  logger?: Consola,
+): void {
+  createWatchCompiler({
+    root: utils.appendPath.fromRoot(),
+    input: moduleName,
+    output: `.chooks/${moduleName}`,
+    compile,
+    unlink,
+    logger,
+  });
 }
 
 export function createModuleLoader(
@@ -102,42 +119,57 @@ export function createModuleLoader(
     return commandStore;
   };
 
-  const createWatcher = (
-    handler: ModuleHandler,
-    moduleName: ModuleName,
-  ) => {
-    handler.init?.();
-    createWatchCompiler({
-      root: utils.appendPath.fromRoot(),
-      input: moduleName,
-      output: `.chooks/${moduleName}`,
-      compile: handler.update?.bind(handler),
-      unlink: handler.remove?.bind(handler),
-    });
-  };
-
   // eslint-disable-next-line complexity
   return async moduleName => {
     switch (moduleName) {
       case 'commands': {
-        const { CommandHandler } = await import('./modules/commands');
-        const handler = new CommandHandler(getCommandStore());
-        createWatcher(handler, moduleName);
+        const { update, unlink } = await import('./modules/commands');
+        const paths = {};
+        const store = getCommandStore();
+        const logger = lib.createLogger('[cli] Commands');
+        createWatcher(
+          moduleName,
+          filePath => update(paths, store, filePath, logger),
+          filePath => { unlink(paths, store, filePath, logger) },
+          logger,
+        );
       } return;
       case 'subcommands': {
-        const { SubCommandHandler } = await import('./modules/sub-commands');
-        const handler = new SubCommandHandler(getCommandStore());
-        createWatcher(handler, moduleName);
+        const { update, unlink } = await import('./modules/subcommands');
+        const paths = {};
+        const store = getCommandStore();
+        const logger = lib.createLogger('[cli] SubCommands');
+        createWatcher(
+          moduleName,
+          filePath => update(paths, store, filePath, logger),
+          filePath => { unlink(paths, store, filePath, logger) },
+          logger,
+        );
       } return;
       case 'events': {
-        const { EventHandler } = await import ('./modules/events');
-        const handler = new EventHandler(client, config, new lib.Store());
-        createWatcher(handler, moduleName);
+        const { update, unlink } = await import ('./modules/events');
+        const paths = {};
+        const store = new lib.Store<Event>();
+        const logger = lib.createLogger('[cli] Events');
+        attachEventListener(store, client, config, logger);
+        createWatcher(
+          moduleName,
+          filePath => update(paths, store, filePath, logger),
+          filePath => { unlink(paths, store, filePath, logger) },
+          logger,
+        );
       } return;
       case 'contexts': {
-        const { ContextCommandHandler } = await import('./modules/context-commands');
-        const handler = new ContextCommandHandler(getCommandStore());
-        createWatcher(handler, moduleName);
+        const { update, unlink } = await import('./modules/contexts');
+        const paths = {};
+        const store = getCommandStore();
+        const logger = lib.createLogger('[cli] Contexts');
+        createWatcher(
+          moduleName,
+          filePath => update(paths, store, filePath, logger),
+          filePath => { unlink(paths, store, filePath, logger) },
+          logger,
+        );
       }
     }
   };

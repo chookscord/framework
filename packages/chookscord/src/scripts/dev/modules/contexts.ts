@@ -1,5 +1,5 @@
 import * as lib from '@chookscord/lib';
-import type { ChooksCommand, ChooksSlashCommand } from '@chookscord/types';
+import type { ChooksCommand, ChooksContextCommand } from '@chookscord/types';
 import type { Consola } from 'consola';
 import { basename } from 'path';
 import { createTimer } from '../../../utils';
@@ -7,10 +7,10 @@ import { createTimer } from '../../../utils';
 type Store = lib.Store<ChooksCommand>;
 
 function isCommandValid(
-  command: ChooksSlashCommand,
+  command: ChooksContextCommand,
   logger?: Consola,
 ): boolean {
-  const validationError = lib.validateSlashCommand(command);
+  const validationError = lib.validateContextCommand(command);
   if (validationError) {
     logger?.error(new Error(validationError));
   }
@@ -27,12 +27,10 @@ export async function update(
   const endTimer = createTimer();
   logger?.info(`"${fileName}" updated.`);
 
-  const commandFile = await lib.uncachedImport<ChooksSlashCommand>(filePath);
-  const command = lib.pickDefault(commandFile);
-
-  if (isCommandValid(command, logger)) {
+  const command = lib.pickDefault(await lib.uncachedImport<ChooksContextCommand>(filePath));
+  if (isCommandValid(command)) {
     store.set(command.name, command);
-    paths[fileName] = command.name;
+    paths[filePath] = command.name;
     logger?.success(`Command "${command.name}" loaded. Time took: ${endTimer().toLocaleString()}ms`);
   }
 }

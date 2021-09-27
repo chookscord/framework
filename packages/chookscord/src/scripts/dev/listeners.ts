@@ -1,8 +1,8 @@
 import * as lib from '@chookscord/lib';
+import type * as types from '../../types';
 import type { Client, Interaction } from 'discord.js';
-import { createTimer, resolveInteractionKey } from '../../../utils';
+import { createTimer, resolveInteractionKey } from '../../utils';
 import type { ChooksContext } from '@chookscord/types';
-import type { CommandModule } from '../../../types';
 import type { Consola } from 'consola';
 
 // Maybe extract
@@ -37,7 +37,7 @@ async function executeCommand(
 
 export function attachInteractionListener(
   client: Client,
-  store: lib.Store<CommandModule>,
+  store: lib.Store<types.CommandModule>,
   logger?: Consola,
 ): void {
   client.on('interactionCreate', interaction => {
@@ -54,5 +54,44 @@ export function attachInteractionListener(
     const execute = command.execute.bind(command, ctx);
 
     executeCommand(commandName, execute);
+  });
+}
+
+export function attachEventListener(
+  store: lib.Store<types.Event>,
+  client: Client,
+  config: types.Config,
+  logger?: Consola,
+): void {
+  function addListener(event: types.Event) {
+    logger?.debug(`Adding event "${event.name}".`);
+    const frequency = event.once ? 'once' : 'on';
+    const ctx: types.EventContext = {
+      client,
+      config,
+      fetch: lib.fetch,
+      logger: lib.createLogger(`[events] ${event.name}`),
+    };
+
+    // Overwrite handler and bind context. Needed to remove listener later.
+    // Cheap way to bind context without adding another store, might be fragile.
+    event.execute = event.execute.bind(event, ctx) as never;
+    client[frequency](event.name, event.execute as never);
+    logger?.debug(`Event "${event.name}" added.`);
+  }
+
+  function removeListener(event: types.Event): void {
+    client.removeListener(
+      event.name,
+      event.execute as never,
+    );
+    logger?.debug(`Event "${event.name}" removed.`);
+  }
+
+  store.addEventListener('set', (event, oldEvent) => {
+    if (oldEvent) {
+      removeListener(oldEvent);
+    }
+    addListener(event);
   });
 }
