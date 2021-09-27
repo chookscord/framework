@@ -3,7 +3,7 @@ process.env.NODE_ENV = 'production';
 import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import { getCommands } from './get-command';
-import { getConfig } from './get-config';
+import { loadConfig } from './load-config';
 import { registerCommands } from './register-commands';
 import { validators } from './validators';
 
@@ -18,18 +18,11 @@ function findProjectFiles() {
   );
 }
 
-function checkConfigFile(fileName: string | null): asserts fileName {
-  if (!fileName) {
-    logger.fatal(new Error('Could not find a config file!'));
-    process.exit();
-  }
-}
-
 async function getProject(
-  configFile: string,
+  configFile: string | null,
   projectFiles: string[],
 ) {
-  const getConfigJob = getConfig(configFile, { logger });
+  const getConfigJob = loadConfig(configFile, logger);
   const getCommandsJobs = projectFiles.map(getCommands, { logger });
 
   const commandsList = await Promise.all(getCommandsJobs);
@@ -43,7 +36,6 @@ export async function run(): Promise<void> {
   logger.info('Getting all commands...');
 
   const [configFile, projectFiles] = await findProjectFiles();
-  checkConfigFile(configFile);
 
   const project = await getProject(configFile, projectFiles);
   await registerCommands(project, { logger });

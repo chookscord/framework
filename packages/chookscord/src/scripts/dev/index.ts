@@ -5,7 +5,7 @@ import * as utils from '../../utils';
 import type { ModuleName } from '../../types';
 import { createModuleLoader } from './load-modules';
 import { createWatchCompiler } from './compiler';
-import { loadConfig } from './loaders/config';
+import { loadConfig } from './load-config';
 
 const logger = lib.createLogger('[cli] Chooks');
 
