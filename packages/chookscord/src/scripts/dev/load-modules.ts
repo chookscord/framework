@@ -13,8 +13,6 @@ import { attachInteractionListener } from './loaders/listeners';
 import { createRegister } from './register';
 import { createWatchCompiler } from './compiler';
 
-const logger = lib.createLogger('[cli] Chooks');
-
 // Move this to lib
 function isSubCommandOption(option: types.ChooksCommandOption): option is types.ChooksSubCommandOption {
   return option.type === 'SUB_COMMAND';
@@ -58,11 +56,12 @@ export function createModuleLoader(
   let moduleStore: lib.Store<CommandModule>;
 
   const initCommands = () => {
+    const logger = lib.createLogger('[cli] Modules');
     commandStore = new lib.Store();
     moduleStore = new lib.Store();
     const register = createRegister(config, commandStore);
 
-    attachInteractionListener(client, moduleStore, { logger });
+    attachInteractionListener(client, moduleStore, logger);
 
     const deleteCommand = (oldCommand: types.ChooksCommand) => {
       for (const [key, mod] of moduleStore.entries()) {

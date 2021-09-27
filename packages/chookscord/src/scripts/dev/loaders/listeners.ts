@@ -38,7 +38,7 @@ async function executeCommand(
 export function attachInteractionListener(
   client: Client,
   store: lib.Store<CommandModule>,
-  options: Partial<lib.Logger> = {},
+  logger?: Consola,
 ): void {
   client.on('interactionCreate', interaction => {
     const commandName = resolveInteractionKey(interaction);
@@ -46,7 +46,7 @@ export function attachInteractionListener(
 
     const command = store.get(commandName);
     if (!command) {
-      options.logger?.warn(`Command "${commandName}" was executed, but no handlers were registered.`);
+      logger?.warn(`Command "${commandName}" was executed, but no handlers were registered.`);
       return;
     }
 
