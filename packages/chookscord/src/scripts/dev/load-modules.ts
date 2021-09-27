@@ -1,18 +1,18 @@
 /* eslint-disable no-new */
 import * as lib from '@chookscord/lib';
-import * as tools from '../../../tools';
+import * as tools from '../../tools';
 import type * as types from '@chookscord/types';
-import * as utils from '../../../utils';
+import * as utils from '../../utils';
 import type {
   CommandModule,
   Config,
   ModuleHandler,
   ModuleName,
-} from '../../../types';
+} from '../../types';
 import type { Client } from 'discord.js';
-import { WatchCompiler } from '../compiler';
-import { attachInteractionListener } from './listeners';
-import { createRegister } from '../register';
+import { WatchCompiler } from './compiler';
+import { attachInteractionListener } from './loaders/listeners';
+import { createRegister } from './register';
 
 const logger = lib.createLogger('[cli] Chooks');
 
@@ -122,22 +122,22 @@ export function createModuleLoader(
   return async moduleName => {
     switch (moduleName) {
       case 'commands': {
-        const { CommandHandler } = await import('../modules/commands');
+        const { CommandHandler } = await import('./modules/commands');
         const handler = new CommandHandler(getCommandStore());
         createWatcher(handler, moduleName);
       } return;
       case 'subcommands': {
-        const { SubCommandHandler } = await import('../modules/sub-commands');
+        const { SubCommandHandler } = await import('./modules/sub-commands');
         const handler = new SubCommandHandler(getCommandStore());
         createWatcher(handler, moduleName);
       } return;
       case 'events': {
-        const { EventHandler } = await import ('../modules/events');
+        const { EventHandler } = await import ('./modules/events');
         const handler = new EventHandler(client, config, new lib.Store());
         createWatcher(handler, moduleName);
       } return;
       case 'contexts': {
-        const { ContextCommandHandler } = await import('../modules/context-commands');
+        const { ContextCommandHandler } = await import('./modules/context-commands');
         const handler = new ContextCommandHandler(getCommandStore());
         createWatcher(handler, moduleName);
       }

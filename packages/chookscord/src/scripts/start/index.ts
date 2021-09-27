@@ -4,7 +4,7 @@ import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
 import type { Config, ModuleContext, ModuleName } from '../../types';
-import { createModuleLoader } from './modules';
+import { createModuleLoader } from './load-modules';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;

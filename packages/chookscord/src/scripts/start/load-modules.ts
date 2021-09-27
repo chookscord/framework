@@ -1,7 +1,7 @@
 import * as lib from '@chookscord/lib';
 import type * as types from '@chookscord/types';
-import * as utils from '../../../utils';
-import type { ModuleContext, ModuleName } from '../../../types';
+import * as utils from '../../utils';
+import type { ModuleContext, ModuleName } from '../../types';
 import type { CommandInteraction } from 'discord.js';
 
 export type CommandHandler = Exclude<types.ChooksCommand['execute'], undefined>;
@@ -98,27 +98,27 @@ export function createModuleLoader(
     const modulePath = utils.appendPath.fromOut(moduleName);
     switch (moduleName) {
       case 'events': {
-        const { loadEvents } = await import('./events');
+        const { loadEvents } = await import('./modules/events');
         await loadEvents(ctx, modulePath);
       } return;
       // @Choooks22: Maybe these parts can be simplified
       case 'commands': {
         const store = getCommandStore();
-        const { getCommands } = await import('./commands');
+        const { getCommands } = await import('./modules/commands');
         for await (const [key, command] of getCommands(modulePath)) {
           store.set(key, command.execute);
         }
       } return;
       case 'subcommands': {
         const store = getCommandStore();
-        const { getSubCommands } = await import('./sub-commands');
+        const { getSubCommands } = await import('./modules/sub-commands');
         for await (const [key, command] of getSubCommands(modulePath)) {
           store.set(key, command.execute);
         }
       } return;
       case 'contexts': {
         const store = getCommandStore();
-        const { getContextCommands } = await import('./context-commands');
+        const { getContextCommands } = await import('./modules/context-commands');
         for await (const [key, command] of getContextCommands(modulePath)) {
           store.set(key, command.execute);
         }
