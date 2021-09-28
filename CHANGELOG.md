@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.1 - 28/09/21
+
+### Fixed
+
+- Uncached module import with specific children breaking.
+
 ## 0.14.0 - 28/09/21
 
 ### Fixed
