@@ -9,7 +9,7 @@
     "register": "chooks register"
   },
   "dependencies": {
-    "chookscord": "^0.13.0"
+    "chookscord": "^0.14.1"
   },
   "devDependencies": {
     "typescript": "^4.4.2"

@@ -5,6 +5,8 @@ export type MaybeDefault<T> = T | { default: T };
 // @Choooks22: Not sure how correct this is exactly, or if it overshoots what it's supposed to do.
 // Maybe someone could come and clean this up later, and maybe add esm support here, idk
 function clearChildren(mod: NodeJS.Module) {
+  if (mod.id.includes('node_modules')) return;
+
   if (mod.children.length) {
     mod.children.forEach(clearChildren);
   }
@@ -28,7 +30,7 @@ export async function uncachedImport<T>(path: string): Promise<T> {
 
   delete require.cache[cacheId];
   removeFromMain(mod);
-  clearChildren(mod);
+  // clearChildren(mod);
 
   return imported;
 }

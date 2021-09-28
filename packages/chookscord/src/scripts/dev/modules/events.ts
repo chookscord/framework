@@ -26,11 +26,15 @@ export async function update(
   const fileName = basename(filePath);
   logger?.info(`"${fileName}" updated.`);
 
-  const event = lib.pickDefault(await lib.uncachedImport<Event>(filePath));
+  logger?.debug(`Importing "${fileName}"...`);
+  const eventData = await lib.uncachedImport<Event>(filePath);
+  const event = lib.pickDefault(eventData);
+
+  logger?.debug('Import OK. Validating event...');
   if (isEventValid(event)) {
     store.set(event.name, event);
     paths[filePath] = event.name;
-    logger?.success(`"${event.name}" updated.`);
+    logger?.success(`Event "${event.name}" loaded.`);
   }
 }
 
