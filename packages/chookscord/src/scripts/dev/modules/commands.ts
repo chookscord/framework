@@ -28,9 +28,11 @@ export async function update(
   const endTimer = createTimer();
   logger?.info(`"${fileName}" updated.`);
 
-  const commandFile = await lib.uncachedImport<ChooksSlashCommand>(filePath);
-  const command = lib.pickDefault(commandFile);
+  logger?.debug(`Importing "${fileName}"...`);
+  const commandData = await lib.uncachedImport<ChooksSlashCommand>(filePath);
+  const command = lib.pickDefault(commandData);
 
+  logger?.debug('Import OK. Validating command...');
   if (isCommandValid(command, logger)) {
     store.set(command.name, command);
     paths[fileName] = command.name;

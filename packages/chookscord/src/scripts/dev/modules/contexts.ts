@@ -28,8 +28,12 @@ export async function update(
   const endTimer = createTimer();
   logger?.info(`"${fileName}" updated.`);
 
-  const command = lib.pickDefault(await lib.uncachedImport<ChooksContextCommand>(filePath));
-  if (isCommandValid(command)) {
+  logger?.debug(`Importing "${fileName}"...`);
+  const commandData = await lib.uncachedImport<ChooksContextCommand>(filePath);
+  const command = lib.pickDefault(commandData);
+
+  logger?.debug('Import OK. Validating command...');
+  if (isCommandValid(command, logger)) {
     store.set(command.name, command);
     paths[filePath] = command.name;
     logger?.success(`Command "${command.name}" loaded. Time took: ${endTimer().toLocaleString()}ms`);
