@@ -13,12 +13,12 @@ function isEventInvalid(event: types.Event) {
   return Boolean(validationError);
 }
 
-function bindExecuteHandler(
+async function bindExecuteHandler(
   event: types.Event,
   ctx: types.ModuleContext,
-): (...args: unknown[]) => void {
-  // @todo(Choooks22): Bind dependencies to 'this'
-  return event.execute.bind(event, {
+): Promise<(...args: unknown[]) => void> {
+  const deps = await event.dependencies?.call(undefined) ?? {};
+  return event.execute.bind(deps, {
     client: ctx.client,
     config: ctx.config,
     fetch: lib.fetch,
@@ -42,7 +42,7 @@ export async function loadEvents(
     if (isEventInvalid(event)) return;
 
     logger.trace('Binding context to handler.');
-    const execute = bindExecuteHandler(event, ctx);
+    const execute = await bindExecuteHandler(event, ctx);
 
     logger.trace('Attaching listener to client.');
     ctx.client.on(event.name, execute);

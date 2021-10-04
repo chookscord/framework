@@ -5,11 +5,11 @@ import { basename } from 'path';
 
 const logger = lib.createLogger('[cli] Commands');
 
-// @todo(Choooks22): Bind dependencies to 'this'
-function prepareCommand(
+async function prepareCommand(
   command: ChooksSlashCommand,
-): [key: string, command: ChooksSlashCommand] {
-  const execute = command.execute.bind(command);
+): Promise<[key: string, command: ChooksSlashCommand]> {
+  const deps = await command.dependencies?.call(undefined) ?? {};
+  const execute = command.execute.bind(deps);
   return [command.name, { ...command, execute }];
 }
 

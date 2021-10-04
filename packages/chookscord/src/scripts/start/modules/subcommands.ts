@@ -7,26 +7,26 @@ const logger = lib.createLogger('[cli] SubCommands');
 
 export interface SubCommandReference {
   parent: types.ChooksSubCommand;
-  execute: Exclude<types.ChooksCommand['execute'], undefined>;
+  execute: (ctx: types.ChooksCommandContext) => unknown;
 }
 
-// @todo(Choooks22): Bind dependencies to 'this'
-function createCommandReference(
+async function createCommandReference(
   command: types.ChooksSubCommand,
-  execute: SubCommandReference['execute'],
-): SubCommandReference {
+  subCommand: types.ChooksSubCommandOption<Record<string, unknown>>,
+): Promise<SubCommandReference> {
+  const deps = await subCommand.dependencies?.call(undefined) ?? {};
   return {
     parent: command,
-    execute: execute.bind(command),
+    execute: subCommand.execute.bind(deps),
   };
 }
 
 // eslint-disable-next-line complexity
-function *extractOptions(
+async function *extractOptions(
   command: types.ChooksSubCommand,
   subOption?: types.ChooksSubCommandOption | types.ChooksGroupCommandOption,
   subCommand?: types.ChooksSubCommandOption,
-): Generator<[key: string, command: SubCommandReference]> {
+): AsyncGenerator<[key: string, command: SubCommandReference]> {
   if (!subOption) {
     for (const option of command.options) {
       yield* extractOptions(command, option);
@@ -37,7 +37,7 @@ function *extractOptions(
   if (subCommand) {
     const names = [command.name, subOption.name, subCommand.name] as const;
     const commandKey = createCommandKey(...names);
-    yield [commandKey, createCommandReference(command, subCommand.execute)];
+    yield [commandKey, await createCommandReference(command, subCommand)];
     return;
   }
 
@@ -45,7 +45,7 @@ function *extractOptions(
     case 'SUB_COMMAND': {
       const names = [command.name, subOption.name] as const;
       const commandKey = createCommandKey(...names);
-      yield [commandKey, createCommandReference(command, subOption.execute)];
+      yield [commandKey, await createCommandReference(command, subOption)];
       return;
     }
     case 'SUB_COMMAND_GROUP':
