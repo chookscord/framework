@@ -1,7 +1,7 @@
 {
   "name": "chookscord",
   "version": "0.14.1",
-  "description": "The Easiest Discord.JS Framework by far.",
+  "description": "The next generation Discord.JS Framework for advanced and rapid bot development.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {

@@ -1,6 +1,6 @@
 # chookscord
 
-The next generation Discord.JS Framework for advanced and rapid development.
+The next generation Discord.JS Framework for advanced and rapid bot development.
 
 [![npm (scoped)](https://img.shields.io/npm/v/chookscord)](https://npmjs.com/package/chookscord)
 [![npm](https://img.shields.io/npm/dt/chookscord)](https://npmjs.com/package/chookscord)
