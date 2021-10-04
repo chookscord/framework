@@ -56,10 +56,16 @@ function transformFile(
   filePath: string,
   options: swc.Options = defaultOptions,
 ): (outPath: string) => Promise<void> {
-  const transform = swc.transformFile(filePath, options);
+  const transform = swc.transformFile(filePath, options)
+    .catch((error: Error) => error);
+
   return async outPath => {
     const output = await transform;
-    await fs.writeFile(outPath, output.code, 'utf-8');
+    if (output instanceof Error) {
+      throw output;
+    } else {
+      await fs.writeFile(outPath, output.code, 'utf-8');
+    }
   };
 }
 

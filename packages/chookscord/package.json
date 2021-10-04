@@ -1,7 +1,7 @@
 {
   "name": "chookscord",
-  "version": "0.14.1",
-  "description": "The Easiest Discord.JS Framework by far.",
+  "version": "0.14.2",
+  "description": "The next generation Discord.JS Framework for advanced and rapid bot development.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -43,15 +43,13 @@
   "license": "MIT",
   "keywords": [
     "discord",
-    "discord-js",
+    "discordjs",
     "discord.js",
+    "typescript",
     "framework",
     "client",
     "bot",
-    "cli",
-    "modular",
-    "commands",
-    "typescript"
+    "cli"
   ],
   "repository": {
     "type": "git",
