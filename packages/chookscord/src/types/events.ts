@@ -10,10 +10,15 @@ export interface EventContext {
   config: Config;
 }
 
-export interface Event<T extends keyof ClientEvents = keyof ClientEvents> {
+export interface Event<
+  T extends keyof ClientEvents = keyof ClientEvents,
+  Deps extends Record<string, unknown> = Record<string, never>,
+> {
   name: T;
   once?: boolean;
+  dependencies?: (this: undefined) => Deps | Promise<Deps>;
   execute: (
+    this: Deps,
     ctx: EventContext,
     ...args: ClientEvents[T]
   ) => unknown;

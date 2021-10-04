@@ -2,11 +2,12 @@ import type { DiscordCommandOptionType, DiscordCommandType } from '../discord';
 
 export type ChooksCommandType = keyof typeof DiscordCommandType;
 
-export interface ChooksCommand {
+export interface ChooksCommand<Deps extends Record<string, unknown> = Record<string, never>> {
   type?: ChooksCommandType;
   name: string;
   description?: string;
-  execute?(ctx: ChooksContext): unknown;
+  dependencies?(this: undefined): Deps | Promise<Deps>;
+  execute?(this: Readonly<Deps>, ctx: ChooksContext): unknown;
   options?: ChooksCommandOption[];
   defaultPermission?: boolean;
 }
