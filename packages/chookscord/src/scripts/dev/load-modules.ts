@@ -36,7 +36,7 @@ function loadModule<T>(
     ? lib.createLogger(loggerName)
     : loggerName;
   const { compile, unlink } = createModule(store, logger);
-  createWatcher(moduleName, compile, unlink);
+  createWatcher(moduleName, compile, unlink, logger);
 }
 
 export function createModuleLoader(
