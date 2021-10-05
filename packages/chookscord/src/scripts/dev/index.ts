@@ -3,9 +3,11 @@ import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
 import type { ModuleName } from '../../types';
+import { basename } from 'path';
 import { createModuleLoader } from './load-modules';
 import { createWatchCompiler } from './compiler';
 import { loadConfig } from './load-config';
+import { unloadModule } from './unload';
 
 const logger = lib.createLogger('[cli] Chooks');
 
@@ -48,11 +50,16 @@ export async function run(): Promise<void> {
     if (isModule(moduleName)) {
       loadModule(moduleName);
     } else {
-      // eslint-disable-next-line no-new
       createWatchCompiler({
         root: utils.appendPath.fromRoot(),
         input: moduleName,
         output: `.chooks/${moduleName}`,
+        compile(filePath) {
+          const fileName = basename(filePath);
+          logger.info(`Reload "${fileName}".`);
+          unloadModule(filePath);
+          delete require.cache[filePath];
+        },
       });
     }
   }

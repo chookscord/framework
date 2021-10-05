@@ -1,6 +1,6 @@
 import * as lib from '@chookscord/lib';
+import type { Client, ClientEvents } from 'discord.js';
 import type { Config, Event, EventContext } from '../../../types';
-import type { Client } from 'discord.js';
 import type { Consola } from 'consola';
 
 export function attachEventListener(
@@ -19,10 +19,17 @@ export function attachEventListener(
       logger: lib.createLogger(`[events] ${event.name}`),
     };
 
-    // Overwrite handler and bind context. Needed to remove listener later.
+    const _execute = event.execute;
+    const execute = async (...args: ClientEvents[typeof event.name]) => {
+      const deps = await event.dependencies?.call(undefined) ?? {};
+      // @ts-ignore ts can't infer ...args
+      _execute.call(deps, ctx, ...args);
+    };
+
+    // Overwrite handler. Needed to remove listener later.
     // Cheap way to bind context without adding another store, might be fragile.
-    event.execute = event.execute.bind(event, ctx) as never;
-    client[frequency](event.name, event.execute as never);
+    event.execute = execute as never;
+    client[frequency](event.name, execute);
     logger?.debug(`Event "${event.name}" added.`);
   }
 
