@@ -27,6 +27,6 @@ export interface ModuleHandler {
 export type ModuleName = 'commands' | 'subcommands' | 'events' | 'contexts';
 
 export interface CommandModule {
-  data: ChooksCommand;
-  execute: Exclude<ChooksCommand['execute'], undefined>;
+  parent: ChooksCommand;
+  target: ChooksCommand;
 }
