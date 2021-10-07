@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import type { FlattenPromise } from './types';
-
 export function debounce<T extends [...args: unknown[]]>(
   fn: (...args: T) => unknown,
   ms: number
@@ -27,17 +25,17 @@ export function debounce<T extends [...args: unknown[]]>(
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   ms: number
-): (...args: T) => FlattenPromise<R>;
+): (...args: T) => Promise<Awaited<R>>;
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   ms: number,
   ...args: T
-): () => FlattenPromise<R>;
+): () => Promise<Awaited<R>>;
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   ms: number,
   ...args: T
-): (...args: T) => FlattenPromise<R> {
+): (...args: T) => Promise<Awaited<R>> {
   let timeout: NodeJS.Timeout;
   return (...a) => {
     if (timeout) {
@@ -45,10 +43,10 @@ export function debounceAsync<T extends [...args: unknown[]], R>(
     }
     return new Promise(res => {
       timeout = setTimeout(
-        (...args: T) => { res(fn(...args)) },
+        (...args: T) => { res(fn(...args) as Awaited<R>) },
         ms,
         ...args.length ? args : a,
       );
-    }) as FlattenPromise<R>;
+    });
   };
 }
