@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.14.2 - 04/09/21
+
+### Fixed
+
+- Logging missing from compiler.
+- Compiler not throwing error.
+
 ## 0.14.1 - 28/09/21
 
 ### Fixed
