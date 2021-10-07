@@ -36,7 +36,7 @@
     "@swc/core": "^1.2.81",
     "@swc/helpers": "^0.2.13",
     "chokidar": "^3.5.2",
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.2.0",
     "dotenv": "^10.0.0",
     "tslib": "^2.3.1"
   },

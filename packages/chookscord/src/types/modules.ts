@@ -1,4 +1,4 @@
-import type { Awaited, Client } from 'discord.js';
+import type { Awaitable, Client } from 'discord.js';
 import type { ChooksCommand } from '@chookscord/types';
 import type { Config } from '.';
 import type { FetchUtil } from '@chookscord/lib';
@@ -19,9 +19,9 @@ export interface ModuleConfig {
 export type ReloadModule = (ctx: ModuleContext) => unknown;
 
 export interface ModuleHandler {
-  init?: () => Awaited<void>;
-  update?: (filePath: string) => Awaited<void>;
-  remove?: (filePath: string) => Awaited<void>;
+  init?: () => Awaitable<void>;
+  update?: (filePath: string) => Awaitable<void>;
+  remove?: (filePath: string) => Awaitable<void>;
 }
 
 export type ModuleName = 'commands' | 'subcommands' | 'events' | 'contexts';
