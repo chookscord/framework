@@ -74,3 +74,19 @@ export function createModuleLoader(
     }
   };
 }
+
+function hasLifecycle(
+  mod: Record<string, unknown>,
+): mod is { chooksOnLoad: () => unknown } {
+  return 'chooksOnLoad' in mod &&
+    typeof mod.chooksOnLoad === 'function';
+}
+
+export async function loadFiles(dir: string): Promise<void> {
+  const path = utils.appendPath.fromOut(dir);
+  for await (const file of lib.loadDir(path, { recursive: true })) {
+    if (file.isDirectory) continue;
+    const mod: Record<string, unknown> = await import(file.path);
+    if (hasLifecycle(mod)) mod.chooksOnLoad();
+  }
+}
