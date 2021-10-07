@@ -5,7 +5,9 @@ import type { ModuleContext, ModuleName } from '../../types';
 import { executeCommand, getCommandCtx } from '../../tools';
 import { Client } from 'discord.js';
 
-export type CommandHandler = (ctx: types.ChooksContext) => unknown;
+export type CommandHandler = (
+  ctx: types.ChooksCommandContext | types.ChooksContextCommandContext
+) => unknown;
 
 const logger = lib.createLogger('[cli] Modules');
 
@@ -54,14 +56,14 @@ export function createModuleLoader(
         const store = getCommandStore();
         const { getCommands } = await import('./modules/commands');
         for await (const [key, command] of getCommands(modulePath)) {
-          store.set(key, command.execute as CommandHandler);
+          store.set(key, command.execute);
         }
       } return;
       case 'subcommands': {
         const store = getCommandStore();
         const { getSubCommands } = await import('./modules/subcommands');
         for await (const [key, command] of getSubCommands(modulePath)) {
-          store.set(key, command.execute as CommandHandler);
+          store.set(key, command.execute);
         }
       } return;
       case 'contexts': {

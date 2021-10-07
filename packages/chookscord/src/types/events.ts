@@ -1,12 +1,8 @@
-import type { Client, ClientEvents } from 'discord.js';
+import type { ChooksContext } from '@chookscord/types';
+import type { ClientEvents } from 'discord.js';
 import type { Config } from './config';
-import type { Consola } from 'consola';
-import type { FetchUtil } from '@chookscord/lib';
 
-export interface EventContext {
-  client: Client<true>;
-  logger: Consola;
-  fetch: FetchUtil;
+export interface EventContext extends ChooksContext {
   config: Config;
 }
 
