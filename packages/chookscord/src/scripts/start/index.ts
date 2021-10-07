@@ -4,8 +4,9 @@ import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
 import type { ModuleContext, ModuleName } from '../../types';
-import { createModuleLoader, loadFiles } from './load-modules';
+import { createModuleLoader } from './load-modules';
 import { loadConfig } from './load-config';
+import { loadFiles } from './load-files';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;
@@ -49,7 +50,7 @@ export async function run(): Promise<void> {
     if (isModule(moduleName)) {
       loadModule(moduleName);
     } else {
-      loadFiles(moduleName);
+      loadFiles({ client, fetch }, moduleName);
     }
   }
 
