@@ -2,6 +2,9 @@ process.env.NODE_ENV = 'development';
 import * as lib from '@chookscord/lib';
 import * as tools from '../../tools';
 import * as utils from '../../utils';
+import { ChooksTeardownList, reload } from './load-files';
+import type { ChooksContext } from '@chookscord/types';
+import type { Client } from 'discord.js';
 import type { ModuleName } from '../../types';
 import { basename } from 'path';
 import { createModuleLoader } from './load-modules';
@@ -10,6 +13,30 @@ import { loadConfig } from './load-config';
 import { unloadModule } from './unload';
 
 const logger = lib.createLogger('[cli] Chooks');
+const store: ChooksTeardownList = new Map();
+
+function reloadFile(client: Client, filePath: string) {
+  const fileName = basename(filePath);
+  const ctx: ChooksContext = {
+    client,
+    fetch: lib.fetch,
+    logger: lib.createLogger(`[file] ${fileName}`),
+  };
+  reload(ctx, store, filePath, logger);
+}
+
+function loadDir(client: Client, dirName: string) {
+  createWatchCompiler({
+    root: utils.appendPath.fromRoot(),
+    input: dirName,
+    output: `.chooks/${dirName}`,
+    compile(filePath) {
+      reloadFile(client, filePath);
+      unloadModule(filePath);
+      delete require.cache[filePath];
+    },
+  });
+}
 
 function findFiles() {
   return tools.findProjectFiles(
@@ -48,19 +75,11 @@ export async function run(): Promise<void> {
 
   for (const moduleName of projectFiles) {
     if (isModule(moduleName)) {
+      logger.debug(`Module "${moduleName}" loaded.`);
       loadModule(moduleName);
     } else {
-      createWatchCompiler({
-        root: utils.appendPath.fromRoot(),
-        input: moduleName,
-        output: `.chooks/${moduleName}`,
-        compile(filePath) {
-          const fileName = basename(filePath);
-          logger.info(`Reload "${fileName}".`);
-          unloadModule(filePath);
-          delete require.cache[filePath];
-        },
-      });
+      logger.debug(`Local dir "${moduleName}" loaded.`);
+      loadDir(client, moduleName);
     }
   }
 
