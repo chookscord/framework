@@ -1,27 +1,49 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, complexity */
-function unloadChildren(targetId: string, mod: NodeJS.Module): boolean {
-  let unloadParent = false;
+
+/**
+ * Traverses a module's children and yields the cache id of each
+ * children that contains the target module's id to be unloaded.
+ */
+function *unloadChildren(targetId: string, mod: NodeJS.Module): Generator<string, boolean> {
+  // should signal to delete the parent
+  let deleteSignal = false;
 
   for (const child of mod.children) {
     if (!child.id.includes('.chooks')) continue;
 
     if (child.id === targetId) {
-      delete require.cache[mod.id];
-      delete require.cache[child.id];
-      unloadParent = true;
+      yield child.id;
+      deleteSignal = true;
     } else // check if any children references the target module instead
-    if (child.children.length && unloadChildren(targetId, child)) {
-      delete require.cache[mod.id];
-      unloadParent = true;
+    if (child.children.length) {
+      const values = unloadChildren(targetId, child);
+      let current = values.next();
+
+      while (!current.done) {
+        yield current.value;
+        current = values.next();
+      }
+
+      deleteSignal ||= current.value;
     }
   }
 
-  return unloadParent;
+  if (deleteSignal) {
+    yield mod.id;
+  }
+
+  return deleteSignal;
 }
 
-export function unloadModule(id: string): void {
+export function *unloadModule(id: string): Generator<string> {
   for (const key in require.cache) {
     if (!key.includes('.chooks')) continue;
-    unloadChildren(id, require.cache[key]!);
+    const ids = unloadChildren(id, require.cache[key]!);
+    for (const cacheId of ids) {
+      delete require.cache[cacheId];
+      yield cacheId;
+    }
   }
+  yield id;
+  delete require.cache[id];
 }

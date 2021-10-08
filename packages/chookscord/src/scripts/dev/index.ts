@@ -31,9 +31,9 @@ function loadDir(client: Client, dirName: string) {
     input: dirName,
     output: `.chooks/${dirName}`,
     compile(filePath) {
-      reloadFile(client, filePath);
-      unloadModule(filePath);
-      delete require.cache[filePath];
+      for (const cacheId of unloadModule(filePath)) {
+        reloadFile(client, cacheId);
+      }
     },
   });
 }
