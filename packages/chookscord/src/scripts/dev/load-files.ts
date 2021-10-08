@@ -1,16 +1,14 @@
-import type { Awaitable } from 'discord.js';
+import type { ChooksLifecycle, ChooksTeardown } from '../../types';
 import type { ChooksContext } from '@chookscord/types';
 import type { Consola } from 'consola';
 import { basename } from 'path';
 
-// Duplicated from start/load-files
-export type ChooksTeardown = () => unknown;
-export type ChooksOnLoad = (ctx: ChooksContext) => Awaitable<ChooksTeardown | undefined>;
-export type ChooksTeardownList = Map<string, ChooksTeardown | undefined>;
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+export type ChooksTeardownList = Map<string, ChooksTeardown | void>;
 
 function hasLifecycle(
   mod: Record<string, unknown>,
-): mod is { chooksOnLoad: ChooksOnLoad } {
+): mod is { chooksOnLoad: ChooksLifecycle } {
   return 'chooksOnLoad' in mod &&
     typeof mod.chooksOnLoad === 'function';
 }

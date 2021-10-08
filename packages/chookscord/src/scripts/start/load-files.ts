@@ -1,14 +1,12 @@
 import { createLogger, loadDir } from '@chookscord/lib';
 import type { ChooksContext } from '@chookscord/types';
+import type { ChooksLifecycle } from '../../types';
 import { appendPath } from '../../utils';
 import { basename } from 'path';
 
-type ChooksTeardown = (() => unknown) | undefined;
-type ChooksOnLoad = (ctx: ChooksContext) => ChooksTeardown;
-
 function hasLifecycle(
   mod: Record<string, unknown>,
-): mod is { chooksOnLoad: ChooksOnLoad } {
+): mod is { chooksOnLoad: ChooksLifecycle } {
   return 'chooksOnLoad' in mod &&
     typeof mod.chooksOnLoad === 'function';
 }

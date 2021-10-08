@@ -1,5 +1,6 @@
+/* eslint-disable object-curly-newline */
 import type * as types from '@chookscord/types';
-import type { Config, Event, EventContext } from './types';
+import type { ChooksLifecycle, Config, Event, EventContext } from './types';
 import type { ClientEvents } from 'discord.js';
 
 export function defineConfig(
@@ -54,4 +55,10 @@ export function defineSubCommand<T extends Record<string, unknown>>(
   ThisType<Readonly<T>>,
 ): types.ChooksSubCommandOption<T> {
   return subCommand;
+}
+
+export function defineLifecycle(
+  lifecycle: ChooksLifecycle,
+): ChooksLifecycle {
+  return lifecycle;
 }
