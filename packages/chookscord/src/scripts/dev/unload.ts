@@ -35,15 +35,18 @@ function *unloadChildren(targetId: string, mod: NodeJS.Module): Generator<string
   return deleteSignal;
 }
 
-export function *unloadModule(id: string): Generator<string> {
+export function *unloadModule(id: string): Generator<string, void, undefined> {
+  const unloadedIds = new Set<string>().add(id);
+
   for (const key in require.cache) {
     if (!key.includes('.chooks')) continue;
     const ids = unloadChildren(id, require.cache[key]!);
     for (const cacheId of ids) {
       delete require.cache[cacheId];
-      yield cacheId;
+      unloadedIds.add(cacheId);
     }
   }
-  yield id;
+
   delete require.cache[id];
+  yield* unloadedIds.values();
 }
