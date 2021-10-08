@@ -59,7 +59,7 @@ export function debounceAsync<T extends [...args: unknown[]], R>(
       const data = await cb(...args.length ? args : _args);
       return { data, aborted: false };
     } catch (error) {
-      if (controller.signal.aborted) {
+      if (error instanceof Error && error.name === 'AbortError') {
         return { data: null, aborted: true };
       }
       throw error;
