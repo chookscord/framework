@@ -9,11 +9,11 @@ declare module '@chookscord/types' {
     fetch: FetchUtil;
   }
 
-  interface ChooksCommandContext {
+  interface ChooksCommandContext extends ChooksContext {
     interaction: CommandInteraction;
   }
 
-  interface ChooksContextCommandContext {
+  interface ChooksContextCommandContext extends ChooksContext {
     interaction: ContextMenuInteraction;
   }
 }
