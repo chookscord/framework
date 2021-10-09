@@ -5,7 +5,6 @@ import { basename } from 'path';
 
 const logger = lib.createLogger('[cli] ContextCommands');
 
-// @todo(Choooks22): Bind dependencies to 'this'
 async function prepareCommand(
   command: ChooksContextCommand,
 ): Promise<[key: string, command: ChooksContextCommand]> {
