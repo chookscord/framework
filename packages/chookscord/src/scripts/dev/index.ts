@@ -25,7 +25,6 @@ function reloadFile(client: Client, filePath: string) {
   reload(ctx, store, filePath, logger);
 }
 
-const loadedFiles = new Set<string>();
 function loadDir(client: Client, dirName: string) {
   createWatchCompiler({
     logger,
@@ -33,11 +32,6 @@ function loadDir(client: Client, dirName: string) {
     input: dirName,
     output: `.chooks/${dirName}`,
     compile(filePath) {
-      if (!loadedFiles.has(filePath)) {
-        loadedFiles.add(filePath);
-        return;
-      }
-
       for (const cacheId of unloadModule(filePath)) {
         reloadFile(client, cacheId);
       }
