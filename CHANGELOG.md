@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.15.0 - 10/10/21
+
+## Fixed
+
+- Module contexts not typed for plain JavaScript projects as well as
+TypeScript projects not using `"strict": true`
+
+## Added
+
+- Added user dependency handling.
+- File lifecycles.
+
+### Changed
+
+- Updated definition functions:
+  - Changed `defineCommand` to `defineSlashCommand`.
+  - Changed `defineSubCommand` to `defineSlashSubCommand`.
+    - `defineSubCommand` is now for defining sub commands.
+  - Added `defineNonCommandOption` and `defineSubCommandGroup` definitions.
+
+## 0.14.2 - 04/09/21
+
+### Fixed
+
+- Logging missing from compiler.
+- Compiler not throwing error.
+
 ## 0.14.1 - 28/09/21
 
 ### Fixed

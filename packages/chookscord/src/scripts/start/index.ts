@@ -6,6 +6,7 @@ import * as utils from '../../utils';
 import type { ModuleContext, ModuleName } from '../../types';
 import { createModuleLoader } from './load-modules';
 import { loadConfig } from './load-config';
+import { loadFiles } from './load-files';
 
 const logger = lib.createLogger('[cli] Chooks');
 const fetch = lib.fetch;
@@ -48,6 +49,8 @@ export async function run(): Promise<void> {
   for (const moduleName of projectFiles) {
     if (isModule(moduleName)) {
       loadModule(moduleName);
+    } else {
+      loadFiles({ client, fetch }, moduleName);
     }
   }
 

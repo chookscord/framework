@@ -1,6 +1,8 @@
 ---
 extends:
   - '../../.eslintrc.yml'
+parserOptions:
+  project: ./tsconfig.types.json
 rules:
   '@typescript-eslint/method-signature-style': 'off'
   camelcase: 'off'

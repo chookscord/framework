@@ -1,13 +1,13 @@
 import type { ChooksCommand, ChooksCommandOption, ChooksCommandOptionType, ChooksContext } from './base';
 
-export interface ChooksSlashCommand extends ChooksCommand {
+export interface ChooksSlashCommand<Deps extends Record<string, unknown> = Record<string, never>> extends ChooksCommand<Deps> {
   type?: 'CHAT_INPUT';
   description: string;
   options?: ChooksNonCommandOption[];
-  execute(ctx: ChooksCommandContext): unknown;
+  execute(this: Readonly<Deps>, ctx: ChooksCommandContext): unknown;
 }
 
-export interface ChooksSubCommand extends Omit<ChooksCommand, 'execute'> {
+export interface ChooksSubCommand extends Omit<ChooksCommand<never>, 'execute'> {
   type?: 'CHAT_INPUT';
   description: string;
   options: (ChooksSubCommandOption | ChooksGroupCommandOption)[];
@@ -23,10 +23,11 @@ export interface ChooksCommandOptionWithChoice extends Omit<ChooksCommandOption,
 
 export type ChooksNonCommandOption = ChooksCommandOptionWithChoice | ChooksCommandOptionWithoutChoice;
 
-export interface ChooksSubCommandOption extends Omit<ChooksCommandOption, 'type' | 'choices'> {
+export interface ChooksSubCommandOption<Deps extends Record<string, unknown> = Record<string, never>> extends Omit<ChooksCommandOption, 'type' | 'choices'> {
   type: 'SUB_COMMAND';
   options?: ChooksNonCommandOption[];
-  execute(ctx: ChooksCommandContext): unknown;
+  dependencies?(this: undefined): Deps | Promise<Deps>;
+  execute(this: Readonly<Deps>, ctx: ChooksCommandContext): unknown;
 }
 
 export interface ChooksGroupCommandOption extends Omit<ChooksCommandOption, 'type' | 'choices'> {

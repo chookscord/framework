@@ -1,20 +1,20 @@
 import * as lib from '@chookscord/lib';
-import type { ChooksCommand, ChooksCommandContext } from '@chookscord/types';
+import type { ChooksCommand, ChooksSubCommandOption } from '@chookscord/types';
 import type { CommandModule } from '../../../types';
 import { createCommandKey } from '../../../utils';
 import { didCommandChanged } from '../../../tools';
 
 // eslint-disable-next-line complexity
-function *extractCommandHandlers(
+function *extractSubCommands(
   command: ChooksCommand,
-): Generator<[string, (ctx: ChooksCommandContext) => unknown]> {
+): Generator<[string, ChooksSubCommandOption]> {
   for (const option of command.options ?? []) {
     if (lib.isSubCommandOption(option)) {
       const key = createCommandKey(
         command.name,
         option.name,
       );
-      yield [key, option.execute];
+      yield [key, option];
     } else if (lib.isGroupOption(option)) {
       for (const subCommand of option.options) {
         if (lib.isSubCommandOption(subCommand)) {
@@ -23,7 +23,7 @@ function *extractCommandHandlers(
             option.name,
             subCommand.name,
           );
-          yield [key, subCommand.execute];
+          yield [key, subCommand];
         }
       }
     }
@@ -37,7 +37,7 @@ export function attachModuleHandler(
 ): void {
   const deleteCommand = (oldCommand: ChooksCommand) => {
     for (const [key, mod] of moduleStore.entries()) {
-      if (mod.data === oldCommand) {
+      if (mod.parent === oldCommand) {
         moduleStore.delete(key);
       }
     }
@@ -53,15 +53,15 @@ export function attachModuleHandler(
       deleteCommand(oldCommand);
     }
 
-    const set = (key: string, execute: (ctx: never) => unknown) => {
-      moduleStore.set(key, { data: command, execute });
+    const set = (key: string, target: ChooksCommand) => {
+      moduleStore.set(key, { parent: command, target });
     };
 
     if (typeof command.execute === 'function') {
-      set(command.name, command.execute.bind(command));
+      set(command.name, command);
     } else {
-      for (const [key, execute] of extractCommandHandlers(command)) {
-        set(key, execute);
+      for (const [key, subCommand] of extractSubCommands(command)) {
+        set(key, subCommand as unknown as ChooksCommand);
       }
     }
   });

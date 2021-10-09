@@ -1,6 +1,4 @@
-import type {
-  Client, CommandInteraction, ContextMenuInteraction, Interaction,
-} from 'discord.js';
+import type { Client, CommandInteraction, ContextMenuInteraction } from 'discord.js';
 import type { Consola } from 'consola';
 import type { FetchUtil } from '@chookscord/lib';
 
@@ -9,14 +7,13 @@ declare module '@chookscord/types' {
     client: Client<true>;
     logger: Consola;
     fetch: FetchUtil;
-    interaction: Interaction;
   }
 
-  interface ChooksCommandContext {
+  interface ChooksCommandContext extends ChooksContext {
     interaction: CommandInteraction;
   }
 
-  interface ChooksContextCommandContext {
+  interface ChooksContextCommandContext extends ChooksContext {
     interaction: ContextMenuInteraction;
   }
 }

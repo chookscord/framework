@@ -26,9 +26,9 @@ export function createRegister(
       return;
     }
 
-    const newCooldown = await register();
-    if (newCooldown) {
-      onCooldown = newCooldown;
+    const result = await register();
+    if (!result.aborted && result.data) {
+      onCooldown = result.data;
     }
   };
 }

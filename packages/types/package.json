@@ -1,6 +1,6 @@
 {
   "name": "@chookscord/types",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "dist/discord.js",
   "types": "dist/index.d.ts",
   "repository": {

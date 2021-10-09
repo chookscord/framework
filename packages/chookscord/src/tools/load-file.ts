@@ -1,3 +1,5 @@
+import type { Awaitable } from 'discord.js';
+
 export type LoadResult<T, R> = {
   ok: true;
   data: T;
@@ -7,7 +9,7 @@ export type LoadResult<T, R> = {
 };
 
 export async function loadFile<T, P, R>(
-  importer: (path: P) => T | Promise<T>,
+  importer: (path: P) => T | Awaitable<T>,
   path: P,
   validate?: (value: T) => R,
 ): Promise<LoadResult<T, R | Error>> {

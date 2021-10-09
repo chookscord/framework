@@ -4,4 +4,6 @@ import './declarations';
 
 export * from './events';
 export * from './config';
+export * from './lifecycle';
 export { ModuleContext } from './modules';
+export * from '@chookscord/types';
