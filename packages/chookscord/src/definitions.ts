@@ -31,9 +31,11 @@ export function defineSlashSubCommand(
   return command;
 }
 
-export function defineContextCommand(
-  command: types.ChooksContextCommand,
-): types.ChooksContextCommand {
+export function defineContextCommand<T extends Record<string, unknown>>(
+  command: Omit<types.ChooksContextCommand<T>, 'execute'> &
+  { execute: (ctx: types.ChooksContextCommandContext) => unknown } &
+  ThisType<Readonly<T>>,
+): types.ChooksContextCommand<T> {
   return command;
 }
 
