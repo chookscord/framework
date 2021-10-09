@@ -1,6 +1,6 @@
 {
   "name": "chookscord",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "description": "The next generation Discord.JS Framework for advanced and rapid bot development.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
