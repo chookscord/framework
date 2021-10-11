@@ -758,6 +758,26 @@
   resolved "https://registry.yarnpkg.com/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.2.95.tgz#06c88434b2218e7f68557c085ed8b4bb2438616c"
   integrity sha512-biSwecUU8eI3i/jfZm/KiY3/Tp1B9bG6U07jNEvSQbJoTqx179+4gwKvCnO0DkDaGh19abGJVdeo8kR8YEVttA==
 
+"@swc/core@^1.2.81":
+  version "1.2.95"
+  resolved "https://registry.yarnpkg.com/@swc/core/-/core-1.2.95.tgz#2a7f55404c4318d443a657e508d1a08e863d2dd9"
+  integrity sha512-1uqBCVGjQ6IWAF+FewJI2HZOWMhUmh36lwdk2kmP4QeLlVPWk1AcX4o+d+4KsHZ2KGyEF08Ys4incO6kWIrnPw==
+  dependencies:
+    "@node-rs/helper" "^1.0.0"
+  optionalDependencies:
+    "@swc/core-android-arm64" "1.2.95"
+    "@swc/core-darwin-arm64" "1.2.95"
+    "@swc/core-darwin-x64" "1.2.95"
+    "@swc/core-freebsd-x64" "1.2.95"
+    "@swc/core-linux-arm-gnueabihf" "1.2.95"
+    "@swc/core-linux-arm64-gnu" "1.2.95"
+    "@swc/core-linux-arm64-musl" "1.2.95"
+    "@swc/core-linux-x64-gnu" "1.2.95"
+    "@swc/core-linux-x64-musl" "1.2.95"
+    "@swc/core-win32-arm64-msvc" "1.2.95"
+    "@swc/core-win32-ia32-msvc" "1.2.95"
+    "@swc/core-win32-x64-msvc" "1.2.95"
+
 "@swc/core@^1.2.94":
   version "1.2.94"
   resolved "https://registry.yarnpkg.com/@swc/core/-/core-1.2.94.tgz#a285b93d41a9a1f4aa62b3a718f509e808e241d3"
@@ -777,26 +797,6 @@
     "@swc/core-win32-arm64-msvc" "1.2.94"
     "@swc/core-win32-ia32-msvc" "1.2.94"
     "@swc/core-win32-x64-msvc" "1.2.94"
-
-"@swc/core@^1.2.95":
-  version "1.2.95"
-  resolved "https://registry.yarnpkg.com/@swc/core/-/core-1.2.95.tgz#2a7f55404c4318d443a657e508d1a08e863d2dd9"
-  integrity sha512-1uqBCVGjQ6IWAF+FewJI2HZOWMhUmh36lwdk2kmP4QeLlVPWk1AcX4o+d+4KsHZ2KGyEF08Ys4incO6kWIrnPw==
-  dependencies:
-    "@node-rs/helper" "^1.0.0"
-  optionalDependencies:
-    "@swc/core-android-arm64" "1.2.95"
-    "@swc/core-darwin-arm64" "1.2.95"
-    "@swc/core-darwin-x64" "1.2.95"
-    "@swc/core-freebsd-x64" "1.2.95"
-    "@swc/core-linux-arm-gnueabihf" "1.2.95"
-    "@swc/core-linux-arm64-gnu" "1.2.95"
-    "@swc/core-linux-arm64-musl" "1.2.95"
-    "@swc/core-linux-x64-gnu" "1.2.95"
-    "@swc/core-linux-x64-musl" "1.2.95"
-    "@swc/core-win32-arm64-msvc" "1.2.95"
-    "@swc/core-win32-ia32-msvc" "1.2.95"
-    "@swc/core-win32-x64-msvc" "1.2.95"
 
 "@swc/helpers@^0.2.13":
   version "0.2.13"
@@ -1431,6 +1431,11 @@ cssstyle@^2.3.0:
   dependencies:
     cssom "~0.3.6"
 
+data-uri-to-buffer@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/data-uri-to-buffer/-/data-uri-to-buffer-3.0.1.tgz#594b8973938c5bc2c33046535785341abc4f3636"
+  integrity sha512-WboRycPNsVw3B3TL559F7kuBUM4d8CgMEvk6xEJlOp7OBPjt6G7z8WMWlD2rOFZLk6OYfFIUGsCOWzcQH9K2og==
+
 data-urls@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/data-urls/-/data-urls-2.0.0.tgz#156485a72963a970f5d5821aaf642bef2bf2db9b"
@@ -1790,6 +1795,13 @@ fb-watchman@^2.0.0:
   integrity sha512-DkPJKQeY6kKwmuMretBhr7G6Vodr7bFwDYTXIkfG1gjvNpaxBTQV3PbXg6bR1c1UP4jPOX0jHUbbHANL9vRjVg==
   dependencies:
     bser "2.1.1"
+
+fetch-blob@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/fetch-blob/-/fetch-blob-3.1.2.tgz#6bc438675f3851ecea51758ac91f6a1cd1bacabd"
+  integrity sha512-hunJbvy/6OLjCD0uuhLdp0mMPzP/yd2ssd1t2FCJsaA7wkWhpbp9xfuNVpv7Ll4jFhzp6T4LAupSiV9uOeg0VQ==
+  dependencies:
+    web-streams-polyfill "^3.0.3"
 
 file-entry-cache@^6.0.1:
   version "6.0.1"
@@ -2774,6 +2786,14 @@ node-fetch@^2.6.1:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
+node-fetch@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-3.0.0.tgz#79da7146a520036f2c5f644e4a26095f17e411ea"
+  integrity sha512-bKMI+C7/T/SPU1lKnbQbwxptpCrG9ashG+VkytmXCPZyuM9jB6VU+hY0oi4lC8LxTtAeWdckNCTa3nrGsAdA3Q==
+  dependencies:
+    data-uri-to-buffer "^3.0.1"
+    fetch-blob "^3.1.2"
+
 node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
@@ -3390,10 +3410,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^4.5.0-beta:
-  version "4.5.0-beta"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.0-beta.tgz#f2e2724d93c35e7a0d0d1e55a22d1e4efb2181c7"
-  integrity sha512-7PvWhki2lwukaR9osVhFnNzxaE4LM+gC94dlwcvS+Tqz8+U65va7FbKo02bT+/MFlnMPM8bsPUXvHiMD/Mg3Jg==
+typescript@^4.5.0-dev.20211010:
+  version "4.5.0-dev.20211010"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.0-dev.20211010.tgz#688e70253fabe701d69be7ca636290dbcbdd525b"
+  integrity sha512-gFJnFGSIcSBpMtDuEYBnoDcQeZCw16TY9pv4yLpfKTPxbXSaZb0hlZp4AdomVH5xLvewdUBFvVESUOXs+5Lnrg==
 
 universalify@^0.1.2:
   version "0.1.2"
@@ -3446,6 +3466,11 @@ walker@^1.0.7:
   integrity sha1-L3+bj9ENZ3JisYqITijRlhjgKPs=
   dependencies:
     makeerror "1.0.x"
+
+web-streams-polyfill@^3.0.3:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-3.1.1.tgz#1516f2d4ea8f1bdbfed15eb65cb2df87098c8364"
+  integrity sha512-Czi3fG883e96T4DLEPRvufrF2ydhOOW1+1a6c3gNjH2aIh50DNFBdfwh2AKoOf1rXvpvavAoA11Qdq9+BKjE0Q==
 
 webidl-conversions@^5.0.0:
   version "5.0.0"
