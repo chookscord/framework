@@ -1,0 +1,37 @@
+{
+  "name": "@chookscord/fetch",
+  "version": "1.0.0",
+  "description": "A node-fetch@3 wrapper for CommonJS with extra utilities.",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc --outDir dist",
+    "clean-build": "rm -rf dist && yarn build",
+    "dev": "yarn build --watch"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.0.0"
+  },
+  "peerDependencies": {
+    "node-fetch": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "directory": "packages/fetch",
+    "url": "chookscord/framework"
+  },
+  "license": "MIT",
+  "keywords": [
+    "fetch",
+    "node-fetch",
+    "commonjs"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

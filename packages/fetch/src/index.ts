@@ -1,7 +1,12 @@
-import _fetch, { RequestInfo, RequestInit, Response } from 'node-fetch';
+/* eslint-disable object-curly-newline */
+// @ts-ignore https://github.com/microsoft/TypeScript/issues/46213
+import type { RequestInfo, RequestInit, Response } from 'node-fetch';
 
-type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-type FetchParams = [url: RequestInfo, init?: RequestInit];
+// @ts-ignore https://github.com/microsoft/TypeScript/issues/46213
+export type { Response, ResponseInit, ResponseType } from 'node-fetch';
+
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export type FetchParams = [url: RequestInfo, init?: RequestInit];
 
 export type WrappedRequest<T = unknown> =
 Pick<Response, 'text' | 'blob' | 'arrayBuffer'> &
@@ -12,6 +17,11 @@ PromiseLike<Response> & {
 
 export type WrappedFetch = <T = unknown>(...args: FetchParams) => WrappedRequest<T>;
 export type FetchUtil = WrappedFetch & Record<Lowercase<Method>, WrappedFetch>;
+
+const _fetch = async (...args: FetchParams) => {
+  const mod = await import('node-fetch');
+  return mod.default(...args);
+};
 
 function wrapResponse<T>(request: Promise<Response>): WrappedRequest<T> {
   const execute = <Body extends 'json' | 'blob' | 'text' | 'arrayBuffer'>(key: Body) => {
@@ -54,3 +64,5 @@ export const fetch: FetchUtil = (() => {
 
   return fetchUtil;
 })();
+
+export default fetch;
