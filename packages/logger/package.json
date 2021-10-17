@@ -1,0 +1,32 @@
+{
+  "name": "@chookscord/logger",
+  "version": "1.0.0",
+  "description": "A small logging library for picocolors adding log levels.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc --outDir dist",
+    "clean-build": "rm -rf dist && yarn build",
+    "dev": "yarn build --watch"
+  },
+  "peerDependencies": {
+    "picocolors": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "directory": "packages/logger",
+    "url": "chookscord/framework"
+  },
+  "license": "MIT",
+  "keywords": [
+    "log",
+    "logger",
+    "logging"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
