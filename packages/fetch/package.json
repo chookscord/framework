@@ -15,7 +15,7 @@
     "node-fetch": "^3.0.0"
   },
   "peerDependencies": {
-    "node-fetch": "^3.0.0"
+    "node-fetch": ">=2"
   },
   "repository": {
     "type": "git",
@@ -30,8 +30,5 @@
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "engines": {
-    "node": ">=14.0.0"
   }
 }
