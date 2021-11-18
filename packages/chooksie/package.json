@@ -1,0 +1,61 @@
+{
+  "name": "chooksie",
+  "version": "1.0.0",
+  "description": "The next generation Discord.JS Framework for advanced and rapid bot development.",
+  "type": "commonjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./lib": {
+      "types": "./dist/lib/index.d.ts",
+      "require": "./dist/lib/index.js",
+      "import": "./dist/lib/index.mjs"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc",
+    "build:wrap": "npx concurrently 'gen-esm-wrapper ./dist ./dist/index.mjs' 'gen-esm-wrapper ./dist/lib ./dist/lib/index.mjs'",
+    "clean-build": "rm -rf dist && yarn build",
+    "dev": "npx tsc-watch --onCompilationComplete 'yarn build:wrap'"
+  },
+  "dependencies": {
+    "@chookscord/fetch": "^1.0.0",
+    "@chookscord/logger": "^1.0.0",
+    "@swc/helpers": "^0.2.14",
+    "dotenv": "^10.0.0",
+    "picocolors": "^1.0.0",
+    "tslib": "^2.3.1"
+  },
+  "license": "MIT",
+  "keywords": [
+    "discord",
+    "discordjs",
+    "discord.js",
+    "typescript",
+    "framework",
+    "client",
+    "bot",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chookscord/framework.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "discord.js": "^13.3.1"
+  }
+}
