@@ -1,0 +1,30 @@
+{
+  "name": "@chookscord/cli",
+  "version": "1.0.0",
+  "license": "MIT",
+  "preferGlobal": true,
+  "exports": {
+    "./build": "./dist/scripts/build.js",
+    "./register": "./dist/scripts/register/index.js",
+    "./dev": "./dist/scripts/dev/index.js"
+  },
+  "bin": {
+    "chooks": "./bin/chooks.js"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "build:dev": "npx tsc-watch --onCompilationComplete 'cp src/scripts/entrypoint.ts dist/scripts'",
+    "build:bin": "npx tsc -p tsconfig.bin.json",
+    "clean-build": "rm -r dist bin && concurrently 'yarn build' 'yarn build:bin'",
+    "dev": "concurrently 'yarn build:dev' 'yarn build:bin -w'"
+  },
+  "dependencies": {
+    "@swc/core": "^1.2.108",
+    "@swc/helpers": "^0.2.14",
+    "chokidar": "^3.5.2"
+  },
+  "devDependencies": {
+    "discord.js": "^13.3.1",
+    "node-fetch": "^2.6.5"
+  }
+}
