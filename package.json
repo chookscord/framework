@@ -1,5 +1,5 @@
 {
-  "name": "chookscord-framework",
+  "name": "chookscord",
   "private": true,
   "workspaces": [
     "packages/*"
