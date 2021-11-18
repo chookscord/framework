@@ -52,7 +52,7 @@ export function warn(...messages: unknown[]): void {
 }
 
 export function success(...messages: unknown[]): void {
-  const prefix = pc.green('OK');
+  const prefix = pc.inverse(pc.green(' OK '));
   write({ out: console.info }, prefix, ...messages);
 }
 
