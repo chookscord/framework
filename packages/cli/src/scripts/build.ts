@@ -7,10 +7,6 @@ import { ConfigFile } from '../lib/config';
 import { createLogger } from '@chookscord/logger';
 import { validateProdConfig } from '../lib/validation/config';
 
-const isModule = process.argv
-  .slice(2)
-  .includes('--esm');
-
 export const logger = createLogger('[cli] build');
 
 export const enum ExitCode {
@@ -109,7 +105,7 @@ export async function run(): Promise<void> {
   lib.compileFile(
     `${__dirname}/entrypoint.ts`,
     `${cwd}/.chooks/index.js`,
-    code => (isModule ? shim : '') + code,
+    code => (process.env.MODULE_TYPE === 'esm' ? shim : '') + code,
   );
 
   logger.success('Project compiled.');

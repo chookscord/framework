@@ -3,10 +3,6 @@ import { Options, transformFile } from '@swc/core';
 import { dirname } from 'path';
 import fs from 'fs/promises';
 
-const isModule = process.argv
-  .slice(2)
-  .includes('--esm');
-
 const defaultOptions: Options = {
   sourceMaps: false,
   jsc: {
@@ -22,7 +18,7 @@ const defaultOptions: Options = {
   module: {
     strict: true,
     noInterop: true,
-    type: isModule
+    type: process.env.MODULE_TYPE === 'esm'
       ? 'es6'
       : 'commonjs',
   },

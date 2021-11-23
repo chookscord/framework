@@ -68,7 +68,7 @@ function removeFromMain(mod: NodeJS.Module) {
   }
 }
 
-export const uncachedImport: <T>(path: string) => Promise<T> = typeof module === 'undefined'
+export const uncachedImport: <T>(path: string) => Promise<T> = process.env.MODULE_TYPE === 'esm'
   ? path => import(path) // import() will be hooked onto in esm mode
   : async path => {
     await Promise.resolve(); // Avoids race conditions

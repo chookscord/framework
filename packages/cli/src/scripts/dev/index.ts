@@ -185,25 +185,8 @@ export async function run(): Promise<void> {
     await command.execute?.call(deps, { client, fetch, interaction, logger: _logger });
   });
 
-  // logger.trace('Loading files...');
-  // const [configFile, projectFiles] = await findFiles();
-  const login = client.login(config.credentials.token);
+}
 
-  // logger.trace('Loading modules...');
-  // const loadModule = createModuleLoader(client, config);
-
-  // for (const moduleName of projectFiles) {
-  //   if (isModule(moduleName)) {
-  //     logger.debug(`Module "${moduleName}" loaded.`);
-  //     loadModule(moduleName);
-  //   } else {
-  //     logger.debug(`Local dir "${moduleName}" loaded.`);
-  //     loadDir(client, moduleName);
-  //   }
-  // }
-
-  logger.debug('Waiting for login...');
-  await login;
-
-  logger.success('Startup time:', endTimer());
+if (process.env.MODULE_TYPE === 'esm') {
+  run(); // call self since we're using fork() and not require().run()
 }
