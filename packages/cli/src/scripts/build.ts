@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import 'dotenv/config';
 import * as lib from '../lib';
 import { basename, join } from 'path';
 import { getDefaultImport, traverse } from 'chooksie/lib';

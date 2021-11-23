@@ -1,4 +1,6 @@
 #! /usr/bin/env node
+require('dotenv/config');
+process.env.NODE_ENV ??= 'production';
 const args = process.argv.slice(2);
 const index = args.indexOf('--esm');
 const esm = index > -1;
