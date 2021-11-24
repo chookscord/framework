@@ -1,6 +1,4 @@
-import type { ChooksConfig } from 'chooksie/types';
+import { ChooksConfig } from 'chooksie';
 
-declare module './chooks.config.js' {
-  const config: ChooksConfig;
-  export default config;
-}
+declare const config: ChooksConfig;
+export default config;
