@@ -2,8 +2,7 @@ import { ChooksContext, ChooksLifecycle, ChooksTeardown } from 'chooksie/types';
 import type { ChooksLogger } from '@chookscord/logger';
 import { basename } from 'path';
 
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-export type ChooksTeardownList = Map<string, ChooksTeardown | void>;
+export type ChooksTeardownList = Map<string, ChooksTeardown>;
 
 function hasLifecycle(
   mod: Record<string, unknown>,
@@ -28,7 +27,7 @@ export function teardown(
 export async function init(
   ctx: ChooksContext,
   filePath: string,
-  store?: ChooksTeardownList,
+  store: ChooksTeardownList,
   logger?: ChooksLogger,
 ): Promise<void> {
   const mod: Record<string, unknown> = await import(filePath);
@@ -36,7 +35,10 @@ export async function init(
     const fileName = basename(filePath);
     logger?.debug(`Load "${fileName}".`);
     const cleanup = await mod.chooksOnLoad(ctx);
-    store?.set(filePath, cleanup);
+    if (cleanup) {
+      logger?.debug('Saved teardown function.');
+      store.set(filePath, cleanup);
+    }
   }
 }
 
