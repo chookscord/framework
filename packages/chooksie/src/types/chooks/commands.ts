@@ -35,7 +35,7 @@ export interface ChooksSlashCommand<Deps extends ChooksDep = EmptyDep> extends C
 export interface ChooksSlashSubCommand extends Omit<ChooksCommand<never>, 'execute' | 'setup'> {
   type?: 'CHAT_INPUT';
   description: string;
-  options: (ChooksSubCommandOption | ChooksCommandGroupOption)[];
+  options: (ChooksSubCommandOption<Record<string, unknown>> | ChooksCommandGroupOption)[];
 }
 
 /**
