@@ -1,9 +1,12 @@
-import { ExitCode, logger } from '../scripts/build';
-import { Options, transformFile } from '@swc/core';
+import { Options as SwcOptions, transformFile } from '@swc/core';
+import { ExitCode } from './errors';
+import { createLogger } from '@chookscord/logger';
 import { dirname } from 'path';
 import fs from 'fs/promises';
 
-const defaultOptions: Options = {
+const logger = createLogger('[chooks] compiler');
+
+const defaultOptions: SwcOptions = {
   sourceMaps: false,
   jsc: {
     loose: true,
@@ -24,8 +27,8 @@ const defaultOptions: Options = {
   },
 };
 
-type OptionSettings = Options | ((defaultOption: Options) => Options);
-const parseOption = (getOption?: OptionSettings) => typeof getOption === 'function'
+type Options = SwcOptions | ((defaultOption: SwcOptions) => SwcOptions);
+const parseOption = (getOption?: Options) => typeof getOption === 'function'
   ? getOption(defaultOptions)
   : getOption ?? defaultOptions;
 
@@ -33,7 +36,7 @@ export async function compileFile(
   filePath: string,
   outFile: string,
   transformCode?: (code: string) => PromiseLike<string> | string,
-  options?: OptionSettings,
+  options?: Options,
 ): Promise<void> {
   const transform = transformFile(filePath, parseOption(options));
   await fs.mkdir(dirname(outFile), { recursive: true });
