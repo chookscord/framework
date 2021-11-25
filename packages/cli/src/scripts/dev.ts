@@ -131,7 +131,7 @@ async function loadFile(client: Client, path: string, store: LifecycleStore) {
   }
 }
 
-export async function main() {
+export async function run() {
   logger.info('Starting dev server...');
   logger.debug('Getting config...');
   const config = await resolveConfig(configFiles, lib.traverse(process.cwd()));
@@ -210,5 +210,5 @@ export async function main() {
 }
 
 if (process.env.MODULE_TYPE === 'module') {
-  main(); // bootstrap self on esm since we can't call run from cli
+  run(); // bootstrap self on esm since we can't call run from cli
 }
