@@ -9,20 +9,6 @@ import { validateProdConfig } from '../lib/validation/config';
 
 export const logger = createLogger('[cli] build');
 
-export const enum ExitCode {
-  InvalidCommand = 64,
-  MissingFile = 72,
-  BuildFail = 73,
-  Validation = 78,
-}
-
-export class ValidationError extends Error {
-  constructor(message?: string) {
-    super(message);
-    super.name = 'ValidationError';
-  }
-}
-
 const cwd = process.cwd();
 
 const configFiles = [
@@ -52,8 +38,7 @@ async function validateConfigFile(
   const file: ChooksConfig = await import(outPath);
   const config = getDefaultImport(file);
 
-  if (!lib.isConfigValid(config, validateProdConfig, logger)) {
-    process.exit();
+    process.exit(lib.ExitCode.Validation);
   }
 }
 
