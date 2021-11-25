@@ -17,6 +17,7 @@ import { compileFile } from '../lib/compile';
 import { fetch } from '@chookscord/fetch';
 import { join } from 'path';
 import { resolveConfig } from '../lib/config';
+import { uncachedImport } from './dev/unload';
 import { watch } from 'chokidar';
 
 const root = process.cwd();
@@ -71,7 +72,7 @@ function createListener(store: lib.Store<CommandModule>): (interaction: Interact
 }
 
 async function resolveMod<T>(path: string): Promise<T> {
-  const file = await import(path);
+  const file = await uncachedImport<T>(path);
   return lib.getDefaultImport(file);
 }
 
