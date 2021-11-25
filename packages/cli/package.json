@@ -11,6 +11,10 @@
   "bin": {
     "chooks": "./bin/chooks.js"
   },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
     "build": "npx tsc",
     "build:dev": "npx tsc-watch --onCompilationComplete 'cp src/scripts/entrypoint.ts dist/scripts'",
@@ -24,6 +28,7 @@
     "chokidar": "^3.5.2"
   },
   "devDependencies": {
+    "chooksie": "^1.0.0",
     "discord.js": "^13.3.1",
     "node-fetch": "^2.6.5"
   }
