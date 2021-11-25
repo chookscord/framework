@@ -20,6 +20,16 @@
       "default": "./dist/types/index.js"
     }
   },
+  "typesVersions": {
+    "*": {
+      "lib": [
+        "./dist/lib/index.d.ts"
+      ],
+      "types": [
+        "./dist/types/index.d.ts"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
