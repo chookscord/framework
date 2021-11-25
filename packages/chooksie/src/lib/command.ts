@@ -1,26 +1,11 @@
-import type * as types from '../types/chooks';
-import { ChooksLogger, createLogger } from '@chookscord/logger';
-import type { Client, Interaction } from 'discord.js';
+import { ChooksCommand, ChooksSlashSubCommand, ChooksSubCommandOption } from '../types/chooks';
+import { ChooksLogger } from '@chookscord/logger';
 import { createCommandKey } from './utils';
 import { createTimer } from './chrono';
-import { fetch } from '@chookscord/fetch';
 
 export interface CommandReference {
-  module: types.ChooksCommand | types.ChooksSubCommandOption;
-  parent: types.ChooksCommand;
-}
-
-export function getCommandCtx<T extends types.ChooksContextCommandContext | types.ChooksCommandContext>(
-  client: Client,
-  commandName: string,
-  interaction: Interaction,
-): T {
-  return {
-    fetch,
-    client,
-    interaction,
-    logger: createLogger(`[commands] ${commandName}`),
-  } as T;
+  module: ChooksCommand | ChooksSubCommandOption;
+  parent: ChooksCommand;
 }
 
 export async function executeCommand(
@@ -41,9 +26,9 @@ export async function executeCommand(
 
 // eslint-disable-next-line complexity
 export function *extractSubCommands(
-  command: types.ChooksSlashSubCommand,
+  command: ChooksSlashSubCommand,
 ): Generator<[string, CommandReference]> {
-  const makeRef = (key: string, option: types.ChooksSubCommandOption): [string, CommandReference] => {
+  const makeRef = (key: string, option: ChooksSubCommandOption): [string, CommandReference] => {
     const ref: CommandReference = {
       parent: command,
       module: option,
@@ -54,7 +39,7 @@ export function *extractSubCommands(
   for (const option of command.options) {
     if (option.type === 'SUB_COMMAND') {
       const key = createCommandKey(command.name, option.name);
-      yield makeRef(key, option as types.ChooksSubCommandOption);
+      yield makeRef(key, option as ChooksSubCommandOption);
       continue;
     }
     if (option.type === 'SUB_COMMAND_GROUP') {
