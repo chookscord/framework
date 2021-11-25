@@ -1,3 +1,5 @@
+// For some reason "mod.name" is typed as "any" according to eslint
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import 'dotenv/config';
 import * as lib from 'chooksie/lib';
 import { Awaitable, Client, Interaction } from 'discord.js';
@@ -18,7 +20,6 @@ interface CommandModule {
 }
 
 const logger = createLogger('bot');
-const console = logger;
 
 const client = new Client({
   ...config.client?.config,
@@ -74,80 +75,53 @@ async function loadEvent(mod: types.ChooksEvent): Promise<void> {
   ctx = { ...ctx, config };
 
   client[frequency](mod.name, mod.execute.bind(deps, ctx) as never);
-  console.log(`loaded event "${mod.name}"`);
+  logger.success(`Loaded event "${mod.name}".`);
 }
 
 async function loadCommand(
+  mod: types.ChooksCommand | types.ChooksSubCommandOption<Record<string, unknown>>,
+  store: ModuleStore,
+  loggerName: string,
+  modName = mod.name,
+): Promise<void> {
+  const deps = await mod.setup?.call(undefined) ?? {};
+  store.set(modName, {
+    execute: mod.execute.bind(deps),
+    logger: createLogger(loggerName),
+  });
+}
+
+async function loadSlashCommand(
   mod: types.ChooksSlashCommand,
   store: ModuleStore,
 ): Promise<void> {
-  const deps = await mod.setup?.call(undefined) ?? {};
-  store.set(mod.name, {
-    execute: mod.execute.bind(deps),
-    logger: createLogger(`[command] ${mod.name}`),
-  });
-  console.log(`loaded command "${mod.name}"`);
-}
-
-// eslint-disable-next-line complexity
-async function *extractSubCommands(
-  mod: types.ChooksSlashSubCommand,
-  group?: types.ChooksCommandGroupOption,
-): AsyncGenerator<CommandModule & { key: string }> {
-  const yieldSubCommand = async (
-    option: types.ChooksSubCommandOption,
-  ): Promise<CommandModule & { key: string }> => {
-    const deps = await option.setup?.call(undefined) ?? {};
-    const key = lib.utils.createCommandKey(
-      mod.name,
-      group?.name,
-      option.name,
-    );
-    console.log(`load ${key}`);
-    return {
-      key,
-      execute: option.execute.bind(deps),
-      logger: createLogger(`[command] ${key}`),
-    };
-  };
-
-  const options = group?.options ?? mod.options;
-  for (const option of options) {
-    switch (option.type) {
-      case 'SUB_COMMAND_GROUP':
-        yield* extractSubCommands(mod, option);
-        break;
-      case 'SUB_COMMAND':
-        yield yieldSubCommand(option);
-    }
-  }
-}
-
-async function loadSubCommand(
-  mod: types.ChooksSlashSubCommand,
-  store: ModuleStore,
-): Promise<void> {
-  for await (const subCommand of extractSubCommands(mod)) {
-    const { key, ...subCommandModule } = subCommand;
-    store.set(key, subCommandModule);
-  }
+  await loadCommand(mod, store, `[command] ${mod.name}`);
+  logger.success(`Loaded slash command "${mod.name}".`);
 }
 
 async function loadContextCommand(
   mod: types.ChooksContextCommand,
   store: ModuleStore,
 ): Promise<void> {
-  const deps = await mod.setup?.call(undefined) ?? {};
-  store.set(mod.name, {
-    execute: mod.execute.bind(deps),
-    logger: createLogger(`[command] ${mod.name}`),
-  });
-  console.log(`loaded context command "${mod.name}"`);
+  await loadCommand(mod, store, `[context] ${mod.name}`);
+  logger.success(`loaded context command "${mod.name}".`);
+}
+
+function loadSubCommand(
+  mod: types.ChooksSlashSubCommand,
+  store: ModuleStore,
+): void {
+  for (const [key, subCommand] of lib.extractSubCommands(mod)) {
+    (async () => {
+      await loadCommand(subCommand.module, store, `[command] ${key}`, key);
+      logger.success(`Loaded subcommand "${key}".`);
+    })();
+  }
 }
 
 const loaders = {
   events: loadEvent,
-  commands: loadCommand,
+  commands: loadSlashCommand,
   subcommands: loadSubCommand,
   contexts: loadContextCommand,
 };
