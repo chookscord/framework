@@ -3,17 +3,15 @@ import * as lib from '../lib';
 import { basename, join } from 'path';
 import { getDefaultImport, traverse } from 'chooksie/lib';
 import type { ChooksConfig } from 'chooksie';
-import { ConfigFile } from '../lib/config';
 import { createLogger } from '@chookscord/logger';
-import { validateProdConfig } from '../lib/validation/config';
 
 export const logger = createLogger('[cli] build');
 
 const cwd = process.cwd();
 
 const configFiles = [
-  ConfigFile.JS,
-  ConfigFile.TS,
+  lib.ConfigFile.JS,
+  lib.ConfigFile.TS,
 ];
 
 function isProjectFile(fileName: string) {
@@ -38,6 +36,7 @@ async function validateConfigFile(
   const file: ChooksConfig = await import(outPath);
   const config = getDefaultImport(file);
 
+  if (!lib.isConfigValid(config, lib.validateProdConfig, logger)) {
     process.exit(lib.ExitCode.Validation);
   }
 }
