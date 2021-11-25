@@ -16,7 +16,7 @@ const configFiles = [
 ];
 
 function isProjectFile(fileName: string) {
-  return !/^\.|^node_modules$/.test(fileName);
+  return !/^\.|^node_modules$|^dist$/.test(fileName);
 }
 
 function loadProject(rootPath: string) {
