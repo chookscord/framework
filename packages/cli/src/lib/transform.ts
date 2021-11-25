@@ -1,5 +1,5 @@
 /* eslint-disable object-curly-newline */
-import { ChooksCommand, ChooksOption, DiscordCommandType, DiscordOption, DiscordOptionType, DiscordSlashCommand } from 'chooksie';
+import { ChooksCommand, ChooksOption, DiscordCommandType, DiscordOption, DiscordOptionType, DiscordSlashCommand } from 'chooksie/types';
 
 function condAppend<T, K extends keyof T>(
   object: T,

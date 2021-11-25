@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, object-curly-newline */
-import { ChooksOption, DiscordOptionChoice } from 'chooksie';
+import type { ChooksOption, DiscordOptionChoice } from 'chooksie/types';
 import { ValidationResult, assert, inRange, testEach } from './tests';
 
 export function validateChoice(

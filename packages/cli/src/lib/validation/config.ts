@@ -1,4 +1,4 @@
-import type { BotCredentials, Config } from 'chooksie';
+import type { BotCredentials, ChooksConfig } from 'chooksie/types';
 import { ValidationResult, assert } from './tests';
 
 export function validateBotCredentials(
@@ -17,7 +17,7 @@ export function validateBotCredentials(
 }
 
 export function validateProdConfig(
-  config: Partial<Config>,
+  config: Partial<ChooksConfig>,
 ): ValidationResult {
   return assert(
     config.credentials ?? {},
@@ -30,7 +30,7 @@ export function validateProdConfig(
 }
 
 export function validateDevConfig(
-  config: Partial<Config>,
+  config: Partial<ChooksConfig>,
 ): ValidationResult {
   return assert(
     config,

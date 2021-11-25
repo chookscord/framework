@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-shadow, object-curly-newline */
-import type { ChooksCommandGroupOption, ChooksOption, ChooksSubCommandOption } from 'chooksie';
+import type { ChooksCommandGroupOption, ChooksOption, ChooksSubCommandOption } from 'chooksie/types';
 import { ValidationResult, assert, inRange, testEach } from './tests';
 import { isOptionWithChoice, isOptionWithoutChoice } from './guards';
 import { testCommandName, testDescription } from './strings';

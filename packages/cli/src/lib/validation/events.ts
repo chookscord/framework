@@ -1,5 +1,5 @@
 import { ValidationResult, assert } from './tests';
-import { ChooksEvent } from 'chooksie';
+import type { ChooksEvent } from 'chooksie/types';
 
 export function validateEvent(
   event: Partial<ChooksEvent>,

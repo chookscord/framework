@@ -1,4 +1,4 @@
-import * as types from 'chooksie';
+import type * as types from 'chooksie/types';
 
 // @Choooks22: Maybe expose these somewhere, idk.
 const TYPES_WITH_CHOICES: types.ChooksOptionType[] = [

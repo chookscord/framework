@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, object-curly-newline */
-import { ChooksCommand, ChooksContextCommand, ChooksSlashCommand, ChooksSlashSubCommand } from 'chooksie';
+import type { ChooksCommand, ChooksContextCommand, ChooksSlashCommand, ChooksSlashSubCommand } from 'chooksie/types';
 import { ValidationResult, assert, inRange, testEach } from './tests';
 import { testCommandName, testContextMenuName, testDescription } from './strings';
 import { validateCommandOption, validateNonCommandOption } from './options';
