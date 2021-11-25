@@ -6,6 +6,7 @@ import type { ChooksConfig } from 'chooksie';
 import { createLogger } from '@chookscord/logger';
 
 export const logger = createLogger('[cli] build');
+const outputDir = 'dist';
 
 const cwd = process.cwd();
 
@@ -30,7 +31,7 @@ async function validateConfigFile(
   configPath: string | null,
 ): Promise<void> {
   lib.checkConfigFile(configPath, logger);
-  const outPath = join(process.cwd(), '.chooks', basename(configPath)).replace(/\.ts$/, '.js');
+  const outPath = join(cwd, outputDir, basename(configPath)).replace(/\.ts$/, '.js');
   await lib.compileFile(configPath, outPath);
 
   const file: ChooksConfig = await import(outPath);
@@ -65,7 +66,7 @@ async function compileDir(dir: string): Promise<void> {
   const dirName = basename(dir);
   await compileDirectory({
     input: dirName,
-    output: `.chooks/${dirName}`,
+    output: `${outputDir}/${dirName}`,
   });
 }
 
@@ -88,7 +89,7 @@ export async function run(): Promise<void> {
 
   lib.compileFile(
     `${__dirname}/entrypoint.ts`,
-    `${cwd}/.chooks/index.js`,
+    `${cwd}/${outputDir}/index.js`,
     code => (process.env.MODULE_TYPE === 'module' ? shim : '') + code,
   );
 
