@@ -19,9 +19,11 @@ const dev = script => {
   });
 };
 
-switch (args[0] ?? 'dev') {
+switch (args[0]) {
   case 'build': run('@chookscord/cli/build'); break;
   case 'register': run('@chookscord/cli/register'); break;
-  case 'dev':
-  default: (esm ? dev : run)('@chookscord/cli/dev');
+  case undefined: (esm ? dev : run)('@chookscord/cli/dev'); break;
+  default:
+    console.error(`${require('picocolors').red('error')} unknown command.`);
+    process.exit(64);
 }
