@@ -18,7 +18,7 @@ const defaultOptions: Options = {
   module: {
     strict: true,
     noInterop: true,
-    type: process.env.MODULE_TYPE === 'esm'
+    type: process.env.MODULE_TYPE === 'module'
       ? 'es6'
       : 'commonjs',
   },

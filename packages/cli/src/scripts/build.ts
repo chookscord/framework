@@ -105,7 +105,7 @@ export async function run(): Promise<void> {
   lib.compileFile(
     `${__dirname}/entrypoint.ts`,
     `${cwd}/.chooks/index.js`,
-    code => (process.env.MODULE_TYPE === 'esm' ? shim : '') + code,
+    code => (process.env.MODULE_TYPE === 'module' ? shim : '') + code,
   );
 
   logger.success('Project compiled.');

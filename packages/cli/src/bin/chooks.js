@@ -4,14 +4,10 @@ const path = require('path');
 const pkg = require(path.resolve(process.cwd(), 'package.json'));
 
 process.env.NODE_ENV ??= 'production';
+process.env.MODULE_TYPE = pkg.type ?? 'commonjs';
+
 const args = process.argv.slice(2);
 const esm = pkg.type === 'module';
-
-if (esm) {
-  process.env.MODULE_TYPE = 'esm';
-} else {
-  process.env.MODULE_TYPE = 'cjs';
-}
 
 const run = script => require(script).run();
 const dev = script => {
