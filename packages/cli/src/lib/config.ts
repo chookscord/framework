@@ -80,7 +80,6 @@ export async function resolveConfig(
 
   checkConfigFile(currentFile, logger);
   const path = join(process.cwd(), '.chooks', currentFile.slice(process.cwd().length).replace(/\.ts$/, '.js'));
-  console.log('config path', path);
   await compileFile(currentFile, path);
 
   const configFile = await import(path);
