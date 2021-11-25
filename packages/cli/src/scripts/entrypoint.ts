@@ -165,15 +165,17 @@ async function loadFile(file: lib.File, store: ModuleStore): Promise<void> {
 
   if (moduleName.includes('.')) return;
   const mod: Record<string, unknown> = lib.getDefaultImport(await import(file.path));
+  const loader = loaders[moduleName as keyof typeof loaders];
+
+  if (loader) {
+    loader(mod as never, store);
+    return;
+  }
 
   if (hasLifecycle(mod)) {
     const fileName = basename(file.path, '.js');
     mod.chooksOnLoad(createCtx(`[file] ${fileName}`));
-    return;
   }
-
-  const loader = loaders[moduleName as keyof typeof loaders];
-  loader?.(mod as never, store);
 }
 
 async function main(): Promise<void> {
