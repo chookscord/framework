@@ -52,26 +52,25 @@ export function warn(...messages: unknown[]): void {
 }
 
 export function success(...messages: unknown[]): void {
-  const prefix = pc.inverse(pc.green(' OK '));
+  const prefix = pc.green('success');
   write({ out: console.info }, prefix, ...messages);
 }
 
 export function info(...messages: unknown[]): void {
-  const prefix = pc.green('INFO');
+  const prefix = pc.green('info');
   write({ out: console.info }, prefix, ...messages);
 }
 
 export function log(...messages: unknown[]): void {
-  const prefix = pc.cyan('LOG');
-  write({ out: console.log }, prefix, ...messages);
+  write({ out: console.log }, ...messages);
 }
 
 export function debug(...messages: unknown[]): void {
-  const prefix = pc.dim('DEBUG');
+  const prefix = pc.dim('debug');
   write({ out: console.debug }, prefix, ...messages);
 }
 
 export function trace(...messages: unknown[]): void {
-  const prefix = pc.dim(pc.gray('TRACE'));
+  const prefix = pc.dim(pc.gray('trace'));
   write({ out: console.debug }, prefix, ...messages);
 }
