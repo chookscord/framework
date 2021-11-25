@@ -5,7 +5,7 @@ overrides:
   - files: "./src/scripts/entrypoint.ts"
     parserOptions:
       project: ./tsconfig.eslint.json
-  - files: "./src/bin/*.js"
+  - files: "./src/bin/*.{ts,js}"
     parserOptions:
       project: ./tsconfig.bin.json
     rules:
