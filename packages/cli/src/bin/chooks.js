@@ -1,12 +1,13 @@
 #! /usr/bin/env node
 require('dotenv/config');
+const path = require('path');
+const pkg = require(path.resolve(process.cwd(), 'package.json'));
+
 process.env.NODE_ENV ??= 'production';
 const args = process.argv.slice(2);
-const index = args.indexOf('--esm');
-const esm = index > -1;
+const esm = pkg.type === 'module';
 
 if (esm) {
-  args.splice(index, 1);
   process.env.MODULE_TYPE = 'esm';
 } else {
   process.env.MODULE_TYPE = 'cjs';
@@ -15,9 +16,9 @@ if (esm) {
 const run = script => require(script).run();
 const dev = script => {
   process.env.NODE_ENV = 'development';
-  const path = require.resolve(script);
+  const devPath = require.resolve(script);
   const loader = require.resolve('./loader.js');
-  require('child_process').fork(path, {
+  require('child_process').fork(devPath, {
     execArgv: ['--loader', loader],
   });
 };
