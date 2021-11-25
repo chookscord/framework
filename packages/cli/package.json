@@ -6,7 +6,7 @@
   "exports": {
     "./build": "./dist/scripts/build.js",
     "./register": "./dist/scripts/register/index.js",
-    "./dev": "./dist/scripts/dev/index.js"
+    "./dev": "./dist/scripts/dev.js"
   },
   "bin": {
     "chooks": "./bin/chooks.js"
