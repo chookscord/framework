@@ -1,3 +1,5 @@
+const { resolve } = require('path');
+
 module.exports = {
   transform: {
     '\\.(t|j)s$': [
@@ -6,4 +8,7 @@ module.exports = {
     ],
   },
   testEnvironment: 'node',
+  moduleNameMapper: {
+    '^chooksie/types$': resolve('./packages/chooksie/src/types/index.ts'),
+  },
 };

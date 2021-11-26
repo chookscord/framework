@@ -1,4 +1,4 @@
-import { createCommandKey } from '../../packages/chooksie/src/utils/commands';
+import { createCommandKey } from '../../packages/chooksie/src/lib/utils';
 
 describe('creating command keys', () => {
   it('creates keys for slash commands', () => {
