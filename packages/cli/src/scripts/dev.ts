@@ -12,13 +12,23 @@ import {
 } from 'chooksie';
 import { ChooksLogger, createLogger } from '@chookscord/logger';
 import { Client, ClientEvents, Interaction } from 'discord.js';
+import { cachedImport, uncachedImport, unloadModule } from './dev/unload';
+import { EventEmitter } from 'events';
 import { Stats } from 'fs';
 import { compileFile } from '../lib/compile';
 import { fetch } from '@chookscord/fetch';
 import { join } from 'path';
 import { resolveConfig } from '../lib/config';
-import { uncachedImport } from './dev/unload';
 import { watch } from 'chokidar';
+
+// @Choooks22: event emitter is on global to
+// let the esm loader get access to the event bus
+declare global {
+  // eslint-disable-next-line no-var
+  var unloadEventBus: EventEmitter;
+}
+
+globalThis.unloadEventBus ??= new EventEmitter();
 
 const root = process.cwd();
 const rootOut = join(root, '.chooks');
@@ -115,7 +125,9 @@ async function loadEvent(path: string, store: EventStore) {
 // eslint-disable-next-line complexity
 async function loadFile(client: Client, path: string, store: LifecycleStore) {
   const fileName = path.slice(rootOut.length + 1);
-  const mod = await resolveMod<{ chooksOnLoad: ChooksLifecycle }>(path);
+  let mod = await cachedImport<{ chooksOnLoad: ChooksLifecycle }>(path);
+  mod = lib.getDefaultImport(mod);
+
   const teardown = store.get(path);
   if (teardown) {
     await teardown();
@@ -130,6 +142,15 @@ async function loadFile(client: Client, path: string, store: LifecycleStore) {
     }
   }
 }
+
+// Intermediary for esm and cjs ways to resolve files
+const unload: (path: string) => void = process.env.MODULE_TYPE === 'module'
+  ? path => unloadEventBus.emit('unload', path)
+  : path => {
+    for (const cacheId of unloadModule(path)) {
+      unloadEventBus.emit('unload', cacheId);
+    }
+  };
 
 export async function run() {
   logger.info('Starting dev server...');
@@ -201,12 +222,21 @@ export async function run() {
         logger.info(`Event "${path}" loaded.`);
         break;
       default:
-        await loadFile(client, paths.output, lifecycleStore);
+        unload(paths.output);
     }
   };
 
   watcher.on('add', onUpdate);
   watcher.on('change', onUpdate);
+
+  // @Choooks22: this algorithm is run twice on esm
+  const loaded = new Set<string>();
+  unloadEventBus.on('unload', (path: string) => {
+    if (loaded.has(path)) return;
+    loaded.add(path);
+    loadFile(client, path, lifecycleStore);
+    Promise.resolve().then(() => loaded.delete(path));
+  });
 }
 
 if (process.env.MODULE_TYPE === 'module') {

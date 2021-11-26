@@ -1,3 +1,17 @@
+import { EventEmitter } from 'events';
+
+// eslint-disable-next-line no-var
+declare var unloadEventBus: EventEmitter;
+globalThis.unloadEventBus ??= new EventEmitter();
+
+const loaded = new Set<string>();
+function emit(path: string) {
+  if (loaded.has(path)) return;
+  loaded.add(path);
+  unloadEventBus.emit('unload', path);
+  Promise.resolve().then(() => loaded.add(path));
+}
+
 type Format = 'builtin' | 'commonjs' | 'json' | 'module' | 'wasm';
 
 interface ResolveContext {
@@ -11,10 +25,83 @@ interface ResolvedFile {
   url: string;
 }
 
-function isNodeModule(url: URL) {
-  return url.protocol === 'nodejs:'
-  || url.protocol === 'node:'
-  || url.pathname.includes('/node_modules/');
+interface Module {
+  id: string;
+  children: Module[];
+}
+
+const modules: Record<string, Module> = {};
+
+// Replicate structure of require.cache
+function cacheModule(childUrl: string, parentUrl: string) {
+  const mod = modules[childUrl] ??= {
+    id: childUrl,
+    children: [],
+  };
+
+  if (parentUrl in modules) {
+    const parentMod = modules[parentUrl];
+    if (!parentMod.children.includes(mod)) {
+      parentMod.children.push(mod);
+    }
+  } else {
+    modules[parentUrl] = {
+      id: parentUrl,
+      children: [mod],
+    };
+  }
+}
+
+// @Choooks22: duplicated, can probably move somewhere else
+// eslint-disable-next-line complexity
+function *unloadChildren(
+  targetId: string,
+  mod: Module,
+  visited: Set<string> = new Set(),
+): Generator<string, boolean> {
+  let deleteSignal = false;
+
+  for (const child of mod.children) {
+    if (!child.id.includes('.chooks')) continue;
+
+    if (visited.has(child.id)) continue;
+    visited.add(child.id);
+
+    if (child.id === targetId) {
+      yield child.id;
+      deleteSignal = true;
+    } else if (child.children.length) {
+      const values = unloadChildren(targetId, child, visited);
+      let current = values.next();
+
+      while (!current.done) {
+        yield current.value as string;
+        current = values.next();
+      }
+
+      deleteSignal ||= current.value;
+    }
+  }
+
+  if (deleteSignal) {
+    yield mod.id;
+  }
+
+  return deleteSignal;
+}
+
+function *unload(id: string) {
+  const unloadedIds = new Set<string>().add(id);
+
+  for (const key in modules) {
+    if (!key.includes('.chooks')) continue;
+    const ids = unloadChildren(id, modules[key]);
+    for (const cacheId of ids) {
+      unloadedIds.add(cacheId);
+    }
+  }
+
+  yield* unloadedIds.values();
 }
 
 export function resolve(
@@ -25,7 +112,17 @@ export function resolve(
   const result = defaultResolve(specifier, context, defaultResolve);
   const child = new URL(result.url);
 
-  return isNodeModule(child)
-    ? result
-    : { url: `${child.href}#${Date.now()}` };
+  if (context.parentURL && child.href.includes('.chooks')) {
+    const parent = new URL(context.parentURL);
+    cacheModule(child.pathname, parent.pathname);
+
+    for (const moduleId of unload(child.href)) {
+      const path = new URL(moduleId).pathname;
+      emit(path);
+    }
+
+    return { url: `${child.href}#${Date.now()}` };
+  }
+
+  return result;
 }

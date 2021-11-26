@@ -85,3 +85,10 @@ export const uncachedImport: <T>(path: string) => Promise<T> = process.env.MODUL
 
     return imported;
   };
+
+export const cachedImport: <T>(path: string) => Promise<T> = process.env.MODULE_TYPE === 'module'
+  ? path => import(path)
+  : async path => {
+    await Promise.resolve();
+    return require(path);
+  };
