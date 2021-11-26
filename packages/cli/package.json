@@ -23,7 +23,7 @@
     "dev": "concurrently 'yarn build:dev' 'yarn build:bin -w'"
   },
   "dependencies": {
-    "@swc/core": "^1.2.108",
+    "@swc/core": "^1.2.112",
     "@swc/helpers": "^0.2.14",
     "chokidar": "^3.5.2"
   },
