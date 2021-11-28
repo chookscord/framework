@@ -123,17 +123,22 @@ async function loadEvent(path: string, store: EventStore) {
   });
 }
 
+async function teardown(path: string, store: LifecycleStore) {
+  const teardown = store.get(path);
+  if (teardown) {
+    await teardown();
+    logger.debug(`Tore down "${path}".`);
+    store.delete(path);
+  }
+}
+
 // eslint-disable-next-line complexity
 async function loadFile(client: Client, path: string, store: LifecycleStore) {
   const fileName = path.slice(rootOut.length + 1);
   let mod = await cachedImport<{ chooksOnLoad: ChooksLifecycle }>(path);
   mod = lib.getDefaultImport(mod);
 
-  const teardown = store.get(path);
-  if (teardown) {
-    await teardown();
-    logger.debug(`Tore down "${path}".`);
-  }
+  await teardown(path, store);
 
   if ('chooksOnLoad' in mod && typeof mod.chooksOnLoad === 'function') {
     const cleanup = await mod.chooksOnLoad({ client, fetch, logger: createLogger(`[file] ${fileName}`) });
@@ -227,9 +232,36 @@ export async function run() {
     }
   };
 
+  // eslint-disable-next-line complexity
   const onDelete = async (path: string) => {
     logger.debug(`"${path} deleted."`);
+
+    const moduleName = path.slice(0, path.indexOf('/'));
     const targetPath = join(rootOut, path.replace(/\.ts$/, '.js'));
+
+    switch (moduleName) {
+      case 'commands':
+      case 'contexts': {
+        const mod = await resolveMod<ChooksCommand>(targetPath);
+        commandStore.delete(mod.name);
+        break;
+      }
+      case 'subcommands': {
+        const mod = await resolveMod<ChooksSlashSubCommand>(targetPath);
+        for (const [key] of lib.extractSubCommands(mod)) {
+          commandStore.delete(key);
+        }
+        break;
+      }
+      case 'events': {
+        const mod = await resolveMod<ChooksEvent>(targetPath);
+        eventStore.delete(mod.name);
+        break;
+      }
+      default:
+        await teardown(targetPath, lifecycleStore);
+    }
+
     await unlink(targetPath);
   };
 
