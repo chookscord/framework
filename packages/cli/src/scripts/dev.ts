@@ -13,12 +13,21 @@ import {
 import { ChooksLogger, createLogger } from '@chookscord/logger';
 import { Client, ClientEvents, Interaction } from 'discord.js';
 import { cachedImport, uncachedImport, unloadModule } from './dev/unload';
+import {
+  compileFile,
+  createRegister,
+  diffCommand,
+  resolveConfig,
+  transformCommandList,
+  validateContextCommand,
+  validateEvent,
+  validateSlashCommand,
+  validateSlashSubCommand,
+} from '../lib';
 import { EventEmitter } from 'events';
 import { Stats } from 'fs';
-import { compileFile } from '../lib/compile';
 import { fetch } from '@chookscord/fetch';
 import { join } from 'path';
-import { resolveConfig } from '../lib/config';
 import { unlink } from 'fs/promises';
 import { watch } from 'chokidar';
 
@@ -89,38 +98,74 @@ async function resolveMod<T>(path: string): Promise<T> {
 
 async function loadSlashCommand(path: string, store: CommandStore) {
   const mod = await resolveMod<ChooksSlashCommand>(path);
+  const error = validateSlashCommand(mod);
+
+  if (error) {
+    logger.error(error);
+    return false;
+  }
+
   store.set(mod.name, {
     parent: mod,
     module: mod,
     logger: createLogger(`[command] ${mod.name}`),
   });
+
+  return true;
 }
 
 async function loadContextCommand(path: string, store: CommandStore) {
   const mod = await resolveMod<ChooksContextCommand>(path);
+  const error = validateContextCommand(mod);
+
+  if (error) {
+    logger.error(error);
+    return false;
+  }
+
   store.set(mod.name, {
     parent: mod,
     module: mod,
     logger: createLogger(`[context] ${mod.name}`),
   });
+
+  return true;
 }
 
 async function loadSubCommand(path: string, store: CommandStore) {
   const mod = await resolveMod<ChooksSlashSubCommand>(path);
+  const error = validateSlashSubCommand(mod);
+
+  if (error) {
+    logger.error(error);
+    return false;
+  }
+
   for await (const [key, subCommand] of lib.extractSubCommands(mod)) {
     store.set(key, {
       ...subCommand,
       logger: createLogger(`[subcommand] ${key}`),
     });
   }
+
+  return true;
 }
 
 async function loadEvent(path: string, store: EventStore) {
   const mod = await resolveMod<ChooksEvent>(path);
+  const error = validateEvent(mod);
+
+  if (error) {
+    logger.error(error);
+    return false;
+  }
+
   store.set(mod.name, {
     event: mod,
     logger: createLogger(`[event] ${mod.name}`),
   });
+
+  return true;
 }
 
 async function teardown(path: string, store: LifecycleStore) {
@@ -212,20 +257,24 @@ export async function run() {
 
     switch (moduleName) {
       case 'commands':
-        await loadSlashCommand(paths.output, commandStore);
-        logger.info(`Slash command "${path}" loaded.`);
+        if (await loadSlashCommand(paths.output, commandStore)) {
+          logger.info(`Slash command "${path}" loaded.`);
+        }
         break;
       case 'subcommands':
-        await loadSubCommand(paths.output, commandStore);
-        logger.info(`Slash subcommand "${path}" loaded.`);
+        if (await loadSubCommand(paths.output, commandStore)) {
+          logger.info(`Slash subcommand "${path}" loaded.`);
+        }
         break;
       case 'contexts':
-        await loadContextCommand(paths.output, commandStore);
-        logger.info(`Context command "${path}" loaded.`);
+        if (await loadContextCommand(paths.output, commandStore)) {
+          logger.info(`Context command "${path}" loaded.`);
+        }
         break;
       case 'events':
-        await loadEvent(paths.output, eventStore);
-        logger.info(`Event "${path}" loaded.`);
+        if (await loadEvent(paths.output, eventStore)) {
+          logger.info(`Event "${path}" loaded.`);
+        }
         break;
       default:
         unload(paths.output);
