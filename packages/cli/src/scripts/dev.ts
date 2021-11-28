@@ -206,11 +206,14 @@ const unload: (path: string) => void = process.env.MODULE_TYPE === 'module'
 
 export async function run() {
   logger.info('Starting dev server...');
+  const endTimer = lib.chrono.createTimer();
+
   logger.debug('Getting config...');
   const config = await resolveConfig(configFiles, lib.traverse(process.cwd()));
 
   logger.debug('Creating client...');
   const client = createClient(config);
+  const login = client.login(config.credentials.token);
 
   const commandStore: CommandStore = new lib.Store();
   const eventStore: EventStore = new lib.Store();
@@ -344,6 +347,13 @@ export async function run() {
     loadFile(client, path, lifecycleStore);
     Promise.resolve().then(() => loaded.delete(path));
   });
+
+  if (!client.isReady()) {
+    logger.info('Waiting to connect...');
+    await login;
+  }
+
+  logger.success(`${client.user.username} connected! Time took: ${endTimer('s')}`);
 }
 
 if (process.env.MODULE_TYPE === 'module') {
