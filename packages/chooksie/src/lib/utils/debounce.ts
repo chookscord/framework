@@ -25,24 +25,24 @@ export function debounce<T extends [...args: unknown[]]>(
   };
 }
 
-export type Debouced<T> =
+export type Debounced<T> =
   { data: T; aborted: false } |
   { data: null; aborted: true };
 
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   delay: number
-): (...args: T) => Promise<Debouced<Awaited<R>>>;
+): (...args: T) => Promise<Debounced<Awaited<R>>>;
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   delay: number,
   ...args: T
-): () => Promise<Debouced<Awaited<R>>>;
+): () => Promise<Debounced<Awaited<R>>>;
 export function debounceAsync<T extends [...args: unknown[]], R>(
   fn: (...args: T) => R,
   delay: number,
   ...args: T
-): (...args: T) => Promise<Debouced<R>> {
+): (...args: T) => Promise<Debounced<R>> {
   let controller: AbortController;
 
   // eslint-disable-next-line complexity
