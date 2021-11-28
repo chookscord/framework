@@ -19,6 +19,7 @@ import { compileFile } from '../lib/compile';
 import { fetch } from '@chookscord/fetch';
 import { join } from 'path';
 import { resolveConfig } from '../lib/config';
+import { unlink } from 'fs/promises';
 import { watch } from 'chokidar';
 
 // @Choooks22: event emitter is on global to
@@ -226,8 +227,16 @@ export async function run() {
     }
   };
 
+  const onDelete = async (path: string) => {
+    logger.debug(`"${path} deleted."`);
+    const targetPath = join(rootOut, path.replace(/\.ts$/, '.js'));
+    await unlink(targetPath);
+  };
+
   watcher.on('add', onUpdate);
   watcher.on('change', onUpdate);
+
+  watcher.on('unlink', onDelete);
 
   // @Choooks22: this algorithm is run twice on esm
   const loaded = new Set<string>();
