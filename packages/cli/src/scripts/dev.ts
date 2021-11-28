@@ -78,7 +78,7 @@ function createListener(store: lib.Store<CommandModule>): (interaction: Interact
       const deps = await command.module.setup?.call(undefined) ?? {};
       const ctx = { client: interaction.client, fetch, interaction, logger: command.logger };
       await command.module.execute!.call(deps, ctx as ChooksCommandContext);
-    });
+    }, command.logger);
   };
 }
 
