@@ -170,9 +170,9 @@ async function loadEvent(path: string, store: EventStore) {
 }
 
 async function teardown(path: string, store: LifecycleStore) {
-  const teardown = store.get(path);
-  if (teardown) {
-    await teardown();
+  const cleanup = store.get(path);
+  if (cleanup) {
+    await cleanup();
     logger.debug(`Tore down "${path}".`);
     store.delete(path);
   }
