@@ -6,7 +6,7 @@ export const enum Time {
   Day = Hour * 24,
 }
 
-export type TimeFormat = 'long' | 'short';
+export type TimeFormat = 'long' | 'short' | 's' | 'ms';
 type TimeInterval = [number, string];
 
 const INTERVALS: TimeInterval[] = [
@@ -36,7 +36,7 @@ export function formatTimeInterval(
   suffix: string,
   time: number,
   current = '',
-): [number, string] {
+): TimeInterval {
   if (time < interval) {
     return [time, current];
   }
@@ -63,7 +63,12 @@ export function formatTime(time: number, format: TimeFormat = 'short'): string {
     return 'Now';
   }
 
-  let timeData: [number, string] = [time, ''];
+  switch (format) {
+    case 'ms': return `${time}ms`;
+    case 's': return `${time / 1000}s`;
+  }
+
+  let timeData: TimeInterval = [time, ''];
   const canSkip = format === 'short'
     ? () => timeData[1].length > 0
     : () => false; // we can't skip if format is long
