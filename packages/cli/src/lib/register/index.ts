@@ -1,12 +1,15 @@
-import * as responses from './responses';
+/* eslint-disable @typescript-eslint/no-non-null-assertion, require-atomic-updates */
 import * as routes from './routes';
-import type * as types from './types';
-import type { DiscordSlashCommand } from 'chooksie/types';
+import { DiscordSlashCommand } from 'chooksie/types';
+import { chrono } from 'chooksie/lib';
+import { createLogger } from '@chookscord/logger';
 import { register } from './register';
 
 export type { RegisterCooldown, RegisterResponse } from './types';
 
-export type InteractionRegister = (interactions: DiscordSlashCommand[]) => Promise<types.RegisterResponse>;
+const logger = createLogger('[chooks] register');
+
+export type InteractionRegister = (interactions: DiscordSlashCommand[]) => Promise<InteractionRegister>;
 export interface RegisterConfig {
   token: string;
   applicationId: string;
@@ -18,21 +21,45 @@ export function createRegister(config: RegisterConfig): InteractionRegister {
     ? routes.guild(config.applicationId, config.guildId)
     : routes.global(config.applicationId);
 
-  return async interactions => {
+  let next: number | null = null;
+  let timeout: NodeJS.Timeout;
+
+  const _register: InteractionRegister = async interactions => {
+    if (next !== null) {
+      clearTimeout(timeout);
+
+      timeout = setTimeout(() => {
+        next = null;
+        clearTimeout(timeout);
+        _register(interactions);
+      }, next - Date.now());
+
+      return _register;
+    }
+
     const response = await register(route, config.token, interactions);
+    const remaining = Number(response.headers.get('X-RateLimit-Remaining'));
 
-    if (response.ok) {
-      return responses.ok();
+    if (remaining === 0) {
+      const timestamp = response.headers.get('X-RateLimit-Reset-After')!;
+      const resetAfter = parseFloat(timestamp!) * 1000;
+      next = Date.now() + resetAfter;
+
+      if (response.status === 429) {
+        logger.error('Rate limit reached!');
+      } else {
+        logger.success('Successfully registered.');
+      }
+
+      logger.info(`Next register: ${chrono.formatTime(resetAfter)}`);
+      return _register;
     }
 
-    let timestamp = Date.now();
-    const error = await response.json();
-
-    if (response.status === 429) {
-      timestamp += (error as types.RateLimitError).retry_after * 1000;
-      return responses.rateLimit(timestamp);
-    }
-
-    return responses.invalid((error as types.ErrorResponse).errors);
+    logger.success('Successfully registered.');
+    logger.info('Next register: now');
+    return _register;
   };
+
+  logger.debug('Interaction Register created.');
+  return _register;
 }
