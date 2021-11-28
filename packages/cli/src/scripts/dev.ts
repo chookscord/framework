@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as lib from 'chooksie/lib';
 import {
+  ChooksCommand,
   ChooksCommandContext,
   ChooksConfig,
   ChooksContextCommand,
@@ -217,6 +218,22 @@ export async function run() {
 
   const listener = createListener(commandStore);
   client.on('interactionCreate', listener);
+
+  let register = createRegister({ guildId: config.devServer, ...config.credentials });
+  commandStore.on('set', lib.utils.debounceAsync(async (mod, oldMod) => {
+    if (oldMod && !diffCommand(mod.parent, oldMod.parent)) {
+      return;
+    }
+
+    const filtered = new Set<ChooksCommand>();
+    for (const command of commandStore.getAll()) {
+      filtered.add(command.parent);
+    }
+
+    const res = transformCommandList(filtered);
+    // eslint-disable-next-line require-atomic-updates
+    register = await register(res);
+  }, 100));
 
   eventStore.on('set', (mod, oldMod) => {
     if (oldMod) {
