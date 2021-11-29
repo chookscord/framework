@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, require-atomic-updates */
 import * as routes from './routes';
 import { DiscordSlashCommand } from 'chooksie/types';
+import { WrappedRequest } from '@chookscord/fetch';
 import { chrono } from 'chooksie/lib';
 import { createLogger } from '@chookscord/logger';
 import { register } from './register';
@@ -14,6 +15,17 @@ export interface RegisterConfig {
   token: string;
   applicationId: string;
   guildId?: string;
+}
+
+export function registerCommands(
+  config: RegisterConfig,
+  interactions: DiscordSlashCommand[],
+): WrappedRequest {
+  const route = config.guildId
+    ? routes.guild(config.applicationId, config.guildId)
+    : routes.global(config.applicationId);
+
+  return register(route, config.token, interactions);
 }
 
 export function createRegister(config: RegisterConfig): InteractionRegister {
