@@ -4,9 +4,17 @@
   "license": "MIT",
   "preferGlobal": true,
   "exports": {
+    "./lib": "./dist/lib/index.js",
     "./build": "./dist/scripts/build.js",
     "./register": "./dist/scripts/register.js",
     "./dev": "./dist/scripts/dev.js"
+  },
+  "typesVersions": {
+    "*": {
+      "lib": [
+        "./dist/lib/index.d.ts"
+      ]
+    }
   },
   "bin": {
     "chooks": "./bin/chooks.js"

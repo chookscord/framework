@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events';
+// @ts-ignore can't setup proper imports
+import { unloadChildren } from '@chookscord/cli/lib';
 
 // eslint-disable-next-line no-var
 declare var unloadEventBus: EventEmitter;
@@ -50,44 +52,6 @@ function cacheModule(childUrl: string, parentUrl: string) {
       children: [mod],
     };
   }
-}
-
-// @Choooks22: duplicated, can probably move somewhere else
-// eslint-disable-next-line complexity
-function *unloadChildren(
-  targetId: string,
-  mod: Module,
-  visited: Set<string> = new Set(),
-): Generator<string, boolean> {
-  let deleteSignal = false;
-
-  for (const child of mod.children) {
-    if (!child.id.includes('.chooks')) continue;
-
-    if (visited.has(child.id)) continue;
-    visited.add(child.id);
-
-    if (child.id === targetId) {
-      yield child.id;
-      deleteSignal = true;
-    } else if (child.children.length) {
-      const values = unloadChildren(targetId, child, visited);
-      let current = values.next();
-
-      while (!current.done) {
-        yield current.value as string;
-        current = values.next();
-      }
-
-      deleteSignal ||= current.value;
-    }
-  }
-
-  if (deleteSignal) {
-    yield mod.id;
-  }
-
-  return deleteSignal;
 }
 
 function *unload(id: string) {

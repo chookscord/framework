@@ -6,3 +6,4 @@ export * from './diff';
 export * from './errors';
 export * from './files';
 export * from './transform';
+export * from './unload';
