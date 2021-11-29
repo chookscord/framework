@@ -5,7 +5,7 @@ import { getDefaultImport, traverse } from 'chooksie/lib';
 import type { ChooksConfig } from 'chooksie';
 import { createLogger } from '@chookscord/logger';
 
-export const logger = createLogger('[cli] build');
+export const logger = createLogger('chooks');
 const outputDir = 'dist';
 
 const cwd = process.cwd();

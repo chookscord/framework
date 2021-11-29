@@ -19,7 +19,7 @@ interface CommandModule {
   execute: (ctx: types.ChooksCommandContext) => Awaitable<void>;
 }
 
-const logger = createLogger('bot');
+const logger = createLogger('chooks');
 
 const client = new Client({
   ...config.client?.config,
@@ -127,11 +127,12 @@ const loaders = {
 };
 
 async function startBot(store: ModuleStore): Promise<void> {
+  const endTimer = lib.chrono.createTimer();
   const listener = createListener(store);
   client.on('interactionCreate', listener);
   logger.info('Starting bot...');
   await client.login(config.credentials.token);
-  logger.success('Bot started!');
+  logger.success(`Bot started! Time took: ${endTimer('s')}`);
 }
 
 async function loadFile(file: lib.File, store: ModuleStore): Promise<void> {

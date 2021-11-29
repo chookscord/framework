@@ -33,6 +33,7 @@ async function loadCommands() {
 }
 
 export async function run(): Promise<void> {
+  logger.info('Registering interactions...');
   const endTimer = chrono.createTimer();
 
   logger.info('Loading config...');

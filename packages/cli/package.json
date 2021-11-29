@@ -4,6 +4,7 @@
   "license": "MIT",
   "preferGlobal": true,
   "exports": {
+    "./package.json": "./package.json",
     "./lib": "./dist/lib/index.js",
     "./build": "./dist/scripts/build.js",
     "./register": "./dist/scripts/register.js",

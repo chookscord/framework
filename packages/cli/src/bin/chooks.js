@@ -2,9 +2,13 @@
 require('dotenv/config');
 const path = require('path');
 const pkg = require(path.resolve(process.cwd(), 'package.json'));
+const chooksie = require('@chookscord/cli/package.json');
+const logger = require('@chookscord/logger').createLogger('chooks');
 
 process.env.NODE_ENV ??= 'production';
 process.env.MODULE_TYPE = pkg.type ?? 'commonjs';
+process.env.CHOOKSIE_VERSION = chooksie.version;
+logger.info(`Using chooksie v${chooksie.version}`);
 
 const args = process.argv.slice(2);
 const esm = pkg.type === 'module';
