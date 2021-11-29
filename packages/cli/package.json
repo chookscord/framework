@@ -5,7 +5,7 @@
   "preferGlobal": true,
   "exports": {
     "./build": "./dist/scripts/build.js",
-    "./register": "./dist/scripts/register/index.js",
+    "./register": "./dist/scripts/register.js",
     "./dev": "./dist/scripts/dev.js"
   },
   "bin": {
