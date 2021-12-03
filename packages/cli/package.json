@@ -8,7 +8,8 @@
     "./lib": "./dist/lib/index.js",
     "./build": "./dist/scripts/build.js",
     "./register": "./dist/scripts/register.js",
-    "./dev": "./dist/scripts/dev.js"
+    "./dev": "./dist/scripts/dev.js",
+    "./templates": "./templates"
   },
   "typesVersions": {
     "*": {
