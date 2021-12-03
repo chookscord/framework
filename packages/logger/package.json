@@ -12,7 +12,7 @@
     "clean-build": "rm -rf dist && yarn build",
     "dev": "yarn build --watch"
   },
-  "peerDependencies": {
+  "dependencies": {
     "picocolors": "^1.0.0"
   },
   "repository": {
