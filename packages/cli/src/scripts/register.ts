@@ -18,7 +18,7 @@ function getConfig() {
 
 async function loadCommands() {
   const commandList: DiscordSlashCommand[] = [];
-  for await (const file of traverse(root)) {
+  for await (const file of traverse(root, { recursive: true })) {
     if (file.isDir) continue;
     const relativePath = file.path.slice(root.length + 1);
     const moduleName = relativePath.slice(0, relativePath.indexOf('/'));
