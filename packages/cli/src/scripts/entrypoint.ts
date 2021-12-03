@@ -39,25 +39,20 @@ function hasLifecycle(mod: Record<string, unknown>): mod is FileLifecycle {
 }
 
 function createListener(store: ModuleStore) {
-  return async (interaction: Interaction) => {
-    if (interaction.isCommand()) {
-      const commandKey = lib.utils.createCommandKey(
-        interaction.commandName,
-        interaction.options.getSubcommandGroup(false),
-        interaction.options.getSubcommand(false),
-      );
+  return (interaction: Interaction) => {
+    const commandKey = lib.utils.resolveCommandKey(interaction);
+    if (!commandKey) return;
 
-      const command = store.get(commandKey);
-      if (!command) return;
-
-      // @todo(Choooks22): try/catch and logging with timer
-      await command.execute({
-        client,
-        fetch,
-        interaction,
-        logger: command.logger,
-      });
+    const command = store.get(commandKey);
+    if (!command) {
+      logger.warn(`Command "${commandKey}" was run, but not handler was present!`);
+      return;
     }
+
+    lib.executeCommand(commandKey, async () => {
+      const ctx = { client, fetch, interaction, logger: command.logger };
+      await command.execute(ctx as types.ChooksCommandContext);
+    }, command.logger);
   };
 }
 
