@@ -9,6 +9,7 @@
     "./build": "./dist/scripts/build.js",
     "./register": "./dist/scripts/register.js",
     "./dev": "./dist/scripts/dev.js",
+    "./scaffold": "./dist/scripts/scaffold.js",
     "./templates": "./templates"
   },
   "typesVersions": {
@@ -35,9 +36,15 @@
   "dependencies": {
     "@swc/core": "^1.2.112",
     "@swc/helpers": "^0.2.14",
-    "chokidar": "^3.5.2"
+    "chokidar": "^3.5.2",
+    "nanospinner": "^0.5.0",
+    "package-name-regex": "^2.0.4",
+    "picocolors": "^1.0.0",
+    "prompts": "^2.4.2"
   },
   "devDependencies": {
+    "@types/package-name-regex": "^2.0.0",
+    "@types/prompts": "^2.0.14",
     "chooksie": "^1.0.0",
     "discord.js": "^13.3.1",
     "node-fetch": "^2.6.5"
