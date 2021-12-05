@@ -262,6 +262,19 @@ export async function run(): Promise<void> {
   try {
     await fs.writeFile(tmp('README.md'), readme);
     await fs.writeFile(tmp('.env'), env);
+    if (lang === 'ts') {
+      const compilerOptions = {
+        target: 'ESNext',
+        module: mod === 'm' ? 'ESNext' : 'CommonJS',
+        moduleResolution: 'Node',
+        noEmit: true,
+        strict: true,
+        esModuleInterop: true,
+      };
+      let tsconfig = JSON.stringify({ compilerOptions }, null, 2);
+      tsconfig = tsconfig.replace(/("strict": true,?)/, '$1 // this is important to have types for "this" in execute');
+      await fs.writeFile(tmp('tsconfig.json'), tsconfig);
+    }
     await copyTemplate(
       input(),
       tmp(),
