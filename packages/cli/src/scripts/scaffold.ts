@@ -23,7 +23,7 @@ const COMMANDS = {
 };
 
 const DEPENDENCIES = [
-  // 'chooksie',
+  'chooksie',
   'discord.js',
 ].join(' ');
 
