@@ -1,78 +1,53 @@
-# chooksie
-
-The next generation Discord.JS Framework for advanced and rapid development.
+# Chooksie
 
 [![npm (scoped)](https://img.shields.io/npm/v/chooksie)](https://npmjs.com/package/chooksie)
 [![npm](https://img.shields.io/npm/dt/chooksie)](https://npmjs.com/package/chooksie)
 
+> Next Generation Discord.JS Framework
+
 ## Features
 
-- First class TypeScript support
-- Support for slash commands and context menus
-- Hot command reloading. Instantly reloads even your TypeScript files
-- Zero boilerplate. No constructing classes, no unnecessary imports
-- Auto registers interactions
+<!-- markdownlint-disable-next-line MD001 -->
+#### 🔥 Built for the Modern Discord API
+
+- Use Discord Interactions from the get-go
+- Tiny footprint, without the burden of the past
+
+#### 💡 Fast Development Feedback
+
+- Full support for Hot Reloading
+- Automatically registers your commands
+
+#### 🛠 First-Class TypeScript Support
+
+- All of the above mentioned, plus:
+- Seamless out of the box integration
+- Compiled in Real-Time using [SWC](https://swc.rs)
+
+#### 🌱 Minimal Boilerplate
+
+- Object-Oriented, without the classes
+- No imports required to work
+
+## Quick Start
+
+```sh
+# Install the cli tool globally
+$ npm install -g @chookscord/cli
+# or
+$ yarn global add @chookscord/cli
+
+# Create a new project in the current empty directory
+$ chooks init .
+
+# Setup any necessary credentials, and start your bot
+$ chooks
+```
 
 ## Documentation
 
-Visit the guide at https://guide.chooks.app for more info.
+Visit <https://guide.chooks.app> for more detailed explanations.
 
-## Getting started
+## License
 
-Initialize your project:
-
-```sh
-# Install the framework
-$ yarn init -y
-$ yarn add chookscord
-
-# Create your files
-$ mkdir commands
-$ touch chooks.config.js commands/hello-world.js
-```
-
-Add the script in your `package.json` file to run your bot:
-
-```json
-{
-  "scripts": {
-    "dev": "chooks"
-  }
-}
-```
-
-Setup your config:
-
-```js
-// chooks.config.js
-module.exports = {
-  credentials: {
-    token: 'bot-token',
-    applicationId: 'application-id',
-  },
-  devServer: 'dev-server-id',
-  intents: [],
-};
-```
-
-Create your slash command:
-
-```js
-// commands/hello-world.js
-module.exports = {
-  name: 'hello',
-  description: 'My basic slash command!',
-  async execute(ctx) {
-    await ctx.interaction.reply('Hello, world!');
-  },
-};
-```
-
-Now run your bot using `yarn dev`, and congratulations, you now have a working Discord bot!
-
-Learn more in detail at https://guide.chooks.app/installation.html
-
-## Sample Projects
-
-You can go to the [`samples`](https://github.com/chookscord/framework/tree/master/sample)
-directory inside the repository to see working templates using JavaScript or TypeScript.
+MIT
