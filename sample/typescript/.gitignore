@@ -1,8 +1,0 @@
-# Standard node stuff
-node_modules
-
-# Do not ever commit your env files!
-.env
-
-# These are our generated files, so we shouldn't commit those.
-.chooks

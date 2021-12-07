@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "skipLibCheck": true
-  }
-}
