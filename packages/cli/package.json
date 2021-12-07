@@ -23,6 +23,7 @@
     "chooks": "./bin/chooks.js"
   },
   "files": [
+    "templates",
     "dist",
     "bin"
   ],
