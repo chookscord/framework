@@ -1,6 +1,6 @@
 {
   "name": "@chookscord/cli",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "license": "MIT",
   "preferGlobal": true,
   "exports": {
@@ -38,6 +38,7 @@
     "@swc/core": "^1.2.112",
     "@swc/helpers": "^0.2.14",
     "chokidar": "^3.5.2",
+    "dotenv": "^10.0.0",
     "nanospinner": "^0.5.0",
     "package-name-regex": "^2.0.4",
     "picocolors": "^1.0.0",
