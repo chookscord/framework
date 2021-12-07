@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "importHelpers": false,
+    "noEmitHelpers": false,
+    "esModuleInterop": false
+  },
+  "include": [
+    "src"
+  ]
+}

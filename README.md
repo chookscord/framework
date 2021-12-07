@@ -5,11 +5,6 @@ The next generation Discord.JS Framework for advanced and rapid development.
 [![npm (scoped)](https://img.shields.io/npm/v/chookscord)](https://npmjs.com/package/chookscord)
 [![npm](https://img.shields.io/npm/dt/chookscord)](https://npmjs.com/package/chookscord)
 
-> ## This project is still experimental!
->
-> Some features are still under way, and stuff might change at any moment without
-> warning, so consider holding on to deploying to production until **v1** is up!
-
 ## Features
 
 - First class TypeScript support

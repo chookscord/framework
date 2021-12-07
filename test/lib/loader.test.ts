@@ -1,4 +1,4 @@
-import * as chooks from '../../packages/lib';
+import * as chooks from '../../packages/chooksie/src/lib';
 import * as fs from 'fs/promises';
 import { Dir, Dirent } from 'fs';
 
@@ -21,12 +21,12 @@ test('loader', async () => {
   mockedOpendir.mockReturnValue(Promise.resolve(mockGenerator() as unknown as Dir));
   const listener = jest.fn();
 
-  const files = await chooks.loadDir('path');
+  const files = chooks.traverse('/path');
   for await (const file of files!) {
     listener(file);
   }
 
   expect(listener).toHaveBeenCalledTimes(2);
-  expect(listener).toHaveBeenCalledWith({ isDirectory: false, path: 'path/foo' });
-  expect(listener).toHaveBeenCalledWith({ isDirectory: true, path: 'path/bar' });
+  expect(listener).toHaveBeenCalledWith({ isDir: false, path: '/path/foo' });
+  expect(listener).toHaveBeenCalledWith({ isDir: true, path: '/path/bar' });
 });

@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "keyofStringsOnly": true,
+    "outDir": "dist",
+    "allowJs": true
+  },
+  "include": [
+    "src"
+  ]
+}

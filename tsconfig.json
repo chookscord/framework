@@ -6,6 +6,7 @@
     "lib": [
       "ESNext"
     ],
+    "esModuleInterop": true,
     "importHelpers": true,
     "noEmitHelpers": true,
     "skipLibCheck": true,
