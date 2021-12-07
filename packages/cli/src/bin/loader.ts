@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { URL } from 'url';
 // @ts-ignore can't setup proper imports
 import { unloadChildren } from '@chookscord/cli/lib';
 
