@@ -1,4 +1,4 @@
-# Chooksie
+# chooksie
 
 [![npm (scoped)](https://img.shields.io/npm/v/chooksie)](https://npmjs.com/package/chooksie)
 [![npm](https://img.shields.io/npm/dt/chooksie)](https://npmjs.com/package/chooksie)
