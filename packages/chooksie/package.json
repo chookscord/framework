@@ -1,6 +1,6 @@
 {
   "name": "chooksie",
-  "version": "1.0.0-rc.0",
+  "version": "1.0.0-rc.1",
   "description": "The next generation Discord.JS Framework for advanced and rapid bot development.",
   "type": "commonjs",
   "types": "dist/index.d.ts",

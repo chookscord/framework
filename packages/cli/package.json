@@ -1,6 +1,6 @@
 {
   "name": "@chookscord/cli",
-  "version": "1.0.0-rc.0",
+  "version": "1.0.0-rc.1",
   "license": "MIT",
   "preferGlobal": true,
   "exports": {
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@types/package-name-regex": "^2.0.0",
     "@types/prompts": "^2.0.14",
-    "chooksie": "^1.0.0",
+    "chooksie": "^1.0.0-rc.1",
     "discord.js": "^13.3.1",
     "node-fetch": "^2.6.5"
   }
