@@ -8,7 +8,9 @@ export * from './files';
 export * from './transform';
 export * from './unload';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-export const chooksie: typeof import('chooksie/lib') = require(
-  require.resolve('chooksie/lib', { paths: [process.cwd()] }),
+const resolveLocal = <T>(id: string): T => require(
+  require.resolve(id, { paths: [process.cwd()] }),
 );
+
+export const chooksie = resolveLocal<typeof import('chooksie/lib')>('chooksie/lib');
+export const types = resolveLocal<typeof import('chooksie/types')>('chooksie/types');
