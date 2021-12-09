@@ -6,7 +6,7 @@ const pc = require('picocolors');
 
 process.env.NODE_ENV ??= 'production';
 process.env.CHOOKSIE_VERSION = cli.version;
-console.info(`${pc.blue('chooks')} Using @chookscord/cli v${cli.version}`);
+console.info(`${pc.blue('chooks')} Using @chookscord/cli@${cli.version}`);
 
 const args = process.argv.slice(2);
 
@@ -30,7 +30,7 @@ const dev = script => {
     case 'init': run('@chookscord/cli/scaffold'); return;
   }
 
-  const pkg = require(path.resolve(process.cwd(), 'package.json'));
+  const pkg = require(path.resolve('package.json'));
   const esm = pkg.type === 'module';
 
   process.env.MODULE_TYPE = pkg.type ?? 'commonjs';

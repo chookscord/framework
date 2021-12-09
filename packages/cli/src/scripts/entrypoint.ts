@@ -1,15 +1,16 @@
 // For some reason "mod.name" is typed as "any" according to eslint
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import 'dotenv/config';
-import * as lib from 'chooksie/lib';
 import { Awaitable, Client, Interaction } from 'discord.js';
 import { ChooksLogger, createLogger } from '@chookscord/logger';
+import { File, Store } from 'chooksie/lib';
 import { basename } from 'path';
+import { chooksie } from '../lib';
 import config from './chooks.config.js';
 import { fetch } from '@chookscord/fetch';
 import type types from 'chooksie/types';
 
-type ModuleStore = lib.Store<CommandModule>;
+type ModuleStore = Store<CommandModule>;
 type FileLifecycle = {
   chooksOnLoad: types.ChooksLifecycle;
 };
@@ -40,7 +41,7 @@ function hasLifecycle(mod: Record<string, unknown>): mod is FileLifecycle {
 
 function createListener(store: ModuleStore) {
   return (interaction: Interaction) => {
-    const commandKey = lib.utils.resolveCommandKey(interaction);
+    const commandKey = chooksie.utils.resolveCommandKey(interaction);
     if (!commandKey) return;
 
     const command = store.get(commandKey);
@@ -49,7 +50,7 @@ function createListener(store: ModuleStore) {
       return;
     }
 
-    lib.executeCommand(commandKey, async () => {
+    chooksie.executeCommand(commandKey, async () => {
       const ctx = { client, fetch, interaction, logger: command.logger };
       await command.execute(ctx as types.ChooksCommandContext);
     }, command.logger);
@@ -106,7 +107,7 @@ function loadSubCommand(
   mod: types.ChooksSlashSubCommand,
   store: ModuleStore,
 ): void {
-  for (const [key, subCommand] of lib.extractSubCommands(mod)) {
+  for (const [key, subCommand] of chooksie.extractSubCommands(mod)) {
     (async () => {
       await loadCommand(subCommand.module, store, `[command] ${key}`, key);
       logger.success(`Loaded subcommand "${key}".`);
@@ -122,7 +123,7 @@ const loaders = {
 };
 
 async function startBot(store: ModuleStore): Promise<void> {
-  const endTimer = lib.chrono.createTimer();
+  const endTimer = chooksie.chrono.createTimer();
   const listener = createListener(store);
   client.on('interactionCreate', listener);
   logger.info('Starting bot...');
@@ -130,11 +131,11 @@ async function startBot(store: ModuleStore): Promise<void> {
   logger.success(`Bot started! Time took: ${endTimer('s')}`);
 }
 
-async function loadFile(file: lib.File, store: ModuleStore): Promise<void> {
+async function loadFile(file: File, store: ModuleStore): Promise<void> {
   const moduleName = resolveModule(file.path);
 
   if (moduleName.includes('.')) return;
-  const mod: Record<string, unknown> = lib.getDefaultImport(await import(file.path));
+  const mod: Record<string, unknown> = chooksie.getDefaultImport(await import(file.path));
   const loader = loaders[moduleName as keyof typeof loaders];
 
   if (loader) {
@@ -149,10 +150,10 @@ async function loadFile(file: lib.File, store: ModuleStore): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const store = new lib.Store<CommandModule>();
+  const store = new chooksie.Store<CommandModule>();
   startBot(store);
 
-  for await (const file of lib.traverse(__dirname, { recursive: true })) {
+  for await (const file of chooksie.traverse(__dirname, { recursive: true })) {
     if (file.isDir) continue;
     loadFile(file, store);
   }

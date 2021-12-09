@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, object-curly-newline */
 process.env.NODE_ENV = 'production';
 import { ChooksCommand, DiscordSlashCommand } from 'chooksie/types';
-import { ConfigFile, registerCommands, resolveConfig, transformCommand } from '../lib';
-import { chrono, getDefaultImport, traverse } from 'chooksie/lib';
+import { ConfigFile, chooksie, registerCommands, resolveConfig, transformCommand } from '../lib';
 import { createLogger } from '@chookscord/logger';
 import { join } from 'path';
 
@@ -12,19 +11,19 @@ const logger = createLogger('[cli] chooks');
 function getConfig() {
   return resolveConfig(
     [ConfigFile.JS],
-    traverse(root),
+    chooksie.traverse(root),
   );
 }
 
 async function loadCommands() {
   const commandList: DiscordSlashCommand[] = [];
-  for await (const file of traverse(root, { recursive: true })) {
+  for await (const file of chooksie.traverse(root, { recursive: true })) {
     if (file.isDir) continue;
     const relativePath = file.path.slice(root.length + 1);
     const moduleName = relativePath.slice(0, relativePath.indexOf('/'));
 
     if (['commands', 'subcommands', 'contexts'].includes(moduleName)) {
-      const mod = getDefaultImport(await import(file.path)) as ChooksCommand;
+      const mod = chooksie.getDefaultImport(await import(file.path)) as ChooksCommand;
       commandList.push(transformCommand(mod));
     }
   }
@@ -34,7 +33,7 @@ async function loadCommands() {
 
 export async function run(): Promise<void> {
   logger.info('Registering interactions...');
-  const endTimer = chrono.createTimer();
+  const endTimer = chooksie.chrono.createTimer();
 
   logger.info('Loading config...');
   const config = await getConfig();
@@ -48,7 +47,7 @@ export async function run(): Promise<void> {
   if (res.status === 429) {
     const resetAfter = res.headers.get('X-RateLimit-Reset-After');
     const timestamp = Number(resetAfter!);
-    logger.error(new Error(`Under rate limit! Retry after: ${chrono.formatTime(timestamp, 's')}`));
+    logger.error(new Error(`Under rate limit! Retry after: ${chooksie.chrono.formatTime(timestamp, 's')}`));
     return;
   }
 

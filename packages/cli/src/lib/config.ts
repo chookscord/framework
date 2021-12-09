@@ -1,9 +1,10 @@
 /* eslint-disable no-trailing-spaces */
-import { File, getDefaultImport } from 'chooksie/lib';
 import { basename, join } from 'path';
 import type { ChooksConfig } from 'chooksie';
 import type { ChooksLogger } from '@chookscord/logger';
+import type { File } from 'chooksie/lib';
 import type { ValidationResult } from './validation/tests';
+import { chooksie } from '../lib';
 import { compileFile } from './compile';
 
 export enum ConfigFile {
@@ -83,5 +84,5 @@ export async function resolveConfig(
   await compileFile(currentFile, path);
 
   const configFile = await import(path);
-  return getDefaultImport(configFile);
+  return chooksie.getDefaultImport(configFile);
 }

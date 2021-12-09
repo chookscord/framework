@@ -10,7 +10,7 @@ export interface BotCredentials {
    * const { defineConfig } = require('chooksie');
    *
    * module.exports = defineConfig({
-   *   authorization: {
+   *   credentials: {
    *     token: process.env.DISCORD_BOT_TOKEN,
    *   },
    * });

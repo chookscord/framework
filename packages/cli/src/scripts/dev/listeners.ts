@@ -5,7 +5,6 @@ import { ChooksCommand, ChooksCommandContext, ChooksConfig, ChooksContext } from
 import { ChooksLogger, createLogger } from '@chookscord/logger';
 import { CommandModule, EventModule } from './loaders';
 import { CommandStore, LifecycleStore, StoreList } from './stores';
-import { executeCommand, utils } from 'chooksie/lib';
 import { fetch } from '@chookscord/fetch';
 import { join } from 'path';
 import { setup } from './lifecycle';
@@ -16,7 +15,7 @@ export function createInteractionHandler(
   logger: ChooksLogger,
 ): (interaction: Interaction) => void {
   return interaction => {
-    const commandKey = utils.resolveCommandKey(interaction);
+    const commandKey = lib.chooksie.utils.resolveCommandKey(interaction);
     if (!commandKey) return;
 
     const command = store.get(commandKey);
@@ -26,7 +25,7 @@ export function createInteractionHandler(
     }
 
     // ctx is casted since interaction is validated but was not narrowed.
-    executeCommand(commandKey, async () => {
+    lib.chooksie.executeCommand(commandKey, async () => {
       const deps = await command.module.setup?.call(undefined) ?? {};
       const ctx = { client: interaction.client, fetch, interaction, logger: command.logger };
       await command.module.execute!.call(deps, ctx as unknown as ChooksCommandContext);
@@ -38,9 +37,9 @@ export function createInteractionHandler(
 export function createCommandSetListener(
   register: lib.InteractionRegister,
   getCommands: () => Iterable<CommandModule>,
-): (mod: CommandModule, oldMod: CommandModule | null) => Promise<utils.Debounced<void>> {
+): (mod: CommandModule, oldMod: CommandModule | null) => Promise<import('chooksie/lib').utils.Debounced<void>> {
   let _register = register;
-  return utils.debounceAsync(async (mod, oldMod) => {
+  return lib.chooksie.utils.debounceAsync(async (mod, oldMod) => {
     if (oldMod && !lib.diffCommand(mod.parent, oldMod.parent)) {
       return;
     }
