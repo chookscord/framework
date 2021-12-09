@@ -1,7 +1,8 @@
-import { File, traverse } from 'chooksie/lib';
 import type { ChooksLogger } from '@chookscord/logger';
 import type { ConfigFile } from './config';
+import type { File } from 'chooksie/lib';
 import { basename } from 'path';
+import { chooksie } from './index';
 
 interface ProjectOptions {
   rootPath: string;
@@ -19,7 +20,7 @@ export async function getProjectFiles(
   const files: string[] = [];
   const getConfig = () => configFile && basename(configFile) as ConfigFile;
 
-  for await (const file of traverse(rootPath)) {
+  for await (const file of chooksie.traverse(rootPath)) {
     const fileName = basename(file.path);
     if (!file.isDir && pickConfig(getConfig(), fileName as ConfigFile)) {
       configFile = file.path as ConfigFile;

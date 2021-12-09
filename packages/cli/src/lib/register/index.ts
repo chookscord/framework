@@ -2,7 +2,7 @@
 import * as routes from './routes';
 import { DiscordSlashCommand } from 'chooksie/types';
 import { WrappedRequest } from '@chookscord/fetch';
-import { chrono } from 'chooksie/lib';
+import { chooksie } from '../../lib';
 import { createLogger } from '@chookscord/logger';
 import { register } from './register';
 
@@ -63,7 +63,7 @@ export function createRegister(config: RegisterConfig): InteractionRegister {
         logger.success('Successfully registered.');
       }
 
-      logger.info(`Next register: ${chrono.formatTime(resetAfter)}`);
+      logger.info(`Next register: ${chooksie.chrono.formatTime(resetAfter)}`);
       return _register;
     }
 

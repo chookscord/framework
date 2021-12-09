@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as lib from '../lib';
 import { basename, join } from 'path';
-import { getDefaultImport, traverse } from 'chooksie/lib';
 import type { ChooksConfig } from 'chooksie';
 import { createLogger } from '@chookscord/logger';
 
@@ -35,7 +34,7 @@ async function validateConfigFile(
   await lib.compileFile(configPath, outPath);
 
   const file: ChooksConfig = await import(outPath);
-  const config = getDefaultImport(file);
+  const config = lib.chooksie.getDefaultImport(file);
 
   if (!lib.isConfigValid(config, lib.validateProdConfig, logger)) {
     process.exit(lib.ExitCode.Validation);
@@ -51,7 +50,7 @@ async function compileDirectory(directory: {
   const inPath = join(root, input);
 
   logger.debug(`Compiling directory "${input}".`);
-  for await (const file of traverse(inPath, { recursive: true })) {
+  for await (const file of lib.chooksie.traverse(inPath, { recursive: true })) {
     logger.trace('File:', file);
     if (file.isDir) continue;
 

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, complexity */
-import { getDefaultImport } from 'chooksie/lib';
-import { unloadChildren } from '../../lib';
+import { chooksie, unloadChildren } from '../../lib';
 
 export function *unloadModule(id: string): Generator<string, void, undefined> {
   const unloadedIds = new Set<string>().add(id);
@@ -57,5 +56,5 @@ export async function resolveMod<T>(
   resolver = uncachedImport,
 ): Promise<T> {
   const mod = await resolver<T>(path);
-  return getDefaultImport(mod);
+  return chooksie.getDefaultImport(mod);
 }

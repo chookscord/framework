@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, object-curly-newline */
-import * as lib from 'chooksie/lib';
+import * as lib from '../lib';
 import { ChooksConfig } from 'chooksie';
 import { Client } from 'discord.js';
 import { EventEmitter } from 'events';
@@ -36,10 +36,10 @@ function createClient(config: ChooksConfig) {
 
 export async function run() {
   logger.info('Starting dev server...');
-  const endTimer = lib.chrono.createTimer();
+  const endTimer = lib.chooksie.chrono.createTimer();
 
   logger.debug('Getting config...');
-  const config = await resolveConfig(configFiles, lib.traverse(process.cwd()));
+  const config = await resolveConfig(configFiles, lib.chooksie.traverse(process.cwd()));
 
   logger.debug('Setting up project...');
   const stores = createStoreList();
