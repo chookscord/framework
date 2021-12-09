@@ -1,6 +1,6 @@
 {
   "name": "@chookscord/cli",
-  "version": "1.0.1-rc.2",
+  "version": "1.0.1-rc.3",
   "license": "MIT",
   "preferGlobal": true,
   "exports": {
@@ -35,6 +35,7 @@
     "dev": "concurrently 'yarn build:dev' 'yarn build:bin -w'"
   },
   "dependencies": {
+    "@chookscord/fetch": "^1.0.0",
     "@chookscord/logger": "^1.0.0",
     "@swc/core": "^1.2.112",
     "@swc/helpers": "^0.2.14",
@@ -48,7 +49,7 @@
   "devDependencies": {
     "@types/package-name-regex": "^2.0.0",
     "@types/prompts": "^2.0.14",
-    "chooksie": "^1.0.1-rc.2",
+    "chooksie": "^1.0.1-rc.3",
     "discord.js": "^13.3.1",
     "node-fetch": "^2.6.5"
   }
