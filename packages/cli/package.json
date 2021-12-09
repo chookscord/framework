@@ -1,6 +1,6 @@
 {
   "name": "@chookscord/cli",
-  "version": "1.0.1-rc.3",
+  "version": "1.0.1-rc.5",
   "license": "MIT",
   "preferGlobal": true,
   "exports": {
