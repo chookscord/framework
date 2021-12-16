@@ -8,9 +8,13 @@ export * from './files';
 export * from './transform';
 export * from './unload';
 
-const resolveLocal = <T>(id: string): T => require(
-  require.resolve(id, { paths: [process.cwd()] }),
-);
+const resolveLocal = <T>(id: string): T => {
+  try {
+    return require(id);
+  } catch {
+    return require(require.resolve(id, { paths: [process.cwd()] }));
+  }
+};
 
 export const chooksie = resolveLocal<typeof import('chooksie/lib')>('chooksie/lib');
 export const types = resolveLocal<typeof import('chooksie/types')>('chooksie/types');

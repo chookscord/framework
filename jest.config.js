@@ -9,6 +9,7 @@ module.exports = {
   },
   testEnvironment: 'node',
   moduleNameMapper: {
+    '^chooksie/lib$': resolve('./packages/chooksie/src/lib/index.ts'),
     '^chooksie/types$': resolve('./packages/chooksie/src/types/index.ts'),
   },
 };
