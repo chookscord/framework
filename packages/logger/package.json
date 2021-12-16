@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "npx tsc --outDir dist",
+    "build": "tsc --outDir dist",
     "clean-build": "rm -rf dist && yarn build",
     "dev": "yarn build --watch"
   },

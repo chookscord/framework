@@ -3364,6 +3364,11 @@ tsutils@^3.21.0:
   dependencies:
     tslib "^1.8.1"
 
+turbo@^1.0.13:
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/turbo/-/turbo-1.0.13.tgz#bcc7b5b12e8b02141ca4190eca24d8415a1184d7"
+  integrity sha512-fG+sdzt9HIZsL8HlpLQzP5WsBu1vliHe6cVgMG4zFZcmCG526RzVbXPyyVHadwcqKqmYjWqFw8mZiUUwNQXjlg==
+
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/type-check/-/type-check-0.4.0.tgz#07b8203bfa7056c0657050e3ccd2c37730bab8f1"

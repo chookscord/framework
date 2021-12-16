@@ -25,12 +25,36 @@
     "regenerator-runtime": "^0.13.9",
     "tsc-watch": "^4.5.0",
     "tslib": "^2.3.1",
+    "turbo": "^1.0.13",
     "typescript": "4.5.0-dev.20211101"
   },
   "scripts": {
-    "build": "npx tsc --project tsconfig.build.json",
-    "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo",
+    "build": "turbo run build",
+    "clean-build": "turbo run clean-build",
     "test": "jest --rootDir test",
-    "dev": "yarn build --watch"
+    "dev": "turbo run dev"
+  },
+  "turbo": {
+    "baseBranch": "origin/main",
+    "pipeline": {
+      "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          "bin/**",
+          "dist/**"
+        ]
+      },
+      "clean-build": {
+        "outputs": [
+          "bin/**",
+          "dist/**"
+        ]
+      },
+      "dev": {
+        "cache": false
+      }
+    }
   }
 }

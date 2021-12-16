@@ -34,10 +34,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "npx tsc",
-    "build:wrap": "npx concurrently 'gen-esm-wrapper ./dist ./dist/index.mjs' 'gen-esm-wrapper ./dist/lib ./dist/lib/index.mjs'",
+    "build": "tsc",
+    "build:wrap": "concurrently 'gen-esm-wrapper ./dist ./dist/index.mjs' 'gen-esm-wrapper ./dist/lib ./dist/lib/index.mjs'",
     "clean-build": "rm -rf dist && yarn build",
-    "dev": "npx tsc-watch --onCompilationComplete 'yarn build:wrap'"
+    "dev": "tsc-watch --onCompilationComplete 'yarn build:wrap'"
   },
   "dependencies": {
     "@chookscord/fetch": "^1.0.0",
