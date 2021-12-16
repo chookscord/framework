@@ -25,13 +25,11 @@
     "!**/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "yarn build:cli && yarn build:bin && yarn copy-entry",
-    "build:cli": "tsc -p tsconfig.cli.json",
+    "build": "tsc",
+    "build:dev": "tsc-watch --onCompilationComplete 'cp src/scripts/entrypoint.ts dist/scripts'",
     "build:bin": "tsc -p tsconfig.bin.json",
-    "copy-entry": "cp src/scripts/entrypoint.ts dist/scripts",
-    "clean": "rm -rf dist bin",
-    "clean-build": "yarn clean && yarn build",
-    "dev": "concurrently -n ,chokidar 'yarn:build:* -w' 'chokidar src/scripts/entrypoint.ts -c \"yarn copy-entry\"'"
+    "clean-build": "rm -rf dist bin && concurrently 'yarn build' 'yarn build:bin'",
+    "dev": "concurrently 'yarn build:dev' 'yarn build:bin -w'"
   },
   "dependencies": {
     "@chookscord/fetch": "^1.0.0",

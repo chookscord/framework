@@ -38,8 +38,7 @@
   "scripts": {
     "build": "tsc",
     "build:wrap": "concurrently 'gen-esm-wrapper ./dist ./dist/index.mjs' 'gen-esm-wrapper ./dist/lib ./dist/lib/index.mjs'",
-    "clean": "rm -rf dist",
-    "clean-build": "yarn clean && yarn build",
+    "clean-build": "rm -rf dist && yarn build",
     "dev": "tsc-watch --onCompilationComplete 'yarn build:wrap'"
   },
   "dependencies": {
