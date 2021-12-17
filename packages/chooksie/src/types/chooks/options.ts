@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/method-signature-style */
 import type { ChooksCommandContext, ChooksDep, EmptyDep } from './base';
+import type { Awaitable } from 'discord.js';
 import type { DiscordOptionType } from './discord';
 
 export type ChooksOptionType = keyof typeof DiscordOptionType;
@@ -31,7 +32,7 @@ export interface ChooksSubCommandOption<Deps extends ChooksDep = EmptyDep> exten
   type: 'SUB_COMMAND';
   options?: ChooksNonCommandOption[];
   setup?(this: undefined): Deps | Promise<Deps>;
-  execute(this: Readonly<Deps>, ctx: ChooksCommandContext): unknown;
+  execute(this: Readonly<Deps>, ctx: ChooksCommandContext): Awaitable<void>;
 }
 
 /**

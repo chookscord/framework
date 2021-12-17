@@ -1,11 +1,19 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "tsconfig/base.json",
   "compilerOptions": {
+    "baseUrl": "src",
+    "outDir": "dist",
+    "declarationDir": "dist/typings",
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
     "importHelpers": false,
     "noEmitHelpers": false,
     "esModuleInterop": false
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
   ]
 }

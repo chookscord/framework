@@ -1,23 +1,19 @@
 {
   "name": "@chookscord/cli",
-  "version": "1.0.1-rc.5",
+  "version": "1.0.2",
   "license": "MIT",
   "preferGlobal": true,
   "exports": {
     "./package.json": "./package.json",
-    "./lib": "./dist/lib/index.js",
+    "./lib": {
+      "types": "./dist/typings/lib/index.d.ts",
+      "default": "./dist/lib/index.js"
+    },
     "./build": "./dist/scripts/build.js",
     "./register": "./dist/scripts/register.js",
     "./dev": "./dist/scripts/dev.js",
     "./scaffold": "./dist/scripts/scaffold.js",
     "./templates": "./templates"
-  },
-  "typesVersions": {
-    "*": {
-      "lib": [
-        "./dist/lib/index.d.ts"
-      ]
-    }
   },
   "bin": {
     "chooks": "./bin/chooks.js"
@@ -25,14 +21,16 @@
   "files": [
     "templates",
     "dist",
-    "bin"
+    "bin",
+    "!**/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "tsc",
-    "build:dev": "tsc-watch --onCompilationComplete 'cp src/scripts/entrypoint.ts dist/scripts'",
+    "build": "concurrently -n ,chokidar 'yarn:build:*' 'yarn copy-entry'",
+    "build:cli": "tsc -p tsconfig.cli.json",
     "build:bin": "tsc -p tsconfig.bin.json",
-    "clean-build": "rm -rf dist bin && concurrently 'yarn build' 'yarn build:bin'",
-    "dev": "concurrently 'yarn build:dev' 'yarn build:bin -w'"
+    "copy-entry": "cp src/scripts/entrypoint.ts dist/scripts",
+    "clean-build": "rm -rf dist bin && yarn build",
+    "dev": "concurrently -n ,chokidar 'yarn:build:* -w' 'chokidar src/scripts/entrypoint.ts -c \"yarn copy-entry\"'"
   },
   "dependencies": {
     "@chookscord/fetch": "^1.0.0",
@@ -49,7 +47,8 @@
   "devDependencies": {
     "@types/package-name-regex": "^2.0.0",
     "@types/prompts": "^2.0.14",
-    "chooksie": "^1.0.1-rc.3",
+    "chokidar-cli": "^3.0.0",
+    "chooksie": "*",
     "discord.js": "^13.3.1",
     "node-fetch": "^2.6.5"
   }

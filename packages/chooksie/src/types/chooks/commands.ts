@@ -14,7 +14,7 @@ export interface ChooksCommand<Deps extends ChooksDep = EmptyDep> {
   name: string;
   description?: string;
   setup?(this: undefined): Awaitable<Deps>;
-  execute?(this: Readonly<Deps>, ctx: ChooksContext): unknown;
+  execute?(this: Readonly<Deps>, ctx: ChooksContext): Awaitable<void>;
   options?: ChooksOption[];
   defaultPermission?: boolean;
 }
@@ -26,7 +26,7 @@ export interface ChooksSlashCommand<Deps extends ChooksDep = EmptyDep> extends C
   type?: 'CHAT_INPUT';
   description: string;
   options?: ChooksNonCommandOption[];
-  execute(this: Readonly<Deps>, ctx: ChooksCommandContext): unknown;
+  execute(this: Readonly<Deps>, ctx: ChooksCommandContext): Awaitable<void>;
 }
 
 /**
@@ -43,5 +43,5 @@ export interface ChooksSlashSubCommand extends Omit<ChooksCommand<never>, 'execu
  */
 export interface ChooksContextCommand<Deps extends ChooksDep = EmptyDep> extends Omit<ChooksCommand<Deps>, 'type' | 'description' | 'options'> {
   type: Exclude<ChooksCommandType, 'CHAT_INPUT'>;
-  execute(this: Readonly<Deps>, ctx: ChooksContextCommandContext): unknown;
+  execute(this: Readonly<Deps>, ctx: ChooksContextCommandContext): Awaitable<void>;
 }

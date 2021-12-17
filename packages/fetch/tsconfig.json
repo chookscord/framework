@@ -1,9 +1,16 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "tsconfig/base.json",
   "compilerOptions": {
-    "moduleResolution": "node12"
+    "baseUrl": "src",
+    "outDir": "dist",
+    "declarationDir": "dist/typings",
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
   ]
 }

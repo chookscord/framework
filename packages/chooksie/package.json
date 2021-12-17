@@ -1,37 +1,39 @@
 {
   "name": "chooksie",
-  "version": "1.0.1-rc.3",
+  "version": "1.0.2",
   "description": "Next Generation Discord.JS Framework",
+  "license": "MIT",
   "type": "commonjs",
-  "types": "dist/index.d.ts",
+  "types": "dist/typings/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/typings/index.d.ts",
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
     "./lib": {
-      "types": "./dist/lib/index.d.ts",
+      "types": "./dist/typings/lib/index.d.ts",
       "require": "./dist/lib/index.js",
       "import": "./dist/lib/index.mjs"
     },
     "./types": {
-      "types": "./dist/types/index.d.ts",
+      "types": "./dist/typings/types/index.d.ts",
       "default": "./dist/types/index.js"
     }
   },
   "typesVersions": {
     "*": {
       "lib": [
-        "./dist/lib/index.d.ts"
+        "./dist/typings/lib/index.d.ts"
       ],
       "types": [
-        "./dist/types/index.d.ts"
+        "./dist/typings/types/index.d.ts"
       ]
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "scripts": {
     "build": "tsc",
@@ -47,7 +49,13 @@
     "picocolors": "^1.0.0",
     "tslib": "^2.3.1"
   },
-  "license": "MIT",
+  "devDependencies": {
+    "discord.js": "^13.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chookscord/framework.git"
+  },
   "keywords": [
     "discord",
     "discordjs",
@@ -58,14 +66,7 @@
     "bot",
     "cli"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/chookscord/framework.git"
-  },
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "discord.js": "^13.3.1"
   }
 }

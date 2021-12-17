@@ -1,4 +1,5 @@
 #! /usr/bin/env node
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 require('dotenv/config');
 const path = require('path');
 const cli = require('@chookscord/cli/package.json');

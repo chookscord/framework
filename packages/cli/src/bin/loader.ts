@@ -1,10 +1,12 @@
 import { EventEmitter } from 'events';
 import { URL } from 'url';
-// @ts-ignore can't setup proper imports
 import { unloadChildren } from '@chookscord/cli/lib';
 
-// eslint-disable-next-line no-var
-declare var unloadEventBus: EventEmitter;
+declare global {
+  // eslint-disable-next-line no-var
+  var unloadEventBus: EventEmitter;
+}
+
 globalThis.unloadEventBus ??= new EventEmitter();
 
 const loaded = new Set<string>();

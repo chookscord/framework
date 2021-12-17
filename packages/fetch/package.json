@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "A node-fetch@3 wrapper for CommonJS with extra utilities.",
   "main": "dist/index.js",
+  "types": "dist/typings/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "tsc --outDir dist",
+    "build": "tsc",
     "clean-build": "rm -rf dist && yarn build",
-    "dev": "yarn build --watch"
+    "dev": "yarn build -w"
   },
   "devDependencies": {
     "node-fetch": "^3.0.0"
