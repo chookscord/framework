@@ -1,10 +1,9 @@
 #! /usr/bin/env node
-/* eslint-disable @typescript-eslint/no-var-requires */
-import 'dotenv/config';
-// @ts-ignore package.json is aliased only
-import cli from '@chookscord/cli/package.json';
-import path from 'path';
-import pc from 'picocolors';
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+require('dotenv/config');
+const path = require('path');
+const cli = require('@chookscord/cli/package.json');
+const pc = require('picocolors');
 
 process.env.NODE_ENV ??= 'production';
 process.env.CHOOKSIE_VERSION = cli.version;

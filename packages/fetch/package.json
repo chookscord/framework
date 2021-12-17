@@ -9,9 +9,9 @@
     "!**/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "tsc --outDir dist",
+    "build": "tsc",
     "clean-build": "rm -rf dist && yarn build",
-    "dev": "yarn build --watch"
+    "dev": "yarn build -w"
   },
   "devDependencies": {
     "node-fetch": "^3.0.0"
