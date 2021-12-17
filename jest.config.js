@@ -12,7 +12,7 @@ module.exports = {
   },
   testEnvironment: 'node',
   moduleNameMapper: {
-    '^chooksie/lib$': resolve('./packages/chooksie/src/lib/index.ts'),
-    '^chooksie/types$': resolve('./packages/chooksie/src/types/index.ts'),
+    '^chooksie/lib$': path.resolve('./packages/chooksie/src/lib/index.ts'),
+    '^chooksie/types$': path.resolve('./packages/chooksie/src/types/index.ts'),
   },
 };
