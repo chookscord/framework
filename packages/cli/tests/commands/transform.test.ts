@@ -1,6 +1,6 @@
-import { DiscordCommandType, DiscordOptionType } from '../../../packages/chooksie/src/types/chooks/discord';
-import { transformCommand, transformOption } from '../../../packages/cli/src/lib/transform';
-import { ChooksSubCommandOption } from '../../../packages/chooksie/src/types/chooks/options';
+import { DiscordCommandType, DiscordOptionType } from '../../../chooksie/src/types/chooks/discord';
+import { transformCommand, transformOption } from '../../src/lib/transform';
+import { ChooksSubCommandOption } from '../../../chooksie/src/types/chooks/options';
 
 describe('transforming options', () => {
   it('can transform regular options', () => {

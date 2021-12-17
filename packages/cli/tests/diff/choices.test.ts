@@ -1,4 +1,4 @@
-import { diffChoice } from '../../../packages/cli/src/lib/diff';
+import { diffChoice } from '../../src/lib/diff';
 
 describe('did choice update', () => {
   it('returns true for updated choices', () => {

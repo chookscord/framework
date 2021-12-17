@@ -1,5 +1,5 @@
 import type { Dirent } from 'fs';
-import { traverse } from '../../packages/chooksie/src/lib/traverse';
+import { traverse } from '../src/lib/traverse';
 
 const newFile = (name: string, isDir: boolean) => ({ name, isDirectory: () => isDir }) as Dirent;
 

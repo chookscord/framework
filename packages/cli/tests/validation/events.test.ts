@@ -1,4 +1,4 @@
-import { validateEvent } from '../../../packages/cli/src/lib/validation/events';
+import { validateEvent } from '../../src/lib/validation/events';
 
 describe('validating event modules', () => {
   it('accepts proper values', () => {

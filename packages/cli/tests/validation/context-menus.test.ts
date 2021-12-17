@@ -1,4 +1,4 @@
-import { validateContextCommand } from '../../../packages/cli/src/lib/validation/commands';
+import { validateContextCommand } from '../../src/lib/validation/commands';
 
 describe('validating context menus', () => {
   describe('proper structures', () => {

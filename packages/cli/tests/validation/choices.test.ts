@@ -1,4 +1,4 @@
-import { validateChoice } from '../../../packages/cli/src/lib/validation/choices';
+import { validateChoice } from '../../src/lib/validation/choices';
 
 describe('validating choices', () => {
   it('accepts proper values', () => {

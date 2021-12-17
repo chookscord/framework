@@ -1,4 +1,4 @@
-import { diffCommand } from '../../../packages/cli/src/lib/diff';
+import { diffCommand } from '../../src/lib/diff';
 
 describe('did slash command update', () => {
   it('returns true for updated slash commands', () => {

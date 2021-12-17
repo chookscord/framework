@@ -1,5 +1,5 @@
-import { ChooksCommandGroupOption, ChooksSubCommandOption } from '../../../packages/chooksie/src/types/chooks/options';
-import { validateSlashSubCommand } from '../../../packages/cli/src/lib/validation/commands';
+import { ChooksCommandGroupOption, ChooksSubCommandOption } from 'chooksie/types';
+import { validateSlashSubCommand } from '../../src/lib/validation/commands';
 
 describe('validating slash subcommands', () => {
   const subCommand: ChooksSubCommandOption = {
