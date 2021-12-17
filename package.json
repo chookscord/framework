@@ -31,9 +31,9 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "clean-build": "turbo run clean-build",
+    "clean-build": "turbo run clean build --force",
     "test": "jest --rootDir test",
-    "dev": "turbo run dev"
+    "dev": "turbo run dev --parallel"
   },
   "turbo": {
     "baseBranch": "origin/main",
@@ -47,11 +47,8 @@
           "dist/**"
         ]
       },
-      "clean-build": {
-        "outputs": [
-          "bin/**",
-          "dist/**"
-        ]
+      "clean": {
+        "cache": false
       },
       "dev": {
         "cache": false

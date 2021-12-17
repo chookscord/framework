@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean-build": "rm -rf dist && yarn build",
+    "clean": "rm -rf dist",
+    "clean-build": "yarn clean && yarn build",
     "dev": "yarn build -w"
   },
   "dependencies": {
