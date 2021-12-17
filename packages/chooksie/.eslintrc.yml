@@ -2,4 +2,3 @@
 root: true
 extends:
   - "eslint/base.yml"
-  - "eslint/tests.yml"
