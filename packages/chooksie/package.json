@@ -45,7 +45,7 @@
   "dependencies": {
     "@chookscord/fetch": "^1.0.0",
     "@chookscord/logger": "^1.0.0",
-    "@swc/helpers": "^0.2.14",
+    "@swc/helpers": "^0.3.2",
     "dotenv": "^10.0.0",
     "picocolors": "^1.0.0",
     "tslib": "^2.3.1"

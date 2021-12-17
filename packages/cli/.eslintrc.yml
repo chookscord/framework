@@ -1,6 +1,7 @@
 ---
+root: true
 extends:
-  - "../../.eslintrc.yml"
+  - "eslint/base.yml"
 overrides:
   - files: "./src/lib/validation/*.ts"
     rules:
