@@ -25,7 +25,7 @@
     "!**/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "yarn clean && yarn build:cli && yarn build:bin && yarn copy-entry",
+    "build": "yarn build:cli && yarn build:bin && yarn copy-entry",
     "build:cli": "tsc -p tsconfig.cli.json",
     "build:bin": "tsc -p tsconfig.bin.json",
     "copy-entry": "cp src/scripts/entrypoint.ts dist/scripts",
