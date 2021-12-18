@@ -12,5 +12,5 @@ export interface ChooksEvent<
     this: Deps,
     ctx: ChooksEventContext,
     ...args: ClientEvents[T]
-  ) => unknown;
+  ) => Awaitable<void>;
 }

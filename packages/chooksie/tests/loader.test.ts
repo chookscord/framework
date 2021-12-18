@@ -1,12 +1,12 @@
-import * as chooks from '../../packages/chooksie/src/lib';
-import * as fs from 'fs/promises';
-import { Dir, Dirent } from 'fs';
+import fs from 'fs';
+import { opendir } from 'fs/promises';
+import { traverse } from '../src/lib/traverse';
 
 jest.mock('fs/promises');
-const mockedOpendir = fs.opendir as jest.Mock<ReturnType<typeof fs.opendir>>;
+const mockedOpendir = opendir as jest.Mock<ReturnType<typeof opendir>>;
 
-function createDirent(fileName: string, isDirectory: boolean): Dirent {
-  const dirent = new Dirent();
+function createDirent(fileName: string, isDirectory: boolean): fs.Dirent {
+  const dirent = new fs.Dirent();
   dirent.name = fileName;
   dirent.isDirectory = () => isDirectory;
   return dirent;
@@ -18,10 +18,10 @@ function *mockGenerator() {
 }
 
 test('loader', async () => {
-  mockedOpendir.mockReturnValue(Promise.resolve(mockGenerator() as unknown as Dir));
+  mockedOpendir.mockReturnValue(Promise.resolve(mockGenerator() as never));
   const listener = jest.fn();
 
-  const files = chooks.traverse('/path');
+  const files = traverse('/path');
   for await (const file of files!) {
     listener(file);
   }

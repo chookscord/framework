@@ -1,8 +1,10 @@
 #! /usr/bin/env node
-require('dotenv/config');
-const path = require('path');
-const cli = require('@chookscord/cli/package.json');
-const pc = require('picocolors');
+/* eslint-disable @typescript-eslint/no-var-requires */
+import 'dotenv/config';
+// @ts-ignore package.json is aliased only
+import cli from '@chookscord/cli/package.json';
+import path from 'path';
+import pc from 'picocolors';
 
 process.env.NODE_ENV ??= 'production';
 process.env.CHOOKSIE_VERSION = cli.version;
@@ -10,11 +12,11 @@ console.info(`${pc.blue('chooks')} Using @chookscord/cli@${cli.version}`);
 
 const args = process.argv.slice(2);
 
-const run = script => {
+const run = (script: string) => {
   require(script).run();
 };
 
-const dev = script => {
+const dev = (script: string) => {
   process.env.NODE_ENV = 'development';
   const devPath = require.resolve(script);
   const loader = require.resolve('./loader.js');

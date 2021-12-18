@@ -1,5 +1,5 @@
-import { validateNonCommandOption, validateSubCommand, validateSubCommandGroup } from '../../../packages/cli/src/lib/validation/options';
-import { ChooksSubCommandOption } from '../../../packages/chooksie/src/types/chooks/options';
+import { validateNonCommandOption, validateSubCommand, validateSubCommandGroup } from '../../src/lib/validation/options';
+import { ChooksSubCommandOption } from 'chooksie/types';
 
 describe('validating non command options', () => {
   describe('proper values', () => {

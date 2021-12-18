@@ -1,16 +1,19 @@
 {
-  "extends": "tsconfig/base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
-    "declarationDir": "dist/typings",
-    "tsBuildInfoFile": "dist/.tsbuildinfo"
+    "declaration": true,
+    "declarationDir": "dist/typings"
   },
   "include": [
     "src"
   ],
   "exclude": [
     "dist",
+    "bin",
+    "src/bin",
+    "src/scripts/entrypoint.ts",
     "node_modules"
   ]
 }

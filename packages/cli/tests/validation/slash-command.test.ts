@@ -1,5 +1,5 @@
-import { ChooksSubCommandOption } from '../../../packages/chooksie/src/types/chooks/options';
-import { validateSlashCommand } from '../../../packages/cli/src/lib/validation/commands';
+import { ChooksSubCommandOption } from 'chooksie/types';
+import { validateSlashCommand } from '../../src/lib/validation/commands';
 
 describe('validating slash commands', () => {
   describe('proper structures', () => {

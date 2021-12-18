@@ -1,4 +1,4 @@
-import { diffOption } from '../../../packages/cli/src/lib/diff';
+import { diffOption } from '../../src/lib/diff';
 
 describe('did option update', () => {
   it('returns true for updated options', () => {

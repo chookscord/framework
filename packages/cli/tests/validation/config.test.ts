@@ -1,4 +1,4 @@
-import { validateBotCredentials, validateDevConfig, validateProdConfig } from '../../../packages/cli/src/lib/validation/config';
+import { validateBotCredentials, validateDevConfig, validateProdConfig } from '../../src/lib/validation/config';
 
 describe('validating credentials', () => {
   it('accepts proper values', () => {

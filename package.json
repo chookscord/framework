@@ -2,7 +2,8 @@
   "name": "chookscord",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "configs/*"
   ],
   "version": "0.9.0",
   "license": "MIT",
@@ -10,10 +11,10 @@
     "@chookslint/eslint-config-typescript": "^1.0.2",
     "@swc/cli": "^0.1.52",
     "@swc/core": "^1.2.112",
-    "@swc/helpers": "^0.2.14",
+    "@swc/helpers": "^0.3.2",
     "@swc/jest": "^0.2.9",
     "@types/jest": "^27.0.2",
-    "@types/node": "^16.11.7",
+    "@types/node": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "concurrently": "^6.4.0",
@@ -25,12 +26,33 @@
     "regenerator-runtime": "^0.13.9",
     "tsc-watch": "^4.5.0",
     "tslib": "^2.3.1",
+    "turbo": "^1.0.13",
     "typescript": "4.5.0-dev.20211101"
   },
   "scripts": {
-    "build": "npx tsc --project tsconfig.build.json",
-    "clean-build": "rm -rf dist && yarn build && rm dist/.tsbuildinfo",
-    "test": "jest --rootDir test",
-    "dev": "yarn build --watch"
+    "build": "turbo run build",
+    "clean-build": "turbo run clean build --force",
+    "test": "jest",
+    "dev": "turbo run dev --parallel"
+  },
+  "turbo": {
+    "baseBranch": "origin/main",
+    "pipeline": {
+      "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          "bin/**",
+          "dist/**"
+        ]
+      },
+      "clean": {
+        "cache": false
+      },
+      "dev": {
+        "cache": false
+      }
+    }
   }
 }

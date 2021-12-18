@@ -1,15 +1,9 @@
 ---
+root: true
 extends:
-  - "../../.eslintrc.yml"
+  - "eslint/base.yml"
+  - "eslint/tests.yml"
 overrides:
-  - files: "./src/scripts/entrypoint.ts"
-    parserOptions:
-      project: ./tsconfig.eslint.json
-  - files: "./src/bin/*.{ts,js}"
-    parserOptions:
-      project: ./tsconfig.bin.json
-    rules:
-      "@typescript-eslint/no-unsafe-argument": "off"
   - files: "./src/lib/validation/*.ts"
     rules:
       complexity: "off"

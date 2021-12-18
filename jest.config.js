@@ -1,6 +1,9 @@
-const { resolve } = require('path');
+const path = require('path');
+const glob = require('glob')
 
+/** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
+  roots: glob.sync('packages/*/tests'),
   transform: {
     '\\.(t|j)s$': [
       '@swc/jest',
@@ -9,6 +12,7 @@ module.exports = {
   },
   testEnvironment: 'node',
   moduleNameMapper: {
-    '^chooksie/types$': resolve('./packages/chooksie/src/types/index.ts'),
+    '^chooksie/lib$': path.resolve('./packages/chooksie/src/lib/index.ts'),
+    '^chooksie/types$': path.resolve('./packages/chooksie/src/types/index.ts'),
   },
 };

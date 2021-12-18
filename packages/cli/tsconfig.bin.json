@@ -1,10 +1,18 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "bin",
-    "allowJs": true,
     "baseUrl": "src/bin",
-    "declaration": false
+    "allowJs": true,
+    "outDir": "bin",
+    "declaration": false,
+    "declarationMap": false
   },
-  "include": ["src/bin"]
+  "include": [
+    "src/bin"
+  ],
+  "exclude": [
+    "dist",
+    "bin",
+    "node_modules"
+  ]
 }

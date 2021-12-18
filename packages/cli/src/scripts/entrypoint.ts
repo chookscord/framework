@@ -65,7 +65,7 @@ function resolveModule(filePath: string) {
 }
 
 async function loadEvent(mod: types.ChooksEvent): Promise<void> {
-  const deps = await mod.setup?.call(undefined);
+  const deps = await mod.setup?.call(undefined) ?? {};
   const frequency = mod.once ? 'once' : 'on';
   let ctx = createCtx(`[event] ${mod.name}`) as types.ChooksEventContext;
   ctx = { ...ctx, config };
@@ -75,20 +75,20 @@ async function loadEvent(mod: types.ChooksEvent): Promise<void> {
 }
 
 async function loadCommand(
-  mod: types.ChooksCommand | types.ChooksSubCommandOption<Record<string, unknown>>,
+  mod: types.ChooksCommand<Record<string, unknown>> | types.ChooksSubCommandOption<Record<string, unknown>>,
   store: ModuleStore,
   loggerName: string,
   modName = mod.name,
 ): Promise<void> {
   const deps = await mod.setup?.call(undefined) ?? {};
   store.set(modName, {
-    execute: mod.execute.bind(deps),
+    execute: mod.execute?.bind(deps) ?? (ctx => ctx.interaction.reply('Not implemented!')),
     logger: createLogger(loggerName),
   });
 }
 
 async function loadSlashCommand(
-  mod: types.ChooksSlashCommand,
+  mod: types.ChooksSlashCommand<Record<string, unknown>>,
   store: ModuleStore,
 ): Promise<void> {
   await loadCommand(mod, store, `[command] ${mod.name}`);

@@ -1,23 +1,19 @@
 {
   "name": "@chookscord/cli",
-  "version": "1.0.1-rc.5",
+  "version": "1.0.2",
   "license": "MIT",
   "preferGlobal": true,
   "exports": {
     "./package.json": "./package.json",
-    "./lib": "./dist/lib/index.js",
+    "./lib": {
+      "types": "./dist/typings/lib/index.d.ts",
+      "default": "./dist/lib/index.js"
+    },
     "./build": "./dist/scripts/build.js",
     "./register": "./dist/scripts/register.js",
     "./dev": "./dist/scripts/dev.js",
     "./scaffold": "./dist/scripts/scaffold.js",
     "./templates": "./templates"
-  },
-  "typesVersions": {
-    "*": {
-      "lib": [
-        "./dist/lib/index.d.ts"
-      ]
-    }
   },
   "bin": {
     "chooks": "./bin/chooks.js"
@@ -25,23 +21,26 @@
   "files": [
     "templates",
     "dist",
-    "bin"
+    "bin",
+    "!**/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "npx tsc",
-    "build:dev": "npx tsc-watch --onCompilationComplete 'cp src/scripts/entrypoint.ts dist/scripts'",
-    "build:bin": "npx tsc -p tsconfig.bin.json",
-    "clean-build": "rm -rf dist bin && concurrently 'yarn build' 'yarn build:bin'",
-    "dev": "concurrently 'yarn build:dev' 'yarn build:bin -w'"
+    "build": "yarn build:cli && yarn build:bin && yarn copy-entry",
+    "build:cli": "tsc -p tsconfig.cli.json",
+    "build:bin": "tsc -p tsconfig.bin.json",
+    "copy-entry": "cp src/scripts/entrypoint.ts dist/scripts",
+    "clean": "rm -rf dist bin",
+    "clean-build": "yarn clean && yarn build",
+    "dev": "concurrently -n ,chokidar 'yarn:build:* -w' 'chokidar src/scripts/entrypoint.ts -c \"yarn copy-entry\"'"
   },
   "dependencies": {
     "@chookscord/fetch": "^1.0.0",
     "@chookscord/logger": "^1.0.0",
     "@swc/core": "^1.2.112",
-    "@swc/helpers": "^0.2.14",
+    "@swc/helpers": "^0.3.2",
     "chokidar": "^3.5.2",
     "dotenv": "^10.0.0",
-    "nanospinner": "^0.5.0",
+    "nanospinner": "^0.6.0",
     "package-name-regex": "^2.0.4",
     "picocolors": "^1.0.0",
     "prompts": "^2.4.2"
@@ -49,7 +48,8 @@
   "devDependencies": {
     "@types/package-name-regex": "^2.0.0",
     "@types/prompts": "^2.0.14",
-    "chooksie": "^1.0.1-rc.3",
+    "chokidar-cli": "^3.0.0",
+    "chooksie": "*",
     "discord.js": "^13.3.1",
     "node-fetch": "^2.6.5"
   }

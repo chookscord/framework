@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "description": "A small logging library for picocolors adding log levels.",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/typings/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "npx tsc --outDir dist",
-    "clean-build": "rm -rf dist && yarn build",
-    "dev": "yarn build --watch"
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "clean-build": "yarn clean && yarn build",
+    "dev": "yarn build -w"
   },
   "dependencies": {
     "picocolors": "^1.0.0"

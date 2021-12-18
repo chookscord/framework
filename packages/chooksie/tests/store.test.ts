@@ -1,4 +1,4 @@
-import { Store } from '../../packages/chooksie/src/lib/store';
+import { Store } from '../src/lib/store';
 
 describe('store', () => {
   const store = new Store<number>();
