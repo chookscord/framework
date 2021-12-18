@@ -3,9 +3,8 @@
 import 'dotenv/config';
 import { Awaitable, Client, Interaction } from 'discord.js';
 import { ChooksLogger, createLogger } from '@chookscord/logger';
-import { File, Store } from 'chooksie/lib';
+import lib, { File, Store } from 'chooksie/lib';
 import { basename } from 'path';
-import { chooksie } from '../lib';
 import config from './chooks.config.js';
 import { fetch } from '@chookscord/fetch';
 import type types from 'chooksie/types';
@@ -41,7 +40,7 @@ function hasLifecycle(mod: Record<string, unknown>): mod is FileLifecycle {
 
 function createListener(store: ModuleStore) {
   return (interaction: Interaction) => {
-    const commandKey = chooksie.utils.resolveCommandKey(interaction);
+    const commandKey = lib.utils.resolveCommandKey(interaction);
     if (!commandKey) return;
 
     const command = store.get(commandKey);
@@ -50,7 +49,7 @@ function createListener(store: ModuleStore) {
       return;
     }
 
-    chooksie.executeCommand(commandKey, async () => {
+    lib.executeCommand(commandKey, async () => {
       const ctx = { client, fetch, interaction, logger: command.logger };
       await command.execute(ctx as types.ChooksCommandContext);
     }, command.logger);
@@ -107,7 +106,7 @@ function loadSubCommand(
   mod: types.ChooksSlashSubCommand,
   store: ModuleStore,
 ): void {
-  for (const [key, subCommand] of chooksie.extractSubCommands(mod)) {
+  for (const [key, subCommand] of lib.extractSubCommands(mod)) {
     (async () => {
       await loadCommand(subCommand.module, store, `[command] ${key}`, key);
       logger.success(`Loaded subcommand "${key}".`);
@@ -123,7 +122,7 @@ const loaders = {
 };
 
 async function startBot(store: ModuleStore): Promise<void> {
-  const endTimer = chooksie.chrono.createTimer();
+  const endTimer = lib.chrono.createTimer();
   const listener = createListener(store);
   client.on('interactionCreate', listener);
   logger.info('Starting bot...');
@@ -135,7 +134,7 @@ async function loadFile(file: File, store: ModuleStore): Promise<void> {
   const moduleName = resolveModule(file.path);
 
   if (moduleName.includes('.')) return;
-  const mod: Record<string, unknown> = chooksie.getDefaultImport(await import(file.path));
+  const mod: Record<string, unknown> = lib.getDefaultImport(await import(file.path));
   const loader = loaders[moduleName as keyof typeof loaders];
 
   if (loader) {
@@ -150,10 +149,10 @@ async function loadFile(file: File, store: ModuleStore): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const store = new chooksie.Store<CommandModule>();
+  const store = new Store<CommandModule>();
   startBot(store);
 
-  for await (const file of chooksie.traverse(__dirname, { recursive: true })) {
+  for await (const file of lib.traverse(__dirname, { recursive: true })) {
     if (file.isDir) continue;
     loadFile(file, store);
   }
