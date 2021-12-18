@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, object-curly-newline */
 import * as lib from '../lib';
 import { ChooksConfig } from 'chooksie';
-import { Client } from 'discord.js';
 import { EventEmitter } from 'events';
 import { createLogger } from '@chookscord/logger';
 import { createStoreList } from './dev/stores';
 import { createWatcher } from './dev/watcher';
 import { resolveConfig } from '../lib';
 import { setupListeners } from './dev/listeners';
+
+const { Client } = lib.resolveLocal<typeof import('discord.js')>('discord.js');
 
 // @Choooks22: event emitter is on global to
 // let the esm loader get access to the event bus
