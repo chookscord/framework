@@ -1,15 +1,13 @@
-// For some reason "mod.name" is typed as "any" according to eslint
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import 'dotenv/config';
+import * as lib from 'chooksie/lib';
 import { Awaitable, Client, Interaction } from 'discord.js';
 import { ChooksLogger, createLogger } from '@chookscord/logger';
-import lib, { File, Store } from 'chooksie/lib';
 import { basename } from 'path';
 import config from './chooks.config.js';
 import { fetch } from '@chookscord/fetch';
 import type types from 'chooksie/types';
 
-type ModuleStore = Store<CommandModule>;
+type ModuleStore = lib.Store<CommandModule>;
 type FileLifecycle = {
   chooksOnLoad: types.ChooksLifecycle;
 };
@@ -130,7 +128,7 @@ async function startBot(store: ModuleStore): Promise<void> {
   logger.success(`Bot started! Time took: ${endTimer('s')}`);
 }
 
-async function loadFile(file: File, store: ModuleStore): Promise<void> {
+async function loadFile(file: lib.File, store: ModuleStore): Promise<void> {
   const moduleName = resolveModule(file.path);
 
   if (moduleName.includes('.')) return;
@@ -149,7 +147,7 @@ async function loadFile(file: File, store: ModuleStore): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const store = new Store<CommandModule>();
+  const store = new lib.Store<CommandModule>();
   startBot(store);
 
   for await (const file of lib.traverse(__dirname, { recursive: true })) {
