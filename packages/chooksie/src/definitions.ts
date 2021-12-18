@@ -48,8 +48,8 @@ export function defineSubCommand<T extends Record<string, unknown>>(
   subCommand: Omit<types.ChooksSubCommandOption<T>, 'execute'> &
   { execute: (ctx: types.ChooksCommandContext) => unknown } &
   ThisType<Readonly<T>>,
-) {
-  return subCommand;
+): types.ChooksSubCommandOption<T> {
+  return subCommand as types.ChooksSubCommandOption<T>;
 }
 
 export function defineLifecycle(lifecycle: types.ChooksLifecycle) {
