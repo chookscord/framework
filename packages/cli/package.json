@@ -43,7 +43,8 @@
     "nanospinner": "^0.6.0",
     "package-name-regex": "^2.0.4",
     "picocolors": "^1.0.0",
-    "prompts": "^2.4.2"
+    "prompts": "^2.4.2",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@types/package-name-regex": "^2.0.0",
