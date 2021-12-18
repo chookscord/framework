@@ -33,6 +33,7 @@
   },
   "files": [
     "dist",
+    "!**/*.map",
     "!**/*.tsbuildinfo"
   ],
   "scripts": {

@@ -22,6 +22,7 @@
     "templates",
     "dist",
     "bin",
+    "!**/*.map",
     "!**/*.tsbuildinfo"
   ],
   "scripts": {
