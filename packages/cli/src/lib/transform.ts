@@ -1,5 +1,5 @@
 /* eslint-disable object-curly-newline */
-import { ChooksCommand, ChooksOption, DiscordCommandType, DiscordOption, DiscordSlashCommand } from 'chooksie/types';
+import { ChooksCommand, ChooksOption, DiscordOption, DiscordSlashCommand } from 'chooksie/types';
 import { types } from '../lib';
 
 function condAppend<T, K extends keyof T>(
@@ -28,7 +28,7 @@ export function transformCommand(command: ChooksCommand): DiscordSlashCommand {
   res = condAppend(res, 'name', command.name);
   res = condAppend(res, 'description', command.description);
   res = condAppend(res, 'default_permission', command.defaultPermission);
-  res = condAppend(res, 'type', command.type && DiscordCommandType[command.type]);
+  res = condAppend(res, 'type', command.type && types.DiscordCommandType[command.type]);
   res = condAppend(res, 'options', command.options?.map(transformOption));
   return res;
 }

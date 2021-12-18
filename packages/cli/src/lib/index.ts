@@ -8,7 +8,7 @@ export * from './files';
 export * from './transform';
 export * from './unload';
 
-const resolveLocal = <T>(id: string): T => {
+export const resolveLocal = <T>(id: string): T => {
   try {
     return require(id);
   } catch {

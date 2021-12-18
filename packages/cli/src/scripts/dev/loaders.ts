@@ -1,10 +1,10 @@
 /* eslint-disable object-curly-newline */
 import { ChooksCommand, ChooksContextCommand, ChooksEvent, ChooksSlashCommand, ChooksSlashSubCommand } from 'chooksie/types';
 import { ChooksLogger, createLogger } from '@chookscord/logger';
-import { CommandReference, extractSubCommands } from 'chooksie/lib';
 import { CommandStore, EventStore } from './stores';
 import { cachedImport, resolveMod } from './modules';
-import { validateContextCommand, validateEvent, validateSlashCommand, validateSlashSubCommand } from '../../lib/validation';
+import { chooksie, validateContextCommand, validateEvent, validateSlashCommand, validateSlashSubCommand } from '../../lib';
+import { CommandReference } from 'chooksie/lib';
 
 export interface CommandModule extends CommandReference {
   logger: ChooksLogger;
@@ -62,7 +62,7 @@ async function loadSubCommand(path: string, store: CommandStore) {
     return false;
   }
 
-  for await (const [key, command] of extractSubCommands(mod)) {
+  for await (const [key, command] of chooksie.extractSubCommands(mod)) {
     store.set(key, {
       ...command,
       logger: createLogger(`[subcommand] ${key}`),
@@ -96,7 +96,7 @@ async function unloadCommand(path: string, store: CommandStore) {
 
 async function unloadSubCommand(path: string, store: CommandStore) {
   const mod = await resolveMod<ChooksSlashSubCommand>(path, cachedImport);
-  for (const [key] of extractSubCommands(mod)) {
+  for (const [key] of chooksie.extractSubCommands(mod)) {
     store.delete(key);
   }
 }
