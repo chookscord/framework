@@ -4,9 +4,16 @@
   "description": "CLI package for the Chooksie Framework",
   "license": "MIT",
   "preferGlobal": true,
+  "scripts": {
+    "test": "jest",
+    "build:swc": "swc src -d dist --config-file ../../.swcrc",
+    "build:tsc": "tsc",
+    "dev": "concurrently -r 'pnpm:build:* -- -w'"
+  },
   "dependencies": {},
   "devDependencies": {
     "eslint-config-lint": "workspace:*",
+    "jest-config": "workspace:*",
     "tsconfig": "workspace:*"
   },
   "repository": {

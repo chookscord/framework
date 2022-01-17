@@ -1,0 +1,14 @@
+{
+  "jsc": {
+    "loose": true,
+    "target": "es2020",
+    "parser": {
+      "syntax": "typescript",
+      "dts": true
+    },
+    "externalHelpers": true
+  },
+  "module": {
+    "type": "commonjs"
+  }
+}

@@ -4,6 +4,7 @@
     "declarationDir": "dist/typings"
   },
   "include": [
-    "src"
+    "src",
+    "tests"
   ]
 }

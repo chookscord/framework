@@ -1,9 +1,13 @@
 {
   "extends": "tsconfig/base",
   "compilerOptions": {
-    "declaration": false
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false
   },
   "include": [
-    "src"
+    "src",
+    "tests"
   ]
 }
