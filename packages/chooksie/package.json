@@ -4,7 +4,14 @@
   "description": "Fast Discord.JS Framework",
   "license": "MIT",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "discord.js": "^14.0.0-dev.1642377990.ecf2430",
+    "eslint-config-lint": "workspace:*",
+    "tsconfig": "workspace:*"
+  },
+  "peerDependencies": {
+    "discord.js": ">= 14.0.0-dev"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chookscord/framework.git",

@@ -5,7 +5,10 @@
   "license": "MIT",
   "preferGlobal": true,
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint-config-lint": "workspace:*",
+    "tsconfig": "workspace:*"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chookscord/framework.git",

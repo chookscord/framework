@@ -1,0 +1,9 @@
+{
+  "extends": "tsconfig/base",
+  "compilerOptions": {
+    "declarationDir": "dist/typings"
+  },
+  "include": [
+    "src"
+  ]
+}
