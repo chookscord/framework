@@ -4,8 +4,8 @@
   "private": true,
   "devDependencies": {
     "@chookslint/eslint-config-typescript": "^2.1.0",
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "@typescript-eslint/parser": "^5.9.1",
+    "@typescript-eslint/eslint-plugin": "^5.9.2-alpha.27",
+    "@typescript-eslint/parser": "^5.9.2-alpha.27",
     "eslint": "^8.7.0"
   }
 }
