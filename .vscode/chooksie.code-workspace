@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "name": "🛠 CLI",
+      "path": "../packages/cli"
+    },
+    {
+      "name": "🚀 Framework",
+      "path": "../packages/chooksie"
+    },
+    {
+      "name": "🔧 Configs",
+      "path": "../configs"
+    },
+    {
+      "name": "🌱 Root",
+      "path": "../"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "configs/": true,
+      "packages/": true
+    }
+  }
+}

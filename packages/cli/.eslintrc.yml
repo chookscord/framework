@@ -1,9 +1,0 @@
----
-root: true
-extends:
-  - "eslint/base.yml"
-  - "eslint/tests.yml"
-overrides:
-  - files: "./src/lib/validation/*.ts"
-    rules:
-      complexity: "off"

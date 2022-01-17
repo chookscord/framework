@@ -1,58 +1,17 @@
 {
   "name": "@chookscord/cli",
-  "version": "1.0.4",
+  "version": "2.0.0",
+  "description": "CLI package for the Chooksie Framework",
   "license": "MIT",
   "preferGlobal": true,
-  "exports": {
-    "./package.json": "./package.json",
-    "./lib": {
-      "types": "./dist/typings/lib/index.d.ts",
-      "default": "./dist/lib/index.js"
-    },
-    "./build": "./dist/scripts/build.js",
-    "./register": "./dist/scripts/register.js",
-    "./dev": "./dist/scripts/dev.js",
-    "./scaffold": "./dist/scripts/scaffold.js",
-    "./templates": "./templates"
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chookscord/framework.git",
+    "directory": "packages/cli"
   },
-  "bin": {
-    "chooks": "./bin/chooks.js"
-  },
-  "files": [
-    "templates",
-    "dist",
-    "bin",
-    "!**/*.map",
-    "!**/*.tsbuildinfo"
-  ],
-  "scripts": {
-    "build": "yarn build:cli && yarn build:bin && yarn copy-entry",
-    "build:cli": "tsc -p tsconfig.cli.json",
-    "build:bin": "tsc -p tsconfig.bin.json",
-    "copy-entry": "cp src/scripts/entrypoint.ts dist/scripts",
-    "clean": "rm -rf dist bin",
-    "clean-build": "yarn clean && yarn build",
-    "dev": "concurrently -n ,chokidar 'yarn:build:* -w' 'chokidar src/scripts/entrypoint.ts -c \"yarn copy-entry\"'"
-  },
-  "dependencies": {
-    "@chookscord/fetch": "^1.0.0",
-    "@chookscord/logger": "^1.0.0",
-    "@swc/core": "^1.2.112",
-    "@swc/helpers": "^0.3.2",
-    "chokidar": "^3.5.2",
-    "dotenv": "^10.0.0",
-    "nanospinner": "^0.6.0",
-    "package-name-regex": "^2.0.4",
-    "picocolors": "^1.0.0",
-    "prompts": "^2.4.2",
-    "tslib": "^2.3.1"
-  },
-  "devDependencies": {
-    "@types/package-name-regex": "^2.0.0",
-    "@types/prompts": "^2.0.14",
-    "chokidar-cli": "^3.0.0",
-    "chooksie": "*",
-    "discord.js": "^13.3.1",
-    "node-fetch": "^2.6.5"
+  "publishConfig": {
+    "access": "public"
   }
 }
