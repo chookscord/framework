@@ -1,6 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext"],
     "strict": true,
     "target": "ESNext",
     "module": "CommonJS",
