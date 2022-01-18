@@ -1,7 +1,7 @@
 import { FSWatcher } from 'chokidar'
 import { once } from 'events'
 import { Stats } from 'fs'
-import type { File } from '../src/server/compiler'
+import type { FileRef } from '../src/lib/file-refs'
 import { createWatchCompiler } from '../src/server/compiler'
 
 describe('watch compiler', () => {
@@ -12,7 +12,7 @@ describe('watch compiler', () => {
 
     // Target file
     const targetCode = 'foo'
-    const targetFile: File = {
+    const targetFile: FileRef = {
       source: '/foo/bar.ts',
       target: '/out/foo/bar.js',
       type: 'script',
@@ -41,7 +41,7 @@ describe('watch compiler', () => {
 
   it('deletes files', async () => {
     // Target file
-    const targetFile: File = {
+    const targetFile: FileRef = {
       source: '/foo/bar.ts',
       target: '/out/foo/bar.js',
       type: 'script',
