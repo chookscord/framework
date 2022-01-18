@@ -10,7 +10,11 @@
     "build:tsc": "tsc",
     "dev": "concurrently -r 'pnpm:build:* -- -w'"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@swc/core": "^1.2.130",
+    "@swc/helpers": "^0.3.2",
+    "chokidar": "^3.5.2"
+  },
   "devDependencies": {
     "eslint-config-lint": "workspace:*",
     "jest-config": "workspace:*",
