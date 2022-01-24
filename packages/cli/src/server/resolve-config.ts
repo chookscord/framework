@@ -1,21 +1,16 @@
 import { interopRequireDefault } from '@swc/helpers'
+import type { Awaitable } from 'discord.js'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
-import type { WatchCompilerOptions } from './compiler'
 import { compile } from '../lib/compile'
+import type { ChooksConfig } from '../lib/config'
+import { validateConfig } from '../lib/config'
 import type { FileOptions, FileRef } from '../lib/file-refs'
-
-export interface BotCredentials {
-  token: string
-  appId: string
-}
-
-export interface ChooksConfig {
-  credentials: BotCredentials
-}
+import type { WatchCompilerOptions } from './compiler'
 
 export interface ConfigResolverOverrides {
-  loader?: (path: string) => ChooksConfig
+  loader?: (path: string) => Awaitable<ChooksConfig>
+  validator?: (config: ChooksConfig) => Awaitable<string | Error | null>
 }
 
 const CONFIG_FILES = [
@@ -30,6 +25,7 @@ export async function resolveConfig(
   overrides: WatchCompilerOptions & ConfigResolverOverrides = {},
 ): Promise<ChooksConfig> {
   const { onChange = compile, onCompile = compile, loader = require } = overrides
+  const validator = overrides.validator ?? validateConfig
   const rootFiles = await readdir(opts.root, { withFileTypes: true })
 
   const configIndex = rootFiles
@@ -50,5 +46,14 @@ export async function resolveConfig(
   const data = await onChange(file)
   await onCompile(file, data.code)
 
-  return interopRequireDefault(<ChooksConfig>loader(file.target)).default
+  const config = await loader(file.target) as ChooksConfig
+  const error = await validator(config)
+
+  if (error !== null) {
+    throw error instanceof Error
+      ? error
+      : new Error(error)
+  }
+
+  return interopRequireDefault(config).default
 }

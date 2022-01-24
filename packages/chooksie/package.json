@@ -11,7 +11,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "discord.js": "^14.0.0-dev.1642377990.ecf2430",
+    "discord.js": "^14.0.0-dev",
     "eslint-config-lint": "workspace:*",
     "jest-config": "workspace:*",
     "tsconfig": "workspace:*"

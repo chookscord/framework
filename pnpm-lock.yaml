@@ -53,7 +53,7 @@ importers:
 
   packages/chooksie:
     specifiers:
-      discord.js: ^14.0.0-dev.1642377990.ecf2430
+      discord.js: ^14.0.0-dev
       eslint-config-lint: workspace:*
       jest-config: workspace:*
       tsconfig: workspace:*
@@ -68,14 +68,18 @@ importers:
       '@swc/core': ^1.2.130
       '@swc/helpers': ^0.3.2
       chokidar: ^3.5.2
+      discord.js: ^14.0.0-dev
       eslint-config-lint: workspace:*
       jest-config: workspace:*
+      joi: ^17.5.0
       tsconfig: workspace:*
     dependencies:
       '@swc/core': 1.2.130
       '@swc/helpers': 0.3.2
       chokidar: 3.5.3
+      joi: 17.5.0
     devDependencies:
+      discord.js: 14.0.0-dev.1642421004.599f967
       eslint-config-lint: link:../../configs/lint
       jest-config: link:../../configs/jest
       tsconfig: link:../../configs/tsconfig
@@ -461,6 +465,16 @@ packages:
       - supports-color
     dev: true
 
+  /@hapi/hoek/9.2.1:
+    resolution: {integrity: sha512-gfta+H8aziZsm8pZa0vj04KO6biEiisppNgA1kbJvFrrWu9Vm7eaUEy76DIxsuTaWvti5fkJVhllWc6ZTE+Mdw==}
+    dev: false
+
+  /@hapi/topo/5.1.0:
+    resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
+    dependencies:
+      '@hapi/hoek': 9.2.1
+    dev: false
+
   /@humanwhocodes/config-array/0.9.2:
     resolution: {integrity: sha512-UXOuFCGcwciWckOpmfKDq/GyhlTf9pN/BzG//x8p8zTOFEcGuA68ANXheFS0AGvy3qgZqLBUkMs7hqzqCKOVwA==}
     engines: {node: '>=10.10.0'}
@@ -729,6 +743,20 @@ packages:
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: true
 
+  /@sideway/address/4.1.3:
+    resolution: {integrity: sha512-8ncEUtmnTsMmL7z1YPB47kPUq7LpKWJNFPsRzHiIajGC5uXlWGn+AmkYPcHNl8S4tcEGx+cnORnNYaw2wvL+LQ==}
+    dependencies:
+      '@hapi/hoek': 9.2.1
+    dev: false
+
+  /@sideway/formula/3.0.0:
+    resolution: {integrity: sha512-vHe7wZ4NOXVfkoRb8T5otiENVlT7a3IAiw7H5M2+GO+9CDgcVUUsX1zalAztCmwyOr2RUTGJdgB+ZvSVqmdHmg==}
+    dev: false
+
+  /@sideway/pinpoint/2.0.0:
+    resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
+    dev: false
+
   /@sindresorhus/is/4.3.0:
     resolution: {integrity: sha512-wwOvh0eO3PiTEivGJWiZ+b946SlMSb4pe+y+Ur/4S87cwo09pYi+FWHHnbrM3W9W7cBYKDqQXcrFYjYUCOJUEQ==}
     engines: {node: '>=10'}
@@ -971,12 +999,8 @@ packages:
   /@types/node-fetch/2.5.12:
     resolution: {integrity: sha512-MKgC4dlq4kKNa/mYrwpKfzQMB5X3ee5U6fSprkKpToBqBmX4nFZL9cW5jl6sWn+xpRJ7ypWh2yyqqr8UUCstSw==}
     dependencies:
-      '@types/node': 17.0.8
+      '@types/node': 17.0.9
       form-data: 3.0.1
-    dev: true
-
-  /@types/node/17.0.8:
-    resolution: {integrity: sha512-YofkM6fGv4gDJq78g4j0mMuGMkZVxZDgtU0JRdx6FgiJDG+0fY0GKVolOV8WqVmEhLCXkQRjwDdKyPxJp/uucg==}
     dev: true
 
   /@types/node/17.0.9:
@@ -994,7 +1018,7 @@ packages:
   /@types/ws/8.2.2:
     resolution: {integrity: sha512-NOn5eIcgWLOo6qW8AcuLZ7G8PycXu0xTxxkS6Q18VWFxgPUSOwV0pBj2a/4viNZVu25i7RIB7GttdkAIUUXOOg==}
     dependencies:
-      '@types/node': 17.0.8
+      '@types/node': 17.0.9
     dev: true
 
   /@types/yargs-parser/20.2.1:
@@ -1601,6 +1625,7 @@ packages:
   /discord.js/14.0.0-dev.1642421004.599f967:
     resolution: {integrity: sha512-8vnGdecNtSykrrg7rTVptvZSgeFO62x7fdgYpqihT1JRHtTZBPVYz6vGPHHz41qvtftFLra+y/3eXVZi1IklTw==}
     engines: {node: '>=16.9.0'}
+    deprecated: no longer supported
     dependencies:
       '@discordjs/builders': 0.11.0
       '@discordjs/collection': 0.4.0
@@ -2697,6 +2722,16 @@ packages:
       - ts-node
       - utf-8-validate
     dev: true
+
+  /joi/17.5.0:
+    resolution: {integrity: sha512-R7hR50COp7StzLnDi4ywOXHrBrgNXuUUfJWIR5lPY5Bm/pOD3jZaTwpluUXVLRWcoWZxkrHBBJ5hLxgnlehbdw==}
+    dependencies:
+      '@hapi/hoek': 9.2.1
+      '@hapi/topo': 5.1.0
+      '@sideway/address': 4.1.3
+      '@sideway/formula': 3.0.0
+      '@sideway/pinpoint': 2.0.0
+    dev: false
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
