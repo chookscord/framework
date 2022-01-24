@@ -17,10 +17,20 @@
       "path": "../"
     }
   ],
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "Orta.vscode-jest"
+    ]
+  },
   "settings": {
     "files.exclude": {
       "configs/": true,
       "packages/": true
-    }
+    },
+    "jest.disabledWorkspaceFolders": [
+      "🔧 Configs",
+      "🌱 Root"
+    ]
   }
 }
