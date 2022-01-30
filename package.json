@@ -8,14 +8,14 @@
   },
   "devDependencies": {
     "@swc/cli": "^0.1.55",
-    "@swc/core": "^1.2.130",
+    "@swc/core": "^1.2.135",
     "@swc/helpers": "^0.3.2",
     "concurrently": "^7.0.0",
     "jest": "^27.4.7",
     "regenerator-runtime": "^0.13.9",
     "tsc-watch": "^4.6.0",
-    "turbo": "1.0.24",
-    "typescript": "^4.5.4"
+    "turbo": "1.1.1",
+    "typescript": "^4.5.5"
   },
   "turbo": {
     "npmClient": "pnpm",
