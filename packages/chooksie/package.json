@@ -11,13 +11,13 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "discord.js": "^14.0.0-dev",
+    "discord.js": "^13.6.0",
     "eslint-config-lint": "workspace:*",
     "jest-config": "workspace:*",
     "tsconfig": "workspace:*"
   },
   "peerDependencies": {
-    "discord.js": ">= 14.0.0-dev"
+    "discord.js": "^13.6.0"
   },
   "repository": {
     "type": "git",

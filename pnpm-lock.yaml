@@ -53,12 +53,12 @@ importers:
 
   packages/chooksie:
     specifiers:
-      discord.js: ^14.0.0-dev
+      discord.js: ^13.6.0
       eslint-config-lint: workspace:*
       jest-config: workspace:*
       tsconfig: workspace:*
     devDependencies:
-      discord.js: 14.0.0-dev.1642421004.599f967
+      discord.js: 13.6.0
       eslint-config-lint: link:../../configs/lint
       jest-config: link:../../configs/jest
       tsconfig: link:../../configs/tsconfig
@@ -68,7 +68,7 @@ importers:
       '@swc/core': ^1.2.130
       '@swc/helpers': ^0.3.2
       chokidar: ^3.5.2
-      discord.js: ^14.0.0-dev
+      discord.js: ^13.6.0
       eslint-config-lint: workspace:*
       jest-config: workspace:*
       joi: ^17.5.0
@@ -79,7 +79,7 @@ importers:
       chokidar: 3.5.3
       joi: 17.5.0
     devDependencies:
-      discord.js: 14.0.0-dev.1642421004.599f967
+      discord.js: 13.6.0
       eslint-config-lint: link:../../configs/lint
       jest-config: link:../../configs/jest
       tsconfig: link:../../configs/tsconfig
@@ -737,11 +737,6 @@ packages:
 
   /@sapphire/async-queue/1.1.9:
     resolution: {integrity: sha512-CbXaGwwlEMq+l1TRu01FJCvySJ1CEFKFclHT48nIfNeZXaAAmmwwy7scUKmYHPUa3GhoMp6Qr1B3eAJux6XgOQ==}
-    engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
-    dev: true
-
-  /@sapphire/snowflake/3.0.1:
-    resolution: {integrity: sha512-v+wCC2q9DK3OhG7Vcdt/8A/INAYiyhlMD5snakmXGBN1usLBwSGJVJBjDHv4VGI5C9YYl4UdW5Ovr3arvYsJXQ==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: true
 
@@ -1774,15 +1769,13 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /discord.js/14.0.0-dev.1642421004.599f967:
-    resolution: {integrity: sha512-8vnGdecNtSykrrg7rTVptvZSgeFO62x7fdgYpqihT1JRHtTZBPVYz6vGPHHz41qvtftFLra+y/3eXVZi1IklTw==}
-    engines: {node: '>=16.9.0'}
-    deprecated: no longer supported
+  /discord.js/13.6.0:
+    resolution: {integrity: sha512-tXNR8zgsEPxPBvGk3AQjJ9ljIIC6/LOPjzKwpwz8Y1Q2X66Vi3ZqFgRHYwnHKC0jC0F+l4LzxlhmOJsBZDNg9g==}
+    engines: {node: '>=16.6.0', npm: '>=7.0.0'}
     dependencies:
       '@discordjs/builders': 0.11.0
       '@discordjs/collection': 0.4.0
       '@sapphire/async-queue': 1.1.9
-      '@sapphire/snowflake': 3.0.1
       '@types/node-fetch': 2.5.12
       '@types/ws': 8.2.2
       discord-api-types: 0.26.1
