@@ -8,6 +8,9 @@
     },
     "externalHelpers": true
   },
+  "exclude": [
+    "\\.d\\.ts$"
+  ],
   "module": {
     "type": "commonjs"
   }
