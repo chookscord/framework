@@ -39,7 +39,7 @@ describe('file traversal', () => {
     }
 
     expect(opendir).toHaveBeenCalledTimes(2)
-    expect(testFile).toHaveBeenCalledWith('/foo.js')
-    expect(testFile).toHaveBeenCalledWith('/dir/bar.js')
+    expect(testFile).toHaveBeenCalledWith({ name: 'foo.js', path: '/foo.js' })
+    expect(testFile).toHaveBeenCalledWith({ name: 'bar.js', path: '/dir/bar.js' })
   })
 })

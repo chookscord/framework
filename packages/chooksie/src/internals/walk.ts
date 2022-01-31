@@ -2,10 +2,15 @@ import { opendir } from 'fs/promises'
 import { isAbsolute, join } from 'path'
 
 interface WalkOptions {
-  ignore?: (path: string) => boolean
+  ignore?: (file: File) => boolean
 }
 
-async function* walk(path: string, opts: WalkOptions = {}): AsyncGenerator<string, void> {
+interface File {
+  name: string
+  path: string
+}
+
+async function* walk(path: string, opts: WalkOptions = {}): AsyncGenerator<File, void> {
   if (!isAbsolute(path)) {
     throw new Error('An absolute path was not provided!')
   }
@@ -14,13 +19,17 @@ async function* walk(path: string, opts: WalkOptions = {}): AsyncGenerator<strin
   const dir = await opendir(path)
 
   for await (const dirent of dir) {
-    const target = join(path, dirent.name)
-    if (ignore(target)) continue
+    const file = {
+      name: dirent.name,
+      path: join(path, dirent.name),
+    }
+
+    if (ignore(file)) continue
 
     if (dirent.isDirectory()) {
-      yield* walk(target, opts)
+      yield* walk(file.path, opts)
     } else {
-      yield target
+      yield file
     }
   }
 }
