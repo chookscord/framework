@@ -4,7 +4,9 @@ import type {
   Awaitable,
   Client,
   ClientEvents,
+  ClientOptions,
   CommandInteraction,
+  IntentsString,
   MessageContextMenuInteraction,
   UserContextMenuInteraction,
 } from 'discord.js'
@@ -16,6 +18,23 @@ import type {
   AppDescription,
   AppName,
 } from './internals/discord'
+
+// #region Config
+export interface BotCredentials {
+  token: string
+  appId?: string
+}
+
+export interface ChooksConfig {
+  credentials: BotCredentials
+  intents: IntentsString[]
+  client?: {
+    options?: Omit<ClientOptions, 'intents'>
+  }
+  devServer?: string
+  [key: string]: unknown
+}
+// #endregion
 
 // #region Contexts
 /**
