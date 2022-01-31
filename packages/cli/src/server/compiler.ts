@@ -3,18 +3,18 @@ import type { FSWatcher } from 'chokidar'
 import EventEmitter from 'events'
 import type { Stats } from 'fs'
 import { compile, unlink, write } from '../lib/compile'
-import type { FileOptions, FileRef } from '../lib/file-refs'
-import { createFileRef } from '../lib/file-refs'
+import type { FileOptions, SourceMap } from '../lib/sourcemap'
+import { mapSourceFile } from '../lib/sourcemap'
 
 export interface WatchCompilerOptions {
-  onChange?: (file: FileRef) => Output | Promise<Output>
-  onCompile?: (file: FileRef, data: string) => void | Promise<void>
-  onDelete?: (file: FileRef) => void | Promise<void>
+  onChange?: (file: SourceMap) => Output | Promise<Output>
+  onCompile?: (file: SourceMap, data: string) => void | Promise<void>
+  onDelete?: (file: SourceMap) => void | Promise<void>
 }
 
 export interface CompilerEvents {
-  compile: [file: FileRef]
-  delete: [file: FileRef]
+  compile: [file: SourceMap]
+  delete: [file: SourceMap]
 }
 
 export interface WatchCompiler extends EventEmitter {
@@ -29,7 +29,7 @@ export function createWatchCompiler(
   const events = new EventEmitter() as WatchCompiler
   const { onChange = compile, onCompile = write, onDelete = unlink } = opts
 
-  const toFile = createFileRef(opts)
+  const toFile = mapSourceFile(opts)
 
   const compileTarget = async (path: string, stats?: Stats) => {
     if (!stats?.isFile()) return

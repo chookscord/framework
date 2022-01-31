@@ -1,11 +1,11 @@
 import { interopRequireDefault } from '@swc/helpers'
+import type { ChooksConfig } from 'chooksie'
 import type { Awaitable } from 'discord.js'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
 import { compile } from '../lib/compile'
-import type { ChooksConfig } from '../lib/config'
 import { validateConfig } from '../lib/config'
-import type { FileOptions, FileRef } from '../lib/file-refs'
+import type { FileOptions, SourceMap } from '../lib/sourcemap'
 import type { WatchCompilerOptions } from './compiler'
 
 export interface ConfigResolverOverrides {
@@ -37,7 +37,7 @@ export async function resolveConfig(
   }
 
   const configFile = CONFIG_FILES[configIndex]
-  const file: FileRef = {
+  const file: SourceMap = {
     source: join(opts.root, configFile),
     target: join(opts.outDir, 'chooks.config.js'),
     type: 'config',

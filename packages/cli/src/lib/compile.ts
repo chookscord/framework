@@ -2,7 +2,7 @@ import type { Options, Output } from '@swc/core'
 import { transformFile } from '@swc/core'
 import fs from 'fs/promises'
 import { basename } from 'path'
-import type { FileRef } from './file-refs'
+import type { SourceMap } from './sourcemap'
 
 const SWC_OPTIONS: Readonly<Options> = {
   module: { type: 'commonjs' },
@@ -13,15 +13,15 @@ const SWC_OPTIONS: Readonly<Options> = {
   },
 }
 
-export function compile(file: FileRef): Promise<Output> {
+export function compile(file: SourceMap): Promise<Output> {
   return transformFile(file.target, SWC_OPTIONS)
 }
 
-export async function write(file: FileRef, data: string): Promise<void> {
+export async function write(file: SourceMap, data: string): Promise<void> {
   await fs.mkdir(basename(file.target), { recursive: true })
   await fs.writeFile(file.target, data)
 }
 
-export async function unlink(file: FileRef): Promise<void> {
+export async function unlink(file: SourceMap): Promise<void> {
   await fs.unlink(file.target)
 }

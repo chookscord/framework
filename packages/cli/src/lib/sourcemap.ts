@@ -1,7 +1,7 @@
 import { sep } from 'path'
 
 export type FileType = 'command' | 'subcommand' | 'context' | 'event' | 'script' | 'config'
-export interface FileRef {
+export interface SourceMap {
   source: string
   target: string
   type: FileType
@@ -24,10 +24,10 @@ function getFileType(path: string): FileType {
   return modules[moduleName] ?? 'script'
 }
 
-export function createFileRef(opts: FileOptions): (path: string) => FileRef
-export function createFileRef(opts: FileOptions, path: string): FileRef
-export function createFileRef(opts: FileOptions, path?: string): ((path: string) => FileRef) | FileRef {
-  const toFileRef = (source: string): FileRef => ({
+export function mapSourceFile(opts: FileOptions): (path: string) => SourceMap
+export function mapSourceFile(opts: FileOptions, path: string): SourceMap
+export function mapSourceFile(opts: FileOptions, path?: string): ((path: string) => SourceMap) | SourceMap {
+  const toFileRef = (source: string): SourceMap => ({
     source,
     target: source
       .replace(opts.root, `${opts.outDir}/`)
