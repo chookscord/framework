@@ -2,6 +2,6 @@
 module.exports = {
   moduleFileExtensions: ['js', 'ts'],
   transform: {
-    '^.+\\.(t|j)s$': ['@swc/jest'],
+    '^.+\\.(t|j)s$': ['@swc/jest', { configFile: '../../.swcrc' }],
   },
 }
