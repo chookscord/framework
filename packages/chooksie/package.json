@@ -19,6 +19,11 @@
   "peerDependencies": {
     "discord.js": "^13.6.0"
   },
+  "main": "./dist/types.js",
+  "exports": {
+    ".": "./dist/types.js",
+    "./internals": "./dist/internals/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chookscord/framework.git",

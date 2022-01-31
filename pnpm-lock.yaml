@@ -68,6 +68,7 @@ importers:
       '@swc/core': ^1.2.130
       '@swc/helpers': ^0.3.2
       chokidar: ^3.5.2
+      chooksie: workspace:^2.0.0
       discord.js: ^13.6.0
       eslint-config-lint: workspace:*
       jest-config: workspace:*
@@ -79,6 +80,7 @@ importers:
       chokidar: 3.5.3
       joi: 17.5.0
     devDependencies:
+      chooksie: link:../chooksie
       discord.js: 13.6.0
       eslint-config-lint: link:../../configs/lint
       jest-config: link:../../configs/jest
