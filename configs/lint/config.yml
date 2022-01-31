@@ -7,4 +7,4 @@ extends:
   - "@chookslint/typescript/strict"
   - "@chookslint/typescript/types"
 parserOptions:
-  project: tsconfig.json
+  project: tsconfig.lint.json
