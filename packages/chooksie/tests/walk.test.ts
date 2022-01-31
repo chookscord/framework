@@ -42,4 +42,22 @@ describe('file traversal', () => {
     expect(testFile).toHaveBeenCalledWith({ name: 'foo.js', path: '/foo.js' })
     expect(testFile).toHaveBeenCalledWith({ name: 'bar.js', path: '/dir/bar.js' })
   })
+
+  it('filters files', async () => {
+    (<jest.Mock>opendir).mockReturnValueOnce((function* () {
+      yield file('foo.js', false)
+      yield file('.bar.js', false)
+    }()))
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const files = walk('/', { ignore: file => file.name.startsWith('.') })
+    const testFile = jest.fn()
+
+    for await (const path of files) {
+      testFile(path)
+    }
+
+    expect(testFile).toHaveBeenCalledWith({ name: 'foo.js', path: '/foo.js' })
+    expect(testFile).not.toHaveBeenCalledWith({ name: 'bar.js', path: '/.bar.js' })
+  })
 })
