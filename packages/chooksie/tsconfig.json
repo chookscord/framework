@@ -1,7 +1,7 @@
 {
   "extends": "tsconfig/base",
   "compilerOptions": {
-    "declarationDir": "dist/typings"
+    "outDir": "dist"
   },
   "include": [
     "src",
