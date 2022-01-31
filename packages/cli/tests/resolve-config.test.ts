@@ -1,12 +1,12 @@
 import type { Dirent } from 'fs'
 import fs from 'fs/promises'
-import type { FileRef } from '../src/lib/file-refs'
+import type { SourceMap } from '../src/lib/sourcemap'
 import { resolveConfig } from '../src/server/resolve-config'
 
 jest.mock('fs/promises')
 ;(<jest.Mock>fs.readdir).mockReturnValue(Promise.resolve([{ isFile: () => true, name: 'chooks.config.ts' }] as Dirent[]))
 
-const targetFile: FileRef = {
+const targetFile: SourceMap = {
   source: '/chooks.config.ts',
   target: '/out/chooks.config.js',
   type: 'config',
