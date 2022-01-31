@@ -1,0 +1,28 @@
+{
+  "npmClient": "pnpm",
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "types": {
+      "dependsOn": [
+        "^types"
+      ],
+      "outputs": [
+        "dist/typings/**"
+      ]
+    },
+    "dev": {
+      "cache": false
+    },
+    "test": {
+      "outputs": []
+    },
+    "lint": {}
+  }
+}
