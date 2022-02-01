@@ -4,6 +4,7 @@
   "license": "MIT",
   "packageManager": "pnpm@6.28.0",
   "scripts": {
+    "test": "turbo run test",
     "build": "turbo run build types",
     "dev": "turbo run dev"
   },
