@@ -1,6 +1,8 @@
 import { sep } from 'path'
 
-export type FileType = 'command' | 'subcommand' | 'context' | 'event' | 'script' | 'config'
+export type FileType = 'command' | 'subcommand' | 'user' | 'message' | 'event' | 'script' | 'config'
+export type SourceDir = 'commands' | 'subcommands' | 'users' | 'messages' | 'events'
+
 export interface SourceMap {
   source: string
   target: string
@@ -12,16 +14,17 @@ export interface FileOptions {
   outDir: string
 }
 
-const modules: Record<string, FileType> = {
+export const MODULES: Record<SourceDir, FileType> = {
   commands: 'command',
   subcommands: 'subcommand',
-  contexts: 'context',
+  users: 'user',
+  messages: 'message',
   events: 'event',
 }
 
-function getFileType(path: string): FileType {
+export function getFileType(path: string): FileType {
   const moduleName = path.slice(0, path.indexOf(sep))
-  return modules[moduleName] ?? 'script'
+  return MODULES[moduleName as SourceDir] ?? 'script'
 }
 
 export function mapSourceFile(opts: FileOptions): (path: string) => SourceMap
