@@ -7,6 +7,7 @@ import type {
   ClientOptions,
   CommandInteraction,
   IntentsString,
+  Interaction,
   MessageContextMenuInteraction,
   UserContextMenuInteraction,
 } from 'discord.js'
@@ -87,6 +88,8 @@ type Define<Interface extends { execute: (...args: never) => unknown }, T> =
  * };
  */
 export type InferSetupType<Setup> = Setup extends () => Awaitable<infer U> ? U : never
+
+export type GenericHandler = (ctx: CommandContext<Interaction>) => Awaitable<void>
 // #endregion
 // #region Events
 /**
@@ -242,6 +245,7 @@ export function defineSubCommandGroup(command: SubCommandGroup) {
 // #region Options
 export type Option = CommandOption | NonCommandOption
 
+export type OptionWithAutocomplete = NumberOption | StringOption
 export type NonCommandOption =
 | ChannelOption
 | NumberOption
@@ -342,6 +346,36 @@ export interface MentionableOption {
  */
 export function defineOption(option: NonCommandOption) {
   return option
+}
+// #endregion
+// #region Scripts
+/**
+ * A script that executes when the file is loaded and reloaded.
+ *
+ * @example
+ * export const chooksOnLoad: OnLoad = (ctx) => {
+ *   console.log('File loaded!');
+ *   return () => {
+ *     console.log('File reloading...');
+ *   };
+ * };
+ */
+export type OnLoad = (ctx: Context) => Awaitable<(() => void) | void>
+
+/**
+ * A file that exports special variables that does executes a specific task.
+ */
+export interface ChooksScript {
+  chooksOnLoad?: OnLoad
+  [key: string]: unknown
+}
+
+/**
+ * **Definition Function**: define a function that executes when a file is loaded/reloaded.
+ * @see {@link OnLoad}
+ */
+export function defineOnLoad(script: OnLoad) {
+  return script
 }
 // #endregion
 // #region Aliases
