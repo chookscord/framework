@@ -9,7 +9,10 @@
     "build:tsc": "tsc",
     "dev": "concurrently -r 'pnpm:build:* -- -w'"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@swc/helpers": "^0.3.2",
+    "dotenv": "^15.0.0"
+  },
   "devDependencies": {
     "discord.js": "^13.6.0",
     "eslint-config-lint": "workspace:*",

@@ -53,10 +53,15 @@ importers:
 
   packages/chooksie:
     specifiers:
+      '@swc/helpers': ^0.3.2
       discord.js: ^13.6.0
+      dotenv: ^15.0.0
       eslint-config-lint: workspace:*
       jest-config: workspace:*
       tsconfig: workspace:*
+    dependencies:
+      '@swc/helpers': 0.3.2
+      dotenv: 15.0.0
     devDependencies:
       discord.js: 13.6.0
       eslint-config-lint: link:../../configs/lint
@@ -70,6 +75,7 @@ importers:
       chokidar: ^3.5.2
       chooksie: workspace:^2.0.0
       discord.js: ^13.6.0
+      dotenv: ^15.0.0
       eslint-config-lint: workspace:*
       jest-config: workspace:*
       joi: ^17.5.0
@@ -82,6 +88,7 @@ importers:
     devDependencies:
       chooksie: link:../chooksie
       discord.js: 13.6.0
+      dotenv: 15.0.0
       eslint-config-lint: link:../../configs/lint
       jest-config: link:../../configs/jest
       tsconfig: link:../../configs/tsconfig
@@ -1803,6 +1810,10 @@ packages:
     dependencies:
       webidl-conversions: 5.0.0
     dev: true
+
+  /dotenv/15.0.0:
+    resolution: {integrity: sha512-/l1sXXm79ry34KwwS0y4oVZjB468iw/6u9g1W26dtexKcIJAnVL2pMF+hxQwzZ7LutxOwEgtym9eIxvX33CMKg==}
+    engines: {node: '>=12'}
 
   /duplexer/0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
