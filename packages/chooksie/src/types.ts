@@ -35,6 +35,14 @@ export interface ChooksConfig {
   devServer?: string
   [key: string]: unknown
 }
+
+/**
+ * **Definition Function**: define your bot's config.
+ * @see {@link ChooksConfig}
+ */
+export function defineConfig(config: ChooksConfig) {
+  return config
+}
 // #endregion
 
 // #region Contexts
