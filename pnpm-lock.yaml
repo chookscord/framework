@@ -7,6 +7,7 @@ importers:
       '@swc/cli': ^0.1.55
       '@swc/core': ^1.2.135
       '@swc/helpers': ^0.3.2
+      '@types/node': ^17.0.14
       concurrently: ^7.0.0
       jest: ^27.4.7
       regenerator-runtime: ^0.13.9
@@ -17,6 +18,7 @@ importers:
       '@swc/cli': 0.1.55_@swc+core@1.2.135
       '@swc/core': 1.2.135
       '@swc/helpers': 0.3.2
+      '@types/node': 17.0.14
       concurrently: 7.0.0
       jest: 27.4.7
       regenerator-runtime: 0.13.9
@@ -520,7 +522,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.4.2
-      '@types/node': 17.0.9
+      '@types/node': 17.0.14
       chalk: 4.1.2
       jest-message-util: 27.4.6
       jest-util: 27.4.2
@@ -541,7 +543,7 @@ packages:
       '@jest/test-result': 27.4.6
       '@jest/transform': 27.4.6
       '@jest/types': 27.4.2
-      '@types/node': 17.0.9
+      '@types/node': 17.0.14
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.8.1
@@ -585,7 +587,7 @@ packages:
     dependencies:
       '@jest/fake-timers': 27.4.6
       '@jest/types': 27.4.2
-      '@types/node': 17.0.9
+      '@types/node': 17.0.14
       jest-mock: 27.4.6
     dev: true
 
@@ -595,7 +597,7 @@ packages:
     dependencies:
       '@jest/types': 27.4.2
       '@sinonjs/fake-timers': 8.1.0
-      '@types/node': 17.0.9
+      '@types/node': 17.0.14
       jest-message-util: 27.4.6
       jest-mock: 27.4.6
       jest-util: 27.4.2
@@ -624,7 +626,7 @@ packages:
       '@jest/test-result': 27.4.6
       '@jest/transform': 27.4.6
       '@jest/types': 27.4.2
-      '@types/node': 17.0.9
+      '@types/node': 17.0.14
       chalk: 4.1.2
       collect-v8-coverage: 1.0.1
       exit: 0.1.2
@@ -708,7 +710,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 17.0.9
+      '@types/node': 17.0.14
       '@types/yargs': 16.0.4
       chalk: 4.1.2
     dev: true
@@ -1122,7 +1124,7 @@ packages:
   /@types/graceful-fs/4.1.5:
     resolution: {integrity: sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw==}
     dependencies:
-      '@types/node': 17.0.9
+      '@types/node': 17.0.14
     dev: true
 
   /@types/istanbul-lib-coverage/2.0.4:
@@ -1157,6 +1159,10 @@ packages:
     dependencies:
       '@types/node': 17.0.9
       form-data: 3.0.1
+    dev: true
+
+  /@types/node/17.0.14:
+    resolution: {integrity: sha512-SbjLmERksKOGzWzPNuW7fJM7fk3YXVTFiZWB/Hs99gwhk+/dnrQRPBQjPW9aO+fi1tAffi9PrwFvsmOKmDTyng==}
     dev: true
 
   /@types/node/17.0.9:
