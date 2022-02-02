@@ -1,4 +1,5 @@
 import { walk } from 'chooksie/internals'
+import type { Dirent } from 'fs'
 import { cp, readdir } from 'fs/promises'
 import { join } from 'path'
 import { compile, write } from './lib/compile'
@@ -34,11 +35,19 @@ function time() {
   }
 }
 
+async function copyEntrypoint() {
+  await cp(join(__dirname, './build-target.js'), join(outDir, 'index.js'))
+}
+
+async function compileConfigFile(files: Dirent[]) {
+  const config = await resolveConfigFile({ root, outDir }, files)
+  await transform(config)
+}
+
 async function build(): Promise<void> {
   console.info('Starting production build...')
   const measure = time()
   const rootFiles = await readdir(root, { withFileTypes: true })
-  const config = await resolveConfigFile({ root, outDir }, rootFiles)
 
   // @todo: module validation
   const jobList = rootFiles
@@ -57,12 +66,13 @@ async function build(): Promise<void> {
       return Promise.all(jobs)
     })
 
-  await transform(config)
-  await cp(join(__dirname, './build-target.js'), join(outDir, 'index.js'))
-  const res = await Promise.all(jobList)
+  const jobCopy = copyEntrypoint()
+  const jobConfig = compileConfigFile(rootFiles)
+
+  const res = await Promise.all([...jobList, jobConfig, jobCopy])
   const elapsed = measure()
 
-  console.info(`Wrote %d files to ${outDir}`, res.flat().length + 2)
+  console.info(`Wrote %d files to ${outDir}`, res.flat().length)
   console.info('Time Took: %s', elapsed)
 }
 
