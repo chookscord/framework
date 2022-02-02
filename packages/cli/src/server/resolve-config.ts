@@ -1,6 +1,7 @@
 import { interopRequireDefault } from '@swc/helpers'
 import type { ChooksConfig } from 'chooksie'
 import type { Awaitable } from 'discord.js'
+import type { Dirent } from 'fs'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
 import { compile } from '../lib/compile'
@@ -20,13 +21,8 @@ const CONFIG_FILES = [
   'chooks.config.dev.ts',
 ]
 
-export async function resolveConfig(
-  opts: FileOptions,
-  overrides: WatchCompilerOptions & ConfigResolverOverrides = {},
-): Promise<ChooksConfig> {
-  const { onChange = compile, onCompile = compile, loader = require } = overrides
-  const validator = overrides.validator ?? validateConfig
-  const rootFiles = await readdir(opts.root, { withFileTypes: true })
+export async function resolveConfigFile(opts: FileOptions, files?: Dirent[]): Promise<SourceMap> {
+  const rootFiles = files ?? await readdir(opts.root, { withFileTypes: true })
 
   const configIndex = rootFiles
     .filter(file => file.isFile())
@@ -37,11 +33,21 @@ export async function resolveConfig(
   }
 
   const configFile = CONFIG_FILES[configIndex]
-  const file: SourceMap = {
+  return {
     source: join(opts.root, configFile),
     target: join(opts.outDir, 'chooks.config.js'),
     type: 'config',
   }
+}
+
+export async function resolveConfig(
+  opts: FileOptions,
+  overrides: WatchCompilerOptions & ConfigResolverOverrides = {},
+): Promise<ChooksConfig> {
+  const file = await resolveConfigFile(opts)
+
+  const { onChange = compile, onCompile = compile, loader = require } = overrides
+  const validator = overrides.validator ?? validateConfig
 
   const data = await onChange(file)
   await onCompile(file, data.code)
