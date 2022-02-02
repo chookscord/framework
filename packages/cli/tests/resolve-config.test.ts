@@ -7,8 +7,7 @@ jest.mock('fs/promises')
 ;(<jest.Mock>fs.readdir).mockReturnValue(Promise.resolve([{ isFile: () => true, name: 'chooks.config.ts' }] as Dirent[]))
 
 // Prevent @swc/core from loading since Jest's runtime breaks it.
-// Might be needed to patch for other OSes as well
-jest.mock('@swc/core-linux-x64-gnu', () => 1)
+jest.mock('@swc/core', () => 1)
 
 const targetFile: SourceMap = {
   source: '/chooks.config.ts',

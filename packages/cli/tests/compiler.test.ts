@@ -4,7 +4,7 @@ import { Stats } from 'fs'
 import type { SourceMap } from '../src/lib/sourcemap'
 import { createWatchCompiler } from '../src/server/compiler'
 
-jest.mock('@swc/core-linux-x64-gnu', () => 1)
+jest.mock('@swc/core', () => 1)
 
 describe('watch compiler', () => {
   it('compiles files', async () => {
