@@ -1,7 +1,7 @@
 import type { Options, Output } from '@swc/core'
 import { transformFile } from '@swc/core'
 import fs from 'fs/promises'
-import { basename } from 'path'
+import { dirname } from 'path'
 import type { SourceMap } from './sourcemap'
 
 const SWC_OPTIONS: Readonly<Options> = {
@@ -14,11 +14,11 @@ const SWC_OPTIONS: Readonly<Options> = {
 }
 
 export function compile(file: SourceMap): Promise<Output> {
-  return transformFile(file.target, SWC_OPTIONS)
+  return transformFile(file.source, SWC_OPTIONS)
 }
 
 export async function write(file: SourceMap, data: string): Promise<void> {
-  await fs.mkdir(basename(file.target), { recursive: true })
+  await fs.mkdir(dirname(file.target), { recursive: true })
   await fs.writeFile(file.target, data)
 }
 
