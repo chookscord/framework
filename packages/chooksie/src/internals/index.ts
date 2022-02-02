@@ -1,4 +1,6 @@
 export { default as createClient } from './client'
+export { AppChannelType, AppCommandOptionType, AppCommandType } from './discord'
+export type { AppCommand, AppCommandOption, AppCommandOptionChoice, AppDescription, AppName } from './discord'
 export { loadCommand, loadEvent, loadScript, loadSubCommand } from './loaders'
 export { createKey, resolveInteraction } from './resolve'
 export type { AutocompleteStore, CommandStore, Stores } from './resolve'
