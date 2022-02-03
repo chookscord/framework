@@ -98,6 +98,7 @@ type Define<Interface extends { execute: (...args: never) => unknown }, T> =
 export type InferSetupType<Setup> = Setup extends () => Awaitable<infer U> ? U : never
 
 export type GenericHandler = (ctx: CommandContext<Interaction>) => Awaitable<void>
+export type CommandStore = Map<string, GenericHandler>
 // #endregion
 // #region Events
 /**
@@ -331,9 +332,10 @@ export interface UserOption {
  * An option where the only roles are allowed.
  */
 export interface RoleOption {
-  type: 'OPTION'
+  type: 'ROLE'
   name: AppName
   description: AppDescription
+  /** @default false */
   required?: boolean
 }
 

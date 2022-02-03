@@ -1,11 +1,10 @@
 import { interopRequireDefault } from '@swc/helpers'
-import type { ChooksScript, Command, Event, SlashSubCommand } from 'chooksie'
-import type { Stores } from 'chooksie/internals'
+import type { ChooksScript, Command, Event, GenericHandler, SlashSubCommand } from 'chooksie'
 import { createClient, loadCommand, loadEvent, loadScript, loadSubCommand, resolveInteraction, walk } from 'chooksie/internals'
 import type { ClientEvents } from 'discord.js'
 import 'dotenv/config'
-import config from './chooks.config.js'
 import type { SourceDir } from '../lib'
+import config from './chooks.config.js'
 
 const MODULE_NAMES: SourceDir[] = ['commands', 'subcommands', 'messages', 'users', 'events']
 
@@ -26,13 +25,10 @@ async function main() {
   const client = createClient(config)
   const login = client.login(config.credentials.token)
 
-  const stores: Stores = {
-    command: new Map(),
-    autocomplete: new Map(),
-  }
+  const store = new Map<string, GenericHandler>()
 
   client.on('interactionCreate', async interaction => {
-    const handler = resolveInteraction(stores, interaction)
+    const handler = resolveInteraction(store, interaction)
     if (!handler) return
 
     if (!handler.execute) {
@@ -56,10 +52,10 @@ async function main() {
       case 'commands':
       case 'messages':
       case 'users':
-        await loadCommand(stores, <unknown>mod as Exclude<Command, SlashSubCommand>)
+        await loadCommand(store, <unknown>mod as Exclude<Command, SlashSubCommand>)
         return
       case 'subcommands':
-        await loadSubCommand(stores, <unknown>mod as SlashSubCommand)
+        await loadSubCommand(store, <unknown>mod as SlashSubCommand)
         return
       case 'events':
         await loadEvent(client, <unknown>mod as Event<keyof ClientEvents>)
