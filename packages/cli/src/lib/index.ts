@@ -1,0 +1,5 @@
+export { compile, unlink, write } from './compile'
+export { validateConfig } from './config'
+export { getFileType, mapSourceFile, MODULES } from './sourcemap'
+export type { FileOptions, FileType, SourceDir, SourceMap } from './sourcemap'
+export { default as Store } from './store'

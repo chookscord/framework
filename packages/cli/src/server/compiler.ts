@@ -2,9 +2,8 @@ import type { Output } from '@swc/core'
 import type { FSWatcher } from 'chokidar'
 import EventEmitter from 'events'
 import type { Stats } from 'fs'
-import { compile, unlink, write } from '../lib/compile'
-import type { FileOptions, SourceMap } from '../lib/sourcemap'
-import { mapSourceFile } from '../lib/sourcemap'
+import type { FileOptions, SourceMap } from '../lib'
+import { compile, mapSourceFile, unlink, write } from '../lib'
 
 export interface WatchCompilerOptions {
   onChange?: (file: SourceMap) => Output | Promise<Output>

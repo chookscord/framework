@@ -8,7 +8,7 @@
     "emitDeclarationOnly": false,
     "paths": {
       "chooksie/internals": [
-        "../chooksie/src/internals/index.ts"
+        "../chooksie/dist/internals/index.d.ts"
       ]
     }
   },

@@ -4,9 +4,8 @@ import type { Awaitable } from 'discord.js'
 import type { Dirent } from 'fs'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
-import { compile } from '../lib/compile'
-import { validateConfig } from '../lib/config'
-import type { FileOptions, SourceMap } from '../lib/sourcemap'
+import type { FileOptions, SourceMap } from '../lib'
+import { compile, validateConfig } from '../lib'
 import type { WatchCompilerOptions } from './compiler'
 
 export interface ConfigResolverOverrides {
