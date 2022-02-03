@@ -2,7 +2,7 @@ import { interopRequireDefault } from '@swc/helpers'
 import type { ChooksConfig } from 'chooksie'
 import type { Awaitable } from 'discord.js'
 import type { FileOptions } from '../lib'
-import { compile, resolveConfigFile, validateConfig } from '../lib'
+import { compile, resolveConfigFile, validateConfig, write } from '../lib'
 import type { WatchCompilerOptions } from './compiler'
 
 export interface ConfigResolverOverrides {
@@ -16,13 +16,13 @@ export async function resolveConfig(
 ): Promise<ChooksConfig> {
   const file = await resolveConfigFile(opts)
 
-  const { onChange = compile, onCompile = compile, loader = require } = overrides
+  const { onChange = compile, onCompile = write, loader = require } = overrides
   const validator = overrides.validator ?? validateConfig
 
   const data = await onChange(file)
   await onCompile(file, data.code)
 
-  const config = await loader(file.target) as ChooksConfig
+  const config = interopRequireDefault(await loader(file.target) as ChooksConfig).default
   const error = await validator(config)
 
   if (error !== null) {
@@ -31,5 +31,5 @@ export async function resolveConfig(
       : new Error(error)
   }
 
-  return interopRequireDefault(config).default
+  return config
 }
