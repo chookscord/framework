@@ -1,3 +1,3 @@
 declare module '@swc/helpers' {
-  export function interopRequireDefault<T>(obj: T): { default: T }
+  export function interopRequireDefault<T>(obj: T): T & { default: T }
 }
