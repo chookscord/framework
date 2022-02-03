@@ -2,6 +2,7 @@ import type { Output } from '@swc/core'
 import type { FSWatcher } from 'chokidar'
 import EventEmitter from 'events'
 import type { Stats } from 'fs'
+import { resolve } from 'path'
 import type { FileOptions, SourceMap } from '../lib'
 import { compile, mapSourceFile, unlink, write } from '../lib'
 
@@ -33,7 +34,7 @@ export function createWatchCompiler(
   const compileTarget = async (path: string, stats?: Stats) => {
     if (!stats?.isFile()) return
 
-    const file = toFile(path)
+    const file = toFile(resolve(path))
     const data = await onChange(file)
     await onCompile(file, data.code)
 
@@ -41,7 +42,7 @@ export function createWatchCompiler(
   }
 
   const deleteTarget = async (path: string) => {
-    const file = toFile(path)
+    const file = toFile(resolve(path))
     await onDelete(file)
 
     events.emit('delete', file)
