@@ -2,9 +2,8 @@ import { walk } from 'chooksie/internals'
 import type { Dirent } from 'fs'
 import { cp, readdir } from 'fs/promises'
 import { join } from 'path'
-import type { SourceMap } from './lib'
-import { compile, mapSourceFile, write } from './lib'
-import { resolveConfigFile } from './server/resolve-config'
+import type { SourceMap } from '../lib'
+import { compile, mapSourceFile, resolveConfigFile, write } from '../lib'
 
 const root = process.cwd()
 const outDir = join(root, 'dist')

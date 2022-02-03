@@ -5,7 +5,7 @@ import { createClient, loadCommand, loadEvent, loadScript, loadSubCommand, resol
 import type { ClientEvents } from 'discord.js'
 import 'dotenv/config'
 import config from './chooks.config.js'
-import type { SourceDir } from './lib'
+import type { SourceDir } from '../lib'
 
 const MODULE_NAMES: SourceDir[] = ['commands', 'subcommands', 'messages', 'users', 'events']
 
