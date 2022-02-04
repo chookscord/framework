@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { BotCredentials, ChooksConfig } from 'chooksie'
 import type { Dirent } from 'fs'
 import { readdir } from 'fs/promises'
@@ -12,12 +13,26 @@ const CONFIG_FILES = [
   'chooks.config.dev.ts',
 ]
 
+const intents = Joi.array()
+  .items(Joi.string())
+  .required()
+
 const configSchema = Joi.object<ChooksConfig>({
   credentials: Joi.object<BotCredentials>({
     appId: Joi.string(),
     token: Joi.string().required(),
   }).required(),
+  intents,
 }).unknown(true)
+
+const devConfigSchema = Joi.object<ChooksConfig>({
+  credentials: Joi.object<BotCredentials>({
+    appId: Joi.string().required(),
+    token: Joi.string().required(),
+  }).required(),
+  devServer: Joi.string().required(),
+  intents,
+})
 
 type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
@@ -25,8 +40,22 @@ type DeepPartial<T> = {
     : T[P] extends object ? DeepPartial<T[P]> : T[P];
 }
 
-export function validateConfig(config: DeepPartial<ChooksConfig>): Joi.ValidationError | null {
-  return configSchema.validate(config).error ?? null
+export async function validateConfig(config: DeepPartial<ChooksConfig>): Promise<null | Joi.ValidationError> {
+  try {
+    await configSchema.validateAsync(config)
+    return null
+  } catch (error) {
+    return error as Joi.ValidationError
+  }
+}
+
+export async function validateDevConfig(config: DeepPartial<ChooksConfig>): Promise<null | Joi.ValidationError> {
+  try {
+    await devConfigSchema.validateAsync(config)
+    return null
+  } catch (error) {
+    return error as Joi.ValidationError
+  }
 }
 
 export async function resolveConfigFile(opts: FileOptions, files?: Dirent[]): Promise<SourceMap> {
