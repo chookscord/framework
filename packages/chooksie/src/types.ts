@@ -127,10 +127,10 @@ export function defineEvent<T, Name extends keyof ClientEvents>(
 // #endregion
 // #region Commands
 export type Command =
-| SlashCommand
+| SlashCommand<any>
 | SlashSubCommand
-| UserCommand
-| MessageCommand
+| UserCommand<any>
+| MessageCommand<any>
 
 /**
  * A basic slash command.
@@ -159,7 +159,7 @@ export interface SlashSubCommand {
   type?: 'CHAT_INPUT'
   name: AppName
   description: AppDescription
-  options: (SubCommand[]) | (SubCommandGroup[])
+  options: (SubCommand<any>[]) | (SubCommandGroup[])
 }
 
 /**
@@ -207,7 +207,7 @@ export function defineMessageCommand<T>(command: Define<MessageCommand<T>, T>) {
 }
 // #endregion
 // #region Subcommands
-export type CommandOption = SubCommand | SubCommandGroup
+export type CommandOption = SubCommand<any> | SubCommandGroup
 
 /**
  * A basic subcommand.
@@ -240,7 +240,7 @@ export interface SubCommandGroup {
   description: AppDescription
   /** @default false */
   required?: boolean
-  options: SubCommand<unknown>[]
+  options: SubCommand<any>[]
 }
 
 /**
