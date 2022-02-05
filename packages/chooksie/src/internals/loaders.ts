@@ -1,5 +1,5 @@
 import type { Client, ClientEvents } from 'discord.js'
-import type { ChooksScript, Command, CommandStore, Event, GenericHandler, OptionWithAutocomplete, SlashSubCommand } from '../types'
+import type { ChooksScript, Command, CommandStore, EmptyObject, Event, GenericHandler, OptionWithAutocomplete, SlashSubcommand } from '../types'
 import { createKey } from './resolve'
 
 /**
@@ -24,8 +24,8 @@ async function loadAutocomplete(store: CommandStore, option: OptionWithAutocompl
 /**
  * @internal **FOR PRODUCTION USE ONLY**.
  */
-async function loadCommand(store: CommandStore, command: Exclude<Command, SlashSubCommand>): Promise<void> {
-  const deps = await command.setup?.() ?? {}
+async function loadCommand(store: CommandStore, command: Exclude<Command, SlashSubcommand>): Promise<void> {
+  const deps = await command.setup?.() as EmptyObject ?? {}
   const execute = <GenericHandler>command.execute.bind(deps)
   store.set(command.name, execute)
   if ('options' in command && Array.isArray(command.options)) {
@@ -40,11 +40,11 @@ async function loadCommand(store: CommandStore, command: Exclude<Command, SlashS
 /**
  * @internal **FOR PRODUCTION USE ONLY**.
  */
-async function loadSubCommand(store: CommandStore, command: SlashSubCommand): Promise<void> {
+async function loadSubcommand(store: CommandStore, command: SlashSubcommand): Promise<void> {
   for (const option of command.options) {
     if (option.type === 'SUB_COMMAND_GROUP') {
       for (const subcommand of option.options) {
-        const deps = await subcommand.setup?.() ?? {}
+        const deps = await subcommand.setup?.() as EmptyObject ?? {}
         const execute = <GenericHandler>subcommand.execute.bind(deps)
         const key = createKey(command.name, option.name, subcommand.name)
         store.set(key, execute)
@@ -57,7 +57,7 @@ async function loadSubCommand(store: CommandStore, command: SlashSubCommand): Pr
       continue
     }
     if (option.type === 'SUB_COMMAND') {
-      const deps = await option.setup?.() ?? {}
+      const deps = await option.setup?.() as EmptyObject ?? {}
       const execute = <GenericHandler>option.execute.bind(deps)
       const key = createKey(command.name, option.name)
       store.set(key, execute)
@@ -79,4 +79,4 @@ async function loadScript(client: Client, script: ChooksScript): Promise<void> {
   }
 }
 
-export { loadEvent, loadCommand, loadSubCommand, loadScript }
+export { loadEvent, loadCommand, loadSubcommand, loadScript }

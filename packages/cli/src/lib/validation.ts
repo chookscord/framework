@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import type { BoolOption, ChannelOption, ChannelType, Choice, Command, Event, MentionableOption, MessageCommand, NumberOption, RoleOption, SlashCommand, SlashSubCommand, StringOption, SubCommand, SubCommandGroup, UserCommand, UserOption } from 'chooksie'
+import type { BoolOption, ChannelOption, ChannelType, Choice, Command, Event, MentionableOption, MessageCommand, NumberOption, RoleOption, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup, UserCommand, UserOption } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
 import Joi from 'joi'
 import { AppChannelType } from '../internals'
@@ -124,7 +124,7 @@ const nonCommandOption = [
   mentionableOption,
 ]
 
-const subCommand = Joi.object<SubCommand>({
+const subCommand = Joi.object<Subcommand>({
   name: appName,
   description: appDescription,
   type: Joi.string()
@@ -139,7 +139,7 @@ const subCommand = Joi.object<SubCommand>({
     .max(25),
 })
 
-const subCommandGroup = Joi.object<SubCommandGroup>({
+const subCommandGroup = Joi.object<SubcommandGroup>({
   name: appName,
   description: appDescription,
   type: Joi.string()
@@ -169,7 +169,7 @@ export function validateSlashCommand(command: Partial<Command>): Promise<SlashCo
   return slashCommand.validateAsync(command)
 }
 
-const slashSubCommand = Joi.object<SlashSubCommand>({
+const slashSubcommand = Joi.object<SlashSubcommand>({
   name: appName,
   description: appDescription,
   type: Joi.string()
@@ -189,8 +189,8 @@ const slashSubCommand = Joi.object<SlashSubCommand>({
     .required(),
 })
 
-export function validateSlashSubCommand(command: Partial<Command>): Promise<SlashSubCommand> {
-  return slashSubCommand.validateAsync(command)
+export function validateSlashSubcommand(command: Partial<Command>): Promise<SlashSubcommand> {
+  return slashSubcommand.validateAsync(command)
 }
 
 const userCommand = Joi.object<UserCommand>({

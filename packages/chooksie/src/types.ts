@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-empty-interface */
 import type {
   AutocompleteInteraction,
@@ -128,7 +129,7 @@ export function defineEvent<T, Name extends keyof ClientEvents>(
 // #region Commands
 export type Command =
 | SlashCommand<any>
-| SlashSubCommand
+| SlashSubcommand
 | UserCommand<any>
 | MessageCommand<any>
 
@@ -157,11 +158,11 @@ export function defineSlashCommand<T>(command: Define<SlashCommand<T>, T>) {
 /**
  * A slash command with subcommands.
  */
-export interface SlashSubCommand {
+export interface SlashSubcommand {
   type?: 'CHAT_INPUT'
   name: AppName
   description: AppDescription
-  options: (SubCommand<any>[]) | (SubCommandGroup[])
+  options: (Subcommand<any>[]) | (SubcommandGroup[])
   /** @default false */
   defaultPermission?: boolean
 }
@@ -170,7 +171,7 @@ export interface SlashSubCommand {
  * **Definition Function**: define a slash command with subcommands.
  * @see {@link SlashSubCommand}
  */
-export function defineSlashSubCommand(command: SlashSubCommand) {
+export function defineSlashSubcommand(command: SlashSubcommand) {
   return command
 }
 
@@ -215,12 +216,12 @@ export function defineMessageCommand<T>(command: Define<MessageCommand<T>, T>) {
 }
 // #endregion
 // #region Subcommands
-export type CommandOption = SubCommand<any> | SubCommandGroup
+export type CommandOption = Subcommand<any> | SubcommandGroup
 
 /**
  * A basic subcommand.
  */
-export interface SubCommand<T = EmptyObject> {
+export interface Subcommand<T = EmptyObject> {
   type: 'SUB_COMMAND'
   name: AppName
   description: AppDescription
@@ -233,29 +234,29 @@ export interface SubCommand<T = EmptyObject> {
 
 /**
  * **Definition Function**: define a subcommand.
- * @see {@link SubCommand}
+ * @see {@link Subcommand}
  */
-export function defineSubCommand<T>(command: Define<SubCommand<T>, T>) {
-  return command as SubCommand
+export function defineSubcommand<T>(command: Define<Subcommand<T>, T>) {
+  return command as Subcommand
 }
 
 /**
  * A container for nesting subcommands.
  */
-export interface SubCommandGroup {
+export interface SubcommandGroup {
   type: 'SUB_COMMAND_GROUP'
   name: AppName
   description: AppDescription
   /** @default false */
   required?: boolean
-  options: SubCommand<any>[]
+  options: Subcommand<any>[]
 }
 
 /**
  * **Definition Function**: define a subcommand group.
- * @see {@link SubCommandGroup}
+ * @see {@link SubcommandGroup}
  */
-export function defineSubCommandGroup(command: SubCommandGroup) {
+export function defineSubcommandGroup(command: SubcommandGroup) {
   return command
 }
 // #endregion

@@ -1,6 +1,6 @@
 import { interopRequireDefault } from '@swc/helpers'
-import type { ChooksScript, Command, Event, GenericHandler, SlashSubCommand } from 'chooksie'
-import { createClient, loadCommand, loadEvent, loadScript, loadSubCommand, resolveInteraction, walk } from 'chooksie/internals'
+import type { ChooksScript, Command, Event, GenericHandler, SlashSubcommand } from 'chooksie'
+import { createClient, loadCommand, loadEvent, loadScript, loadSubcommand, resolveInteraction, walk } from 'chooksie/internals'
 import type { ClientEvents } from 'discord.js'
 import 'dotenv/config'
 import type { SourceDir } from '../lib'
@@ -52,10 +52,10 @@ async function main() {
       case 'commands':
       case 'messages':
       case 'users':
-        await loadCommand(store, <unknown>mod as Exclude<Command, SlashSubCommand>)
+        await loadCommand(store, <unknown>mod as Exclude<Command, SlashSubcommand>)
         return
       case 'subcommands':
-        await loadSubCommand(store, <unknown>mod as SlashSubCommand)
+        await loadSubcommand(store, <unknown>mod as SlashSubcommand)
         return
       case 'events':
         await loadEvent(client, <unknown>mod as Event<keyof ClientEvents>)

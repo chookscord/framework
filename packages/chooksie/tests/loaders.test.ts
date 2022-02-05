@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import type { Client } from 'discord.js'
-import { loadCommand, loadEvent, loadSubCommand } from '../src/internals/loaders'
+import { loadCommand, loadEvent, loadSubcommand } from '../src/internals/loaders'
 import { createKey } from '../src/internals/resolve'
 
 class FakeMap extends Map {
@@ -56,7 +56,7 @@ describe('loaders', () => {
   })
 
   test('slash subcommands', async () => {
-    await loadSubCommand(store, {
+    await loadSubcommand(store, {
       name: 'foo',
       description: '',
       options: [
@@ -89,7 +89,7 @@ describe('loaders', () => {
   })
 
   test('slash subcommand groups', async () => {
-    await loadSubCommand(store, {
+    await loadSubcommand(store, {
       name: 'foo',
       description: '',
       options: [
