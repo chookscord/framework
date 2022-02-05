@@ -20,21 +20,17 @@ describe('loaders', () => {
   const deps = { [Symbol('foo')]: 23 }
   const setup = jest.fn().mockReturnValue(Promise.resolve(deps))
 
-  const stores = {
-    command: new FakeMap(),
-    autocomplete: new FakeMap(),
-  }
+  const store = new FakeMap()
 
   afterEach(() => {
-    stores.command.set.mockClear()
-    stores.autocomplete.set.mockClear()
+    store.set.mockClear()
     execute.mockClear()
     autocomplete.mockClear()
     setup.mockClear()
   })
 
   test('commands', async () => {
-    await loadCommand(stores, {
+    await loadCommand(store, {
       name: 'foo',
       description: '',
       setup,
@@ -55,12 +51,12 @@ describe('loaders', () => {
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
     const key = createKey('foo')
-    expect(stores.command.set).toHaveBeenCalledWith(key, execute.bind())
-    expect(stores.autocomplete.set).toHaveBeenCalledWith(createKey(key, 'bar'), autocomplete.bind())
+    expect(store.set).toHaveBeenCalledWith(key, execute.bind())
+    expect(store.set).toHaveBeenCalledWith(createKey(key, 'bar'), autocomplete.bind())
   })
 
   test('slash subcommands', async () => {
-    await loadSubCommand(stores, {
+    await loadSubCommand(store, {
       name: 'foo',
       description: '',
       options: [
@@ -88,12 +84,12 @@ describe('loaders', () => {
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
     const key = createKey('foo', 'bar')
-    expect(stores.command.set).toHaveBeenCalledWith(key, execute.bind())
-    expect(stores.autocomplete.set).toHaveBeenCalledWith(createKey(key, 'baz'), autocomplete.bind())
+    expect(store.set).toHaveBeenCalledWith(key, execute.bind())
+    expect(store.set).toHaveBeenCalledWith(createKey(key, 'baz'), autocomplete.bind())
   })
 
   test('slash subcommand groups', async () => {
-    await loadSubCommand(stores, {
+    await loadSubCommand(store, {
       name: 'foo',
       description: '',
       options: [
@@ -128,8 +124,8 @@ describe('loaders', () => {
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
     const key = createKey('foo', 'bar', 'baz')
-    expect(stores.command.set).toHaveBeenCalledWith(key, execute.bind())
-    expect(stores.autocomplete.set).toHaveBeenCalledWith(createKey(key, 'qux'), autocomplete.bind())
+    expect(store.set).toHaveBeenCalledWith(key, execute.bind())
+    expect(store.set).toHaveBeenCalledWith(createKey(key, 'qux'), autocomplete.bind())
   })
 
   test('events', async () => {

@@ -42,7 +42,7 @@ describe('resolving interactions', () => {
     const interaction = fakeInteraction('command', { name: 'foo' })
 
     const key = createKey('foo')
-    const res = resolveInteraction(<never>{ command: map }, interaction)
+    const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
     expect(res).toStrictEqual({ key, execute })
@@ -56,7 +56,7 @@ describe('resolving interactions', () => {
     })
 
     const key = createKey('foo', 'bar')
-    const res = resolveInteraction(<never>{ command: map }, interaction)
+    const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
     expect(res).toStrictEqual({ key, execute })
@@ -71,7 +71,7 @@ describe('resolving interactions', () => {
     })
 
     const key = createKey('foo', 'baz', 'bar')
-    const res = resolveInteraction(<never>{ command: map }, interaction)
+    const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
     expect(res).toStrictEqual({ key, execute })
@@ -82,7 +82,7 @@ describe('resolving interactions', () => {
     const interaction = fakeInteraction('context', { name: 'foo' })
 
     const key = createKey('foo')
-    const res = resolveInteraction(<never>{ command: map }, interaction)
+    const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
     expect(res).toStrictEqual({ key, execute })
@@ -96,7 +96,7 @@ describe('resolving interactions', () => {
     })
 
     const key = createKey('foo', 'baz')
-    const res = resolveInteraction(<never>{ autocomplete: map }, interaction)
+    const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
     expect(res).toStrictEqual({ key, execute })
@@ -112,7 +112,7 @@ describe('resolving interactions', () => {
     })
 
     const key = createKey('foo', 'bar', 'baz', 'qux')
-    const res = resolveInteraction(<never>{ autocomplete: map }, interaction)
+    const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
     expect(res).toStrictEqual({ key, execute })

@@ -2,22 +2,27 @@ import { validateConfig } from '../src/lib/config'
 
 describe('config validation', () => {
   describe('valid config', () => {
-    test('minimal config', () => {
+    test('minimal config', async () => {
       expect(
-        validateConfig({
+        await validateConfig({
           credentials: {
             token: 'bar',
           },
+          intents: [],
         }),
       ).toBeNull()
     })
 
-    test('full config', () => {
+    test('full config', async () => {
       expect(
-        validateConfig({
+        await validateConfig({
           credentials: {
             token: 'bar',
             appId: 'foo',
+          },
+          intents: [],
+          client: {
+            options: {},
           },
         }),
       ).toBeNull()
@@ -25,17 +30,19 @@ describe('config validation', () => {
   })
 
   describe('invalid configs', () => {
-    test('wrong credentials', () => {
+    test('wrong credentials', async () => {
       expect(
-        validateConfig({
+        await validateConfig({
+          intents: [],
         }),
       ).toBeInstanceOf(Error)
 
       expect(
-        validateConfig({
+        await validateConfig({
           credentials: {
             appId: 'bar',
           },
+          intents: [],
         }),
       ).toBeInstanceOf(Error)
     })
