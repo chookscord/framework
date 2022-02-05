@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import type { BotCredentials, ChooksConfig } from 'chooksie'
+import type { ChooksConfig } from 'chooksie'
 import type { Dirent } from 'fs'
 import { readdir } from 'fs/promises'
 import Joi from 'joi'
@@ -17,21 +17,22 @@ const intents = Joi.array()
   .items(Joi.string())
   .required()
 
+const clientOptions = Joi.object({
+  options: Joi.object().unknown(),
+})
+
 const configSchema = Joi.object<ChooksConfig>({
-  credentials: Joi.object<BotCredentials>({
-    appId: Joi.string(),
-    token: Joi.string().required(),
-  }).required(),
+  token: Joi.string().required(),
+  devServer: Joi.string(),
   intents,
+  client: clientOptions,
 }).unknown(true)
 
 const devConfigSchema = Joi.object<ChooksConfig>({
-  credentials: Joi.object<BotCredentials>({
-    appId: Joi.string().required(),
-    token: Joi.string().required(),
-  }).required(),
+  token: Joi.string().required(),
   devServer: Joi.string().required(),
   intents,
+  client: clientOptions,
 })
 
 type DeepPartial<T> = {

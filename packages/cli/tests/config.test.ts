@@ -1,13 +1,21 @@
-import { validateConfig } from '../src/lib/config'
+import { validateConfig, validateDevConfig } from '../src/lib/config'
 
 describe('config validation', () => {
   describe('valid config', () => {
     test('minimal config', async () => {
       expect(
         await validateConfig({
-          credentials: {
-            token: 'bar',
-          },
+          token: 'foo',
+          intents: [],
+        }),
+      ).toBeNull()
+    })
+
+    test('minimal dev config', async () => {
+      expect(
+        await validateDevConfig({
+          token: 'foo',
+          devServer: 'bar',
           intents: [],
         }),
       ).toBeNull()
@@ -16,11 +24,9 @@ describe('config validation', () => {
     test('full config', async () => {
       expect(
         await validateConfig({
-          credentials: {
-            token: 'bar',
-            appId: 'foo',
-          },
+          token: 'foo',
           intents: [],
+          devServer: 'bar',
           client: {
             options: {},
           },
@@ -30,18 +36,18 @@ describe('config validation', () => {
   })
 
   describe('invalid configs', () => {
-    test('wrong credentials', async () => {
+    test('missing credentials', async () => {
       expect(
         await validateConfig({
           intents: [],
         }),
       ).toBeInstanceOf(Error)
+    })
 
+    test('missing dev guild id', async () => {
       expect(
-        await validateConfig({
-          credentials: {
-            appId: 'bar',
-          },
+        await validateDevConfig({
+          token: 'foo',
           intents: [],
         }),
       ).toBeInstanceOf(Error)
