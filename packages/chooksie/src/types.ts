@@ -142,6 +142,8 @@ export interface SlashCommand<T = EmptyObject> {
   setup?: () => Awaitable<T>
   execute: (this: T, ctx: CommandContext<CommandInteraction>) => Awaitable<void>
   options?: NonCommandOption[]
+  /** @default false */
+  defaultPermission?: boolean
 }
 
 /**
@@ -160,6 +162,8 @@ export interface SlashSubCommand {
   name: AppName
   description: AppDescription
   options: (SubCommand<any>[]) | (SubCommandGroup[])
+  /** @default false */
+  defaultPermission?: boolean
 }
 
 /**
@@ -178,6 +182,8 @@ export interface UserCommand<T = EmptyObject> {
   name: AppName
   setup?: () => Awaitable<T>
   execute: (this: T, ctx: CommandContext<UserContextMenuInteraction>) => Awaitable<void>
+  /** @default false */
+  defaultPermission?: boolean
 }
 
 /**
@@ -196,6 +202,8 @@ export interface MessageCommand<T = EmptyObject> {
   name: AppName
   setup?: () => Awaitable<T>
   execute: (this: T, ctx: CommandContext<MessageContextMenuInteraction>) => Awaitable<void>
+  /** @default false */
+  defaultPermission?: boolean
 }
 
 /**
