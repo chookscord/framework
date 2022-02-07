@@ -1,4 +1,4 @@
-import { walk } from 'chooksie/internals'
+import { timer, walk } from 'chooksie/internals'
 import type { Dirent } from 'fs'
 import { cp, readdir } from 'fs/promises'
 import { join } from 'path'
@@ -24,15 +24,6 @@ async function transform(file: SourceMap) {
   await write(file, output.code)
 }
 
-function time() {
-  const start = process.hrtime()
-  return () => {
-    const [secs, nsecs] = process.hrtime(start)
-    const msecs = Math.floor(nsecs / 1e6)
-    return secs > 0 ? `${secs}.${msecs}s` : `${msecs}ms`
-  }
-}
-
 async function copyEntrypoint() {
   await cp(join(__dirname, './build-target.js'), join(outDir, 'index.js'))
 }
@@ -44,7 +35,7 @@ async function compileConfigFile(files: Dirent[]) {
 
 async function build(): Promise<void> {
   console.info('Starting production build...')
-  const measure = time()
+  const measure = timer()
   const rootFiles = await readdir(root, { withFileTypes: true })
 
   // @todo: module validation
@@ -70,8 +61,8 @@ async function build(): Promise<void> {
   const res = await Promise.all([...jobList, jobConfig, jobCopy])
   const elapsed = measure()
 
-  console.info(`Wrote %d files to ${outDir}`, res.flat().length)
-  console.info('Time Took: %s', elapsed)
+  console.info(`Wrote ${res.flat().length} files to ${outDir}`)
+  console.info(`Time Took: ${elapsed}`)
 }
 
 export = build
