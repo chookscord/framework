@@ -23,7 +23,7 @@ function hasScript(mod: Record<string, unknown>): mod is ChooksScript {
 
 async function main() {
   const client = createClient(config)
-  const login = client.login(config.credentials.token)
+  const login = client.login(config.token)
 
   const store = new Map<string, GenericHandler>()
 
