@@ -13,7 +13,8 @@ import type {
   UserContextMenuInteraction,
 } from 'discord.js'
 import type {
-  AppChannelType, AppCommandOptionType,
+  AppChannelType,
+  AppCommandOptionType,
   AppCommandType,
   AppDescription,
   AppName,
@@ -757,7 +758,7 @@ export function defineOption<T>(option: DefineOption<T>) {
   return option as NonCommandOption
 }
 
-interface Choice<Type extends string | number = string | number> {
+export interface Choice<Type extends string | number = string | number> {
   name: AppName
   value: Type
 }
