@@ -15,14 +15,15 @@ function resolveInteraction(store: CommandStore, interaction: Interaction): Reso
     const group = interaction.options.getSubcommandGroup(false)
     const subcommand = interaction.options.getSubcommand(false)
 
-    const key = createKey(interaction.commandName, group, subcommand)
+    const key = createKey('cmd', interaction.commandName, group, subcommand)
     const execute = store.get(key) ?? null
 
     return { key, execute }
   }
 
   if (interaction.isContextMenu()) {
-    const key = interaction.commandName
+    const namespace = interaction.isUserContextMenu() ? 'usr' : 'msg'
+    const key = createKey(namespace, interaction.commandName)
     const execute = store.get(key) ?? null
 
     return { key, execute }
@@ -33,7 +34,7 @@ function resolveInteraction(store: CommandStore, interaction: Interaction): Reso
     const subcommand = interaction.options.getSubcommand(false)
     const option = interaction.options.getFocused(true)
 
-    const key = createKey(interaction.commandName, group, subcommand, option.name)
+    const key = createKey('auto', interaction.commandName, group, subcommand, option.name)
     const execute = store.get(key) ?? null
 
     return { key, execute }

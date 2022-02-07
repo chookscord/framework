@@ -6,7 +6,7 @@ class FakeMap extends Map {
   public get = jest.fn().mockReturnValue(execute)
 }
 
-function fakeInteraction(type: 'command' | 'context' | 'autocomplete', opts: {
+function fakeInteraction(type: 'command' | 'user' | 'message' | 'autocomplete', opts: {
   name: string
   group?: string
   subcommand?: string
@@ -14,7 +14,9 @@ function fakeInteraction(type: 'command' | 'context' | 'autocomplete', opts: {
 }) {
   return {
     isCommand: () => type === 'command',
-    isContextMenu: () => type === 'context',
+    isUserContextMenu: () => type === 'user',
+    isMessageContextMenu: () => type === 'message',
+    isContextMenu: () => type === 'user' || type === 'message',
     isAutocomplete: () => type === 'autocomplete',
     commandName: opts.name,
     options: {
@@ -41,7 +43,7 @@ describe('resolving interactions', () => {
     const map = new FakeMap()
     const interaction = fakeInteraction('command', { name: 'foo' })
 
-    const key = createKey('foo')
+    const key = createKey('cmd', 'foo')
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
@@ -55,7 +57,7 @@ describe('resolving interactions', () => {
       subcommand: 'bar',
     })
 
-    const key = createKey('foo', 'bar')
+    const key = createKey('cmd', 'foo', 'bar')
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
@@ -70,18 +72,29 @@ describe('resolving interactions', () => {
       subcommand: 'bar',
     })
 
-    const key = createKey('foo', 'baz', 'bar')
+    const key = createKey('cmd', 'foo', 'baz', 'bar')
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
     expect(res).toStrictEqual({ key, execute })
   })
 
-  test('context menu command', () => {
+  test('user command', () => {
     const map = new FakeMap()
-    const interaction = fakeInteraction('context', { name: 'foo' })
+    const interaction = fakeInteraction('user', { name: 'foo' })
 
-    const key = createKey('foo')
+    const key = createKey('usr', 'foo')
+    const res = resolveInteraction(map, interaction)
+
+    expect(map.get).toHaveBeenCalledWith(key)
+    expect(res).toStrictEqual({ key, execute })
+  })
+
+  test('message command', () => {
+    const map = new FakeMap()
+    const interaction = fakeInteraction('message', { name: 'foo' })
+
+    const key = createKey('msg', 'foo')
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
@@ -95,7 +108,7 @@ describe('resolving interactions', () => {
       option: 'baz',
     })
 
-    const key = createKey('foo', 'baz')
+    const key = createKey('auto', 'foo', 'baz')
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
@@ -111,7 +124,7 @@ describe('resolving interactions', () => {
       option: 'qux',
     })
 
-    const key = createKey('foo', 'bar', 'baz', 'qux')
+    const key = createKey('auto', 'foo', 'bar', 'baz', 'qux')
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
