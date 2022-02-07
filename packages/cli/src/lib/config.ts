@@ -13,6 +13,10 @@ const CONFIG_FILES = [
   'chooks.config.dev.ts',
 ]
 
+const token = Joi.string()
+  .pattern(/^[\w-]{24}\.[\w-]{6}\.[\w-]{27}$/)
+  .required()
+
 const intents = Joi.array()
   .items(Joi.string())
   .required()
@@ -22,14 +26,14 @@ const clientOptions = Joi.object({
 })
 
 const configSchema = Joi.object<ChooksConfig>({
-  token: Joi.string().required(),
+  token,
   devServer: Joi.string(),
   intents,
   client: clientOptions,
 }).unknown(true)
 
 const devConfigSchema = Joi.object<ChooksConfig>({
-  token: Joi.string().required(),
+  token,
   devServer: Joi.string().required(),
   intents,
   client: clientOptions,

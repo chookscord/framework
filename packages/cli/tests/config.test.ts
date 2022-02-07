@@ -1,11 +1,13 @@
 import { validateConfig, validateDevConfig } from '../src/lib/config'
 
+const token = 'ODUwMzgwOTg2NTY2ODM2MjM0.YLo5Ag.v5Mgj4RykD9Y7c4lONOo9Fl1Syg'
+
 describe('config validation', () => {
   describe('valid config', () => {
     test('minimal config', async () => {
       expect(
         await validateConfig({
-          token: 'foo',
+          token,
           intents: [],
         }),
       ).toBeNull()
@@ -14,7 +16,7 @@ describe('config validation', () => {
     test('minimal dev config', async () => {
       expect(
         await validateDevConfig({
-          token: 'foo',
+          token,
           devServer: 'bar',
           intents: [],
         }),
@@ -24,7 +26,7 @@ describe('config validation', () => {
     test('full config', async () => {
       expect(
         await validateConfig({
-          token: 'foo',
+          token,
           intents: [],
           devServer: 'bar',
           client: {
