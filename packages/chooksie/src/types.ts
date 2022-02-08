@@ -347,7 +347,7 @@ export interface SlashSubcommand {
  *   type: 'SUB_COMMAND',
  *   setup: strings,
  *   async execute(ctx) {
- *     const targetText = ctx.interaction.options.getString('text')
+ *     const targetText = ctx.interaction.options.getString('text', true)
  *     await ctx.interaction.reply(this.upper(targetText))
  *   },
  *   options: [stringOption],
@@ -359,7 +359,7 @@ export interface SlashSubcommand {
  *   type: 'SUB_COMMAND',
  *   setup: strings,
  *   async execute(ctx) {
- *     const targetText = ctx.interaction.options.getString('text')
+ *     const targetText = ctx.interaction.options.getString('text', true)
  *     await ctx.interaction.reply(this.lower(targetText))
  *   },
  *   options: [stringOption],
