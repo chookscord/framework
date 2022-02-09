@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import type { Client } from 'discord.js'
-import { loadCommand, loadEvent, loadSubcommand } from '../src/internals/loaders'
+import { loadEvent, loadSlashCommand, loadSlashSubcommand } from '../src/internals/loaders'
 import { createKey } from '../src/internals/resolve'
 
 class FakeMap extends Map {
@@ -29,8 +29,8 @@ describe('loaders', () => {
     setup.mockClear()
   })
 
-  test('commands', async () => {
-    await loadCommand(store, {
+  test('slash commands', async () => {
+    await loadSlashCommand(store, {
       name: 'foo',
       description: '',
       setup,
@@ -50,13 +50,13 @@ describe('loaders', () => {
     expect(execute.bind).toHaveBeenCalledWith(deps)
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
-    const key = createKey('foo')
-    expect(store.set).toHaveBeenCalledWith(key, execute.bind())
-    expect(store.set).toHaveBeenCalledWith(createKey(key, 'bar'), autocomplete.bind())
+    const key = 'foo'
+    expect(store.set).toHaveBeenCalledWith(createKey('cmd', key), execute.bind())
+    expect(store.set).toHaveBeenCalledWith(createKey('auto', key, 'bar'), autocomplete.bind())
   })
 
   test('slash subcommands', async () => {
-    await loadSubcommand(store, {
+    await loadSlashSubcommand(store, {
       name: 'foo',
       description: '',
       options: [
@@ -84,12 +84,12 @@ describe('loaders', () => {
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
     const key = createKey('foo', 'bar')
-    expect(store.set).toHaveBeenCalledWith(key, execute.bind())
-    expect(store.set).toHaveBeenCalledWith(createKey(key, 'baz'), autocomplete.bind())
+    expect(store.set).toHaveBeenCalledWith(createKey('cmd', key), execute.bind())
+    expect(store.set).toHaveBeenCalledWith(createKey('auto', key, 'baz'), autocomplete.bind())
   })
 
   test('slash subcommand groups', async () => {
-    await loadSubcommand(store, {
+    await loadSlashSubcommand(store, {
       name: 'foo',
       description: '',
       options: [
@@ -124,8 +124,8 @@ describe('loaders', () => {
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
     const key = createKey('foo', 'bar', 'baz')
-    expect(store.set).toHaveBeenCalledWith(key, execute.bind())
-    expect(store.set).toHaveBeenCalledWith(createKey(key, 'qux'), autocomplete.bind())
+    expect(store.set).toHaveBeenCalledWith(createKey('cmd', key), execute.bind())
+    expect(store.set).toHaveBeenCalledWith(createKey('auto', key, 'qux'), autocomplete.bind())
   })
 
   test('events', async () => {

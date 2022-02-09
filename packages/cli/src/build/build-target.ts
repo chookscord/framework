@@ -1,6 +1,6 @@
 import { interopRequireDefault } from '@swc/helpers'
-import type { ChooksScript, Command, Event, GenericHandler, SlashSubcommand } from 'chooksie'
-import { createClient, loadCommand, loadEvent, loadScript, loadSubcommand, resolveInteraction, walk } from 'chooksie/internals'
+import type { ChooksScript, Event, GenericHandler, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import { createClient, loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, resolveInteraction, walk } from 'chooksie/internals'
 import type { ClientEvents } from 'discord.js'
 import 'dotenv/config'
 import type { SourceDir } from '../lib'
@@ -47,34 +47,47 @@ async function main() {
   const files = walk(__dirname, { ignore: file => file.path === __filename })
 
   const loadFile = async (path: string) => {
-    const mod = interopRequireDefault(await import(path) as Record<string, unknown>).default
-    switch (getFileType(path)) {
-      case 'commands':
-      case 'messages':
-      case 'users':
-        await loadCommand(store, <unknown>mod as Exclude<Command, SlashSubcommand>)
-        return
-      case 'subcommands':
-        await loadSubcommand(store, <unknown>mod as SlashSubcommand)
-        return
-      case 'events':
-        await loadEvent(client, <unknown>mod as Event<keyof ClientEvents>)
-        return
-      case 'scripts':
-        if (hasScript(mod)) {
-          await loadScript(client, mod)
-        }
+    const mod = interopRequireDefault(await import(path) as unknown).default
+    const type = getFileType(path)
+
+    if (type === 'commands') {
+      await loadSlashCommand(store, mod as SlashCommand)
+      return
+    }
+
+    if (type === 'subcommands') {
+      await loadSlashSubcommand(store, mod as SlashSubcommand)
+      return
+    }
+
+    if (type === 'users') {
+      await loadUserCommand(store, mod as UserCommand)
+      return
+    }
+
+    if (type === 'messages') {
+      await loadMessageCommand(store, mod as MessageCommand)
+      return
+    }
+
+    if (type === 'events') {
+      await loadEvent(client, mod as Event<keyof ClientEvents>)
+      return
+    }
+
+    if (type === 'scripts') {
+      const script = mod as Record<string, unknown>
+      if (hasScript(script)) {
+        await loadScript(client, script)
+      }
     }
   }
 
   for await (const file of files) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     void loadFile(file.path)
   }
 
   await login
 }
 
-main().catch(error => {
-  throw error
-})
+void main()
