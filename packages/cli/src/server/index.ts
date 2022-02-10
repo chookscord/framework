@@ -1,22 +1,66 @@
 import { watch } from 'chokidar'
-import type { ChooksScript, Command, EmptyObject, Event, GenericHandler, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import { fetch } from 'chooksie/fetch'
 import type { AppCommand } from 'chooksie/internals'
-import type { Awaitable, ClientEvents } from 'discord.js'
-import type Joi from 'joi'
+import type { ClientEvents } from 'discord.js'
 import { join, relative } from 'path'
-import { createClient, createKey, resolveInteraction } from '../internals'
+import { createClient, createKey, getAutocompletes, onInteractionCreate } from '../internals'
 import { diffCommand, Store, tokenToAppId, transformCommand, validateDevConfig } from '../lib'
 import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
 import { createWatchCompiler } from './compiler'
+import type { Stores } from './loaders'
+import { loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadScript } from './loaders'
 import { unrequire } from './require'
 import { resolveConfig } from './resolve-config'
 
 const root = process.cwd()
 const outDir = join(root, '.chooks')
 
-function hasOnLoad(mod: Record<string, unknown>): mod is Required<ChooksScript> {
-  return typeof mod.chooksOnLoad === 'function'
+async function validate<T>(mod: T, validator: (mod: T) => Promise<unknown>): Promise<boolean> {
+  try {
+    await validator(mod)
+    return true
+  } catch (error) {
+    console.error(error)
+    return false
+  }
+}
+
+function* getCommandKeys(command: Command) {
+  const prefix = command.type === 'USER'
+    ? 'usr'
+    : command.type === 'MESSAGE'
+      ? 'msg'
+      : 'cmd'
+
+  yield createKey(prefix, command.name)
+
+  if (!('options' in command)) return
+  if (!Array.isArray(command.options)) return
+
+  for (const option of command.options) {
+    if ('autocomplete' in option) {
+      yield createKey('auto', command.name, option.name)
+      continue
+    }
+
+    if (option.type === 'SUB_COMMAND') {
+      yield createKey('cmd', command.name, option.name)
+      for (const autocomplete of getAutocompletes(option.options)) {
+        yield createKey('auto', command.name, option.name, autocomplete.name)
+      }
+      continue
+    }
+
+    if (option.type === 'SUB_COMMAND_GROUP') {
+      for (const subcommand of option.options) {
+        yield createKey('cmd', command.name, option.name, subcommand.name)
+        for (const autocomplete of getAutocompletes(subcommand.options)) {
+          yield createKey('auto', command.name, option.name, subcommand.name, autocomplete.name)
+        }
+      }
+    }
+  }
 }
 
 async function createServer(): Promise<void> {
@@ -25,6 +69,13 @@ async function createServer(): Promise<void> {
     { root, outDir },
     { validator: validateDevConfig },
   )
+
+  const stores: Stores = {
+    module: new Store(),
+    command: new Store(),
+    event: new Store(),
+    cleanup: new Store(),
+  }
 
   const client = createClient(config)
   const appId = tokenToAppId(config.token)
@@ -35,241 +86,124 @@ async function createServer(): Promise<void> {
     cwd: root,
   })
 
-  const stores = {
-    modules: new Store<Command>(),
-    command: new Store<GenericHandler>(),
-    event: new Store<() => void>(),
-    cleanup: new Store<() => Awaitable<void>>(),
-  }
-
   const url = `https://discord.com/api/v8/applications/${appId}/guilds/${config.devServer!}/commands`
-  const register = async (command: AppCommand) => {
-    console.info(`Updating command "${command.name}"...`)
-    const res = await fetch.post(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bot ${config.token}`,
-      },
-      body: JSON.stringify(command),
-    })
+  const credential = `Bot ${config.token}`
 
-    if (res.ok) {
-      console.info(`Updated command "${command.name}".`)
-    } else {
-      console.error(`Updating command "${command.name}" resulted in status code "${res.status}".`)
-    }
-  }
-
-  // @todo: handle command renames
-  stores.modules.events.on('add', async (a, b) => {
-    if (b === null) return
-    if (diffCommand(a, b)) {
-      const command = transformCommand(a)
-      await register(command)
-    }
-  })
-
-  stores.modules.events.on('delete', async a => {
+  async function register() {
     const commands: AppCommand[] = []
-    for (const command of stores.modules.values()) {
-      commands.push(transformCommand(command))
+    for (const cmd of stores.module.values()) {
+      commands.push(transformCommand(cmd))
     }
 
     const res = await fetch.put(url, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bot ${config.token}`,
+        'Authorization': credential,
       },
       body: JSON.stringify(commands),
     })
 
     if (res.ok) {
-      console.info(`Deleted command "${a.name}".`)
+      console.info('Updated commands.')
     } else {
-      console.error(`Deleting command "${a.name}" resulted in status code "${res.status}".`)
+      // @todo: parse dapi error
+      console.error(`Updating commands resulted in status code "${res.status}"`)
+    }
+  }
+
+  stores.module.events.on('add', async (a, b) => {
+    if (b === null) return
+    if (diffCommand(a, b)) {
+      console.info(`Updating command "${a.name}"...`)
+      for (const key of getCommandKeys(b)) {
+        stores.command.delete(key)
+      }
+      await register()
     }
   })
 
-  const compiler = createWatchCompiler(watcher, { root, outDir })
+  stores.module.events.on('delete', async command => {
+    console.info(`Deleting command "${command.name}"...`)
+    for (const key of getCommandKeys(command)) {
+      stores.command.delete(key)
+    }
+    await register()
+  })
 
-  // @todo: refactor
-  // @todo: handle file deletions
+  const compiler = createWatchCompiler(watcher, { root, outDir })
+  const listener = onInteractionCreate(stores.command)
+
+  client.on('interactionCreate', listener)
+
   // @todo: command cache json file for diffing on start
   compiler.on('compile', async file => {
     const relpath = relative(root, file.source)
+    const mod = await unrequire<unknown>(file.target)
     console.info(`File ${relpath} updated.`)
 
     if (file.type === 'command') {
-      const mod = (await unrequire<SlashCommand>(file.target)).default
-      try {
-        await validateSlashCommand(mod)
-      } catch (error) {
-        console.error(`Slash command at ${relpath} failed validation! %s`, error)
-        return
+      const command = mod.default as SlashCommand
+      if (await validate(command, validateSlashCommand)) {
+        stores.module.set(relpath, command)
+        loadSlashCommand(stores.command, command)
       }
-
-      const setup = mod.setup ?? (() => ({}))
-      const execute: GenericHandler = async ctx => {
-        const deps = await setup()
-        await (<GenericHandler>mod.execute).call(deps, ctx)
-      }
-
-      // @todo: autocompletes
-      stores.command.set(createKey('cmd', mod.name), execute)
-      stores.modules.set(mod.name, mod)
       return
     }
 
     if (file.type === 'subcommand') {
-      const mod = (await unrequire<SlashSubcommand>(file.target)).default
-      try {
-        await validateSlashSubcommand(mod)
-      } catch (error) {
-        console.error(`Slash subcommand at ${relpath} failed validation!`)
-        console.error((<Joi.ValidationError>error).message)
-        return
+      const command = mod.default as SlashSubcommand
+      if (await validate(command, validateSlashSubcommand)) {
+        stores.module.set(relpath, command)
+        loadSlashSubcommand(stores.command, command)
       }
-
-      for (const option of mod.options) {
-        if (option.type === 'SUB_COMMAND') {
-          const key = createKey('cmd', mod.name, option.name)
-
-          const setup = option.setup ?? (() => ({}))
-          const execute: GenericHandler = async ctx => {
-            const deps = await setup() as EmptyObject
-            await (<GenericHandler>option.execute).call(deps, ctx)
-          }
-
-          // @todo: autocompletes
-          stores.command.set(key, execute)
-        } else
-        if (option.type === 'SUB_COMMAND_GROUP') {
-          for (const subcommand of option.options) {
-            const key = createKey('cmd', mod.name, option.name, subcommand.name)
-
-            const setup = subcommand.setup ?? (() => ({}))
-            const execute: GenericHandler = async ctx => {
-              const deps = await setup() as EmptyObject
-              await (<GenericHandler>subcommand.execute).call(deps, ctx)
-            }
-
-            // @todo: autocompletes
-            stores.command.set(key, execute)
-          }
-        }
-      }
-
-      stores.modules.set(mod.name, mod)
       return
     }
 
     if (file.type === 'user') {
-      const mod = (await unrequire<UserCommand>(file.target)).default
-      try {
-        await validateUserCommand(mod)
-        mod.type = 'USER'
-      } catch (error) {
-        console.error(`User command at ${relpath} failed validation!`)
-        console.error(error)
-        return
+      const command = mod.default as UserCommand
+      if (await validate(command, validateUserCommand)) {
+        command.type ??= 'USER'
+        stores.module.set(relpath, command)
+        loadUserCommand(stores.command, command)
       }
-
-      const setup = mod.setup ?? (() => ({}))
-      const execute: GenericHandler = async ctx => {
-        const deps = await setup()
-        await (<GenericHandler>mod.execute).call(deps, ctx)
-      }
-
-      stores.command.set(createKey('usr', mod.name), execute)
-      stores.modules.set(mod.name, mod)
       return
     }
 
     if (file.type === 'message') {
-      const mod = (await unrequire<MessageCommand>(file.target)).default
-      try {
-        await validateMessageCommand(mod)
-        mod.type = 'MESSAGE'
-      } catch (error) {
-        console.error(`Message command at ${relpath} failed validation!`)
-        console.error(error)
-        return
+      const command = mod.default as MessageCommand
+      if (await validate(command, validateMessageCommand)) {
+        command.type ??= 'MESSAGE'
+        stores.module.set(relpath, command)
+        loadMessageCommand(stores.command, command)
       }
-
-      const setup = mod.setup ?? (() => ({}))
-      const execute: GenericHandler = async ctx => {
-        const deps = await setup()
-        await (<GenericHandler>mod.execute).call(deps, ctx)
-      }
-
-      stores.command.set(createKey('msg', mod.name), execute)
-      stores.modules.set(mod.name, mod)
       return
     }
 
     if (file.type === 'event') {
-      const mod = (await unrequire<Event<keyof ClientEvents>>(file.target)).default
-      try {
-        await validateEvent(mod)
-      } catch (error) {
-        console.error(`Event module at ${relpath} failed validation!`)
-        console.error(error)
-        return
+      const command = mod.default as Event<keyof ClientEvents>
+      if (await validate(command, validateEvent)) {
+        loadEvent(stores.event, client, command)
       }
-
-      const setup = mod.setup ?? (() => ({}))
-      const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
-        const deps = await setup()
-        // @ts-ignore: 'this' context blah blah complex type
-        await mod.execute.call(deps, { client }, ...args)
-      }
-
-      const oldListener = stores.event.get(mod.name)
-      if (oldListener) {
-        client.off(mod.name, oldListener as never)
-      }
-
-      stores.event.set(mod.name, execute)
-      client[mod.once ? 'once' : 'on'](mod.name, execute)
       return
     }
 
     if (file.type === 'script') {
-      const oldCleanup = stores.cleanup.get(file.source)
-      if (oldCleanup) {
-        try {
-          await oldCleanup()
-        } catch (error) {
-          console.error(`Cleanup function at ${relpath} threw an error!`)
-          console.error(error)
-        }
-      }
-
-      // @todo: recursively refresh children as well
-      const mod = await unrequire(file.target) as Record<string, unknown>
-      if (!hasOnLoad(mod)) return
-
-      const newCleanup = await mod.chooksOnLoad({ client })
-      if (newCleanup) {
-        stores.cleanup.set(file.source, newCleanup)
-      }
+      await unloadScript(stores.cleanup, root, file)
+      await loadScript(stores.cleanup, client, file)
+      return
     }
   })
 
-  client.on('interactionCreate', async interaction => {
-    const handler = resolveInteraction(stores.command, interaction)
-    if (!handler) return
-
-    if (!handler.execute) {
-      console.warn(`Handler for "${handler.key}" is missing.`)
+  compiler.on('delete', async file => {
+    if (file.type === 'script') {
+      await unloadScript(stores.cleanup, root, file)
       return
     }
 
-    try {
-      await handler.execute({ client, interaction })
-    } catch (error) {
-      console.error(`Handler "${handler.key}" threw an error!`)
-      console.error(error)
+    if (file.type !== 'config') {
+      const relpath = relative(root, file.source)
+      stores.module.delete(relpath)
+      return
     }
   })
 
