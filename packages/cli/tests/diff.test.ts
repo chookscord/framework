@@ -82,7 +82,7 @@ describe('module diff', () => {
           },
         },
         {
-          name: 'foo',
+          name: 'qux',
           description: 'bar',
           type: 'SUB_COMMAND',
           setup: noop,
@@ -92,7 +92,7 @@ describe('module diff', () => {
         },
       )
 
-      expect(diff).toBe(false)
+      expect(diff).toBe(true)
     })
 
     test('diff name', () => {
