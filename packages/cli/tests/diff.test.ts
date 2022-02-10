@@ -95,6 +95,40 @@ describe('module diff', () => {
       expect(diff).toBe(true)
     })
 
+    test('diff group', () => {
+      const diff = diffOption(
+        {
+          name: 'foo',
+          description: 'bar',
+          type: 'SUB_COMMAND_GROUP',
+          options: [
+            {
+              name: 'foo',
+              description: 'bar',
+              type: 'SUB_COMMAND',
+              execute: noop,
+            },
+          ],
+        },
+        {
+          name: 'foo',
+          description: 'bar',
+          type: 'SUB_COMMAND_GROUP',
+          options: [
+            {
+              name: 'qux',
+              description: 'bar',
+              type: 'SUB_COMMAND',
+              setup: noop,
+              execute: noop,
+            },
+          ],
+        },
+      )
+
+      expect(diff).toBe(true)
+    })
+
     test('diff name', () => {
       const diff = diffOption(
         {

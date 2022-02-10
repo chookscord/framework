@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import type { ChannelOption, Choice, Command, NumberOption, Option, SlashCommand, SlashSubcommand, StringOption, Subcommand } from 'chooksie'
+import type { ChannelOption, Choice, Command, NumberOption, Option, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup } from 'chooksie'
 
 // true = values are different
 
@@ -53,6 +53,10 @@ function diffSubcommand(a: Subcommand<any>, b: Subcommand<any>): boolean {
   return false
 }
 
+function diffSubcommandGroup(a: SubcommandGroup, b: SubcommandGroup): boolean {
+  return diffBoth(a.options, b.options, diffOption)
+}
+
 function diffChannel(a: ChannelOption, b: ChannelOption): boolean {
   const aIsArray = Array.isArray(a.channelTypes)
   const bIsArray = Array.isArray(b.channelTypes)
@@ -77,6 +81,8 @@ function diffOption(a: Option, b: Option): boolean {
   switch (a.type) {
     case 'SUB_COMMAND':
       return diffSubcommand(a, b as never)
+    case 'SUB_COMMAND_GROUP':
+      return diffSubcommandGroup(a, b as never)
     case 'NUMBER':
     case 'INTEGER':
       return diffNumber(a, b as never)
