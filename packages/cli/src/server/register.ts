@@ -51,9 +51,20 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
   const url = `https://discord.com/api/v8/applications/${appId}/guilds/${devServer}/commands`
   const credential = `Bot ${token}`
 
+  const unsyncedCommands: Command[] = []
   let timeout: NodeJS.Timeout
   let controller: AbortController
   let resetAfter = 0
+
+  const syncCommands = () => {
+    unsyncedCommands.splice(0)
+      .map(getCommandKeys)
+      .forEach(keys => {
+        for (const key of keys) {
+          stores.command.delete(key)
+        }
+      })
+  }
 
   const registerCommands = async (commands: AppCommand[]) => {
     const res = await fetch.put(url, {
@@ -67,16 +78,20 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
 
     if (res.ok) {
       console.info('Updated commands.')
-      // Handle rate limits
-      if (res.headers.get('X-RateLimit-Remaining') === '0') {
-        resetAfter = Number(res.headers.get('X-RateLimit-Reset')) * 1000
-        const nextReset = res.headers.get('X-RateLimit-Reset-After')
-        console.warn(`Rate limit reached! Next register available in: ${nextReset}s`)
-      }
-    } else {
+      console.info(`Updates left before reset: ${res.headers.get('X-RateLimit-Remaining')}`)
+    } else if (res.status !== 429) {
       // @todo: parse dapi error
       console.error(`Updating commands resulted in status code "${res.status}"`)
     }
+
+    // Handle rate limits
+    if (res.headers.get('X-RateLimit-Remaining') === '0') {
+      const nextReset = res.headers.get('X-RateLimit-Reset-After')
+      resetAfter = Date.now() + Number(nextReset) * 1000
+      console.warn(`Rate limit reached! Next register available in: ${nextReset}s`)
+    }
+
+    return res.ok
   }
 
   // Parse modules, reset controller and register commands
@@ -89,8 +104,11 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
     }
 
     try {
+      // only sync commands once commands actually are updated
       controller = new AbortController()
-      await registerCommands(commands)
+      if (await registerCommands(commands)) {
+        syncCommands()
+      }
     } catch (error) {
       if (!isAbortError(error)) {
         // @todo: error handling?
@@ -99,20 +117,14 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
     }
   }
 
-  // Clear queued registers, sync deleted commands, and check rate limit
-  const register = (oldCommand?: Command) => {
+  // Clear queued registers and check rate limit
+  const register = () => {
     clearTimeout(timeout)
     controller?.abort()
 
-    if (oldCommand) {
-      for (const key of getCommandKeys(oldCommand)) {
-        stores.command.delete(key)
-      }
-    }
-
-    if (Date.now() > resetAfter) {
-      timeout = setTimeout(_register, 250)
-    }
+    // If rate limited, run after the set timeout expires, else default to 250ms
+    const runAfter = Math.max(resetAfter - Date.now(), 250)
+    timeout = setTimeout(_register, runAfter)
   }
 
   stores.module.events.on('add', (a, b) => {
@@ -123,13 +135,15 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
 
     if (diffCommand(a, b)) {
       console.info(`Updating command "${a.name}"...`)
-      register(b)
+      unsyncedCommands.push(b)
+      register()
     }
   })
 
   stores.module.events.on('delete', command => {
     console.info(`Deleting command "${command.name}"...`)
-    register(command)
+    unsyncedCommands.push(command)
+    register()
   })
 }
 
