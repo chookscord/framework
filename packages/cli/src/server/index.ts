@@ -5,13 +5,13 @@ import { existsSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { join, relative, resolve } from 'path'
 import { createClient, onInteractionCreate } from '../internals'
-import { Store, validateDevConfig } from '../lib'
+import { sourceFromFile, Store, validateDevConfig } from '../lib'
 import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
 import { createWatchCompiler } from './compiler'
 import type { Stores } from './loaders'
 import { loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadScript } from './loaders'
 import watchCommands from './register'
-import { unrequire } from './require'
+import { unloadMod, unrequire } from './require'
 import { resolveConfig } from './resolve-config'
 
 type CachedCommand = [key: string, module: Command]
@@ -19,6 +19,8 @@ type CachedCommand = [key: string, module: Command]
 const root = process.cwd()
 const outDir = join(root, '.chooks')
 const cacheDir = join(outDir, '.chooksinfo')
+
+const fileFromTarget = sourceFromFile({ root, outDir })
 
 async function getCached() {
   try {
@@ -139,8 +141,11 @@ async function createServer(): Promise<void> {
     }
 
     if (file.type === 'script') {
-      await unloadScript(stores.cleanup, root, file)
-      await loadScript(stores.cleanup, client, file)
+      for (const key of unloadMod(file.target)) {
+        const script = fileFromTarget(key)
+        await unloadScript(stores.cleanup, root, script)
+        await loadScript(stores.cleanup, client, script)
+      }
       return
     }
   })

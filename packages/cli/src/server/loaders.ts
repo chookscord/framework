@@ -4,7 +4,6 @@ import type { Awaitable, Client, ClientEvents } from 'discord.js'
 import { relative } from 'path'
 import { createKey } from '../internals'
 import type { SourceMap, Store } from '../lib'
-import { unrequire } from './require'
 
 type EventStore = Map<string, () => Awaitable<void>>
 type ScriptStore = Map<string, () => Awaitable<void>>
@@ -146,8 +145,8 @@ async function unloadScript(store: ScriptStore, root: string, file: SourceMap): 
 }
 
 async function loadScript(store: ScriptStore, client: Client, file: SourceMap): Promise<void> {
-  // @todo: recursively refresh children as well
-  const mod = await unrequire(file.target) as Record<string, unknown>
+  // Scripts MUST be cached since track child dependencies from require.cache
+  const mod = await import(file.target) as Record<string, unknown>
   if (!hasOnLoad(mod)) return
 
   const newCleanup = await mod.chooksOnLoad({ client })
