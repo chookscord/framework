@@ -133,25 +133,32 @@ function loadEvent(store: EventStore, client: Client, event: Event<keyof ClientE
 
 async function unloadScript(store: ScriptStore, root: string, file: SourceMap): Promise<void> {
   const relpath = relative(root, file.source)
-  const oldCleanup = store.get(file.source)
-  if (oldCleanup) {
-    try {
-      await oldCleanup()
-    } catch (error) {
-      console.error(`Cleanup function at ${relpath} threw an error!`)
-      console.error(error)
-    }
+  if (!store.has(relpath)) return
+
+  try {
+    const cleanup = store.get(relpath)!
+    await cleanup()
+  } catch (error) {
+    console.error(`Cleanup function at ${relpath} threw an error!`)
+    console.error(error)
   }
 }
 
-async function loadScript(store: ScriptStore, client: Client, file: SourceMap): Promise<void> {
+async function loadScript(store: ScriptStore, client: Client, root: string, file: SourceMap): Promise<void> {
+  const relpath = relative(root, file.source)
+
   // Scripts MUST be cached since track child dependencies from require.cache
   const mod = await import(file.target) as Record<string, unknown>
   if (!hasOnLoad(mod)) return
 
-  const newCleanup = await mod.chooksOnLoad({ client })
-  if (newCleanup) {
-    store.set(file.source, newCleanup)
+  try {
+    const cleanup = await mod.chooksOnLoad({ client })
+    if (cleanup) {
+      store.set(relpath, cleanup)
+    }
+  } catch (error) {
+    console.error(`On load function at ${relpath} threw an error!`)
+    console.error(error)
   }
 }
 

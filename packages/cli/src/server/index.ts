@@ -144,7 +144,7 @@ async function createServer(): Promise<void> {
       for (const key of unloadMod(file.target)) {
         const script = fileFromTarget(key)
         await unloadScript(stores.cleanup, root, script)
-        await loadScript(stores.cleanup, client, script)
+        await loadScript(stores.cleanup, client, root, script)
       }
       return
     }
