@@ -1,15 +1,14 @@
 import { watch } from 'chokidar'
-import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
-import { fetch } from 'chooksie/fetch'
-import type { AppCommand } from 'chooksie/internals'
+import type { Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
 import { join, relative } from 'path'
-import { createClient, createKey, getAutocompletes, onInteractionCreate } from '../internals'
-import { diffCommand, Store, tokenToAppId, transformCommand, validateDevConfig } from '../lib'
+import { createClient, onInteractionCreate } from '../internals'
+import { Store, validateDevConfig } from '../lib'
 import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
 import { createWatchCompiler } from './compiler'
 import type { Stores } from './loaders'
 import { loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadScript } from './loaders'
+import watchCommands from './register'
 import { unrequire } from './require'
 import { resolveConfig } from './resolve-config'
 
@@ -23,43 +22,6 @@ async function validate<T>(mod: T, validator: (mod: T) => Promise<unknown>): Pro
   } catch (error) {
     console.error(error)
     return false
-  }
-}
-
-function* getCommandKeys(command: Command) {
-  const prefix = command.type === 'USER'
-    ? 'usr'
-    : command.type === 'MESSAGE'
-      ? 'msg'
-      : 'cmd'
-
-  yield createKey(prefix, command.name)
-
-  if (!('options' in command)) return
-  if (!Array.isArray(command.options)) return
-
-  for (const option of command.options) {
-    if ('autocomplete' in option) {
-      yield createKey('auto', command.name, option.name)
-      continue
-    }
-
-    if (option.type === 'SUB_COMMAND') {
-      yield createKey('cmd', command.name, option.name)
-      for (const autocomplete of getAutocompletes(option.options)) {
-        yield createKey('auto', command.name, option.name, autocomplete.name)
-      }
-      continue
-    }
-
-    if (option.type === 'SUB_COMMAND_GROUP') {
-      for (const subcommand of option.options) {
-        yield createKey('cmd', command.name, option.name, subcommand.name)
-        for (const autocomplete of getAutocompletes(subcommand.options)) {
-          yield createKey('auto', command.name, option.name, subcommand.name, autocomplete.name)
-        }
-      }
-    }
   }
 }
 
@@ -78,7 +40,6 @@ async function createServer(): Promise<void> {
   }
 
   const client = createClient(config)
-  const appId = tokenToAppId(config.token)
   const login = client.login(config.token)
 
   const watcher = watch('*/**/*.?(m|c){js,ts}', {
@@ -86,49 +47,9 @@ async function createServer(): Promise<void> {
     cwd: root,
   })
 
-  const url = `https://discord.com/api/v8/applications/${appId}/guilds/${config.devServer!}/commands`
-  const credential = `Bot ${config.token}`
-
-  async function register() {
-    const commands: AppCommand[] = []
-    for (const cmd of stores.module.values()) {
-      commands.push(transformCommand(cmd))
-    }
-
-    const res = await fetch.put(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': credential,
-      },
-      body: JSON.stringify(commands),
-    })
-
-    if (res.ok) {
-      console.info('Updated commands.')
-    } else {
-      // @todo: parse dapi error
-      console.error(`Updating commands resulted in status code "${res.status}"`)
-    }
-  }
-
-  stores.module.events.on('add', async (a, b) => {
-    if (b === null) return
-    if (diffCommand(a, b)) {
-      console.info(`Updating command "${a.name}"...`)
-      for (const key of getCommandKeys(b)) {
-        stores.command.delete(key)
-      }
-      await register()
-    }
-  })
-
-  stores.module.events.on('delete', async command => {
-    console.info(`Deleting command "${command.name}"...`)
-    for (const key of getCommandKeys(command)) {
-      stores.command.delete(key)
-    }
-    await register()
-  })
+  // Watches command modules and updates using Discord API
+  // Also syncs commands when modules are deleted.
+  watchCommands(stores, config.token, config.devServer!)
 
   const compiler = createWatchCompiler(watcher, { root, outDir })
   const listener = onInteractionCreate(stores.command)
@@ -200,6 +121,7 @@ async function createServer(): Promise<void> {
       return
     }
 
+    // No need to handle commands since it's handled by the module register.
     if (file.type !== 'config') {
       const relpath = relative(root, file.source)
       stores.module.delete(relpath)
