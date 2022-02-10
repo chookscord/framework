@@ -1,6 +1,7 @@
 import { watch } from 'chokidar'
-import type { Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
+import { readFile, writeFile } from 'fs/promises'
 import { join, relative } from 'path'
 import { createClient, onInteractionCreate } from '../internals'
 import { Store, validateDevConfig } from '../lib'
@@ -12,8 +13,20 @@ import watchCommands from './register'
 import { unrequire } from './require'
 import { resolveConfig } from './resolve-config'
 
+type CachedCommand = [key: string, module: Command]
+
 const root = process.cwd()
 const outDir = join(root, '.chooks')
+const cacheDir = join(outDir, '.chooksinfo')
+
+async function getCached() {
+  try {
+    const modules = await readFile(cacheDir, 'utf-8')
+    return JSON.parse(modules) as CachedCommand[]
+  } catch {
+    return []
+  }
+}
 
 async function validate<T>(mod: T, validator: (mod: T) => Promise<unknown>): Promise<boolean> {
   try {
@@ -33,7 +46,7 @@ async function createServer(): Promise<void> {
   )
 
   const stores: Stores = {
-    module: new Store(),
+    module: new Store(await getCached()),
     command: new Store(),
     event: new Store(),
     cleanup: new Store(),
@@ -56,7 +69,16 @@ async function createServer(): Promise<void> {
 
   client.on('interactionCreate', listener)
 
-  // @todo: command cache json file for diffing on start
+  // Save state of commands to diff changes on startup
+  // This saves unnecessary registers when the bot is started
+  const saveState = async () => {
+    const modules = [...stores.module.entries()]
+    await writeFile(cacheDir, JSON.stringify(modules))
+  }
+
+  stores.module.events.on('add', saveState)
+  stores.module.events.on('delete', saveState)
+
   compiler.on('compile', async file => {
     const relpath = relative(root, file.source)
     const mod = await unrequire<unknown>(file.target)
