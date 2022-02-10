@@ -14,6 +14,7 @@ interface StoreEmitter<T> extends EventEmitter {
  * A JavaScript {@link Map} with an {@link EventEmitter}.
  */
 export default class Store<T> extends Map<string, T> {
+  // Note: events is not available when super gets called with initial values
   public events = new EventEmitter() as StoreEmitter<T>
   public set(key: string, value: T): this {
     const oldValue = super.has(key)
@@ -21,7 +22,7 @@ export default class Store<T> extends Map<string, T> {
       : null
 
     super.set(key, value)
-    this.events.emit('add', value, oldValue!)
+    this.events?.emit('add', value, oldValue!)
 
     return this
   }
@@ -31,7 +32,7 @@ export default class Store<T> extends Map<string, T> {
     if (has) {
       const oldValue = super.get(key)
       super.delete(key)
-      this.events.emit('delete', oldValue!)
+      this.events?.emit('delete', oldValue!)
     }
 
     return has
