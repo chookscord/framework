@@ -1,7 +1,7 @@
 export { compile, unlink, write } from './compile'
 export { resolveConfigFile, validateConfig, validateDevConfig } from './config'
 export { diffCommand, diffOption } from './diff'
-export { getFileType, mapSourceFile, MODULES } from './sourcemap'
+export { getFileType, mapSourceFile, MODULES, sourceFromFile } from './sourcemap'
 export type { FileOptions, FileType, SourceDir, SourceMap } from './sourcemap'
 export { default as Store } from './store'
 export { default as tokenToAppId } from './token-id'

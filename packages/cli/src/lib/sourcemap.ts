@@ -1,4 +1,4 @@
-import { normalize, sep } from 'path'
+import { join, relative, sep } from 'path'
 
 export type FileType = 'command' | 'subcommand' | 'user' | 'message' | 'event' | 'script' | 'config'
 export type SourceDir = 'commands' | 'subcommands' | 'users' | 'messages' | 'events'
@@ -27,16 +27,38 @@ export function getFileType(relpath: string): FileType {
   return MODULES[moduleName as SourceDir] ?? 'script'
 }
 
-export function mapSourceFile(opts: FileOptions): (path: string) => SourceMap
-export function mapSourceFile(opts: FileOptions, path: string): SourceMap
-export function mapSourceFile(opts: FileOptions, path?: string): ((path: string) => SourceMap) | SourceMap {
-  const toFileRef = (source: string): SourceMap => ({
-    source,
-    target: normalize(source.replace(opts.root, `${opts.outDir}/`)).replace(/\.(m|c)?ts$/, '.$1js'),
-    type: getFileType(source.slice(opts.root.length + 1)),
-  })
+function mapSourceFile(opts: FileOptions): (path: string) => SourceMap
+function mapSourceFile(opts: FileOptions, path: string): SourceMap
+function mapSourceFile(opts: FileOptions, path?: string): ((path: string) => SourceMap) | SourceMap {
+  const toFileRef = (source: string): SourceMap => {
+    const relpath = relative(opts.root, source)
+    return {
+      source,
+      target: join(opts.outDir, relpath).replace(/\.(m|c)?ts$/, '.$1js'),
+      type: getFileType(relpath),
+    }
+  }
 
   return arguments.length === 2
     ? toFileRef(path!)
     : toFileRef
 }
+
+function sourceFromFile(opts: FileOptions): (path: string) => SourceMap
+function sourceFromFile(opts: FileOptions, path: string): SourceMap
+function sourceFromFile(opts: FileOptions, path?: string): ((path: string) => SourceMap) | SourceMap {
+  const fromFileRef = (target: string): SourceMap => {
+    const relpath = relative(opts.outDir, target)
+    return {
+      source: join(opts.root, relpath),
+      target,
+      type: getFileType(relpath),
+    }
+  }
+
+  return arguments.length === 2
+    ? fromFileRef(path!)
+    : fromFileRef
+}
+
+export { mapSourceFile, sourceFromFile }
