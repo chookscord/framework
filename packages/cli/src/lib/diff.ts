@@ -20,7 +20,7 @@ function diffChoice(a: Choice, b: Choice): boolean {
 }
 
 function diffStringOrNumber<T extends StringOption | NumberOption>(a: T, b: T): boolean {
-  if (typeof a.autocomplete !== typeof b.autocomplete) return true
+  if (Boolean(a.autocomplete) !== Boolean(b.autocomplete)) return true
 
   const aIsArray = Array.isArray(a.choices)
   const bIsArray = Array.isArray(b.choices)

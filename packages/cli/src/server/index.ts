@@ -73,7 +73,11 @@ async function createServer(): Promise<void> {
   // This saves unnecessary registers when the bot is started
   const saveState = async () => {
     const modules = [...stores.module.entries()]
-    await writeFile(cacheDir, JSON.stringify(modules))
+    await writeFile(cacheDir, JSON.stringify(
+      modules,
+      // Replace autocomplete functions to "true" to preserve the field
+      (key: string, value: unknown) => key === 'autocomplete' && typeof value === 'function' || value,
+    ))
   }
 
   stores.module.events.on('add', saveState)
