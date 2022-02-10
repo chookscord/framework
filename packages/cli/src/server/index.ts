@@ -1,8 +1,9 @@
 import { watch } from 'chokidar'
 import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
+import { existsSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
-import { join, relative } from 'path'
+import { join, relative, resolve } from 'path'
 import { createClient, onInteractionCreate } from '../internals'
 import { Store, validateDevConfig } from '../lib'
 import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
@@ -22,7 +23,10 @@ const cacheDir = join(outDir, '.chooksinfo')
 async function getCached() {
   try {
     const modules = await readFile(cacheDir, 'utf-8')
-    return JSON.parse(modules) as CachedCommand[]
+    const cached = JSON.parse(modules) as CachedCommand[]
+
+    // Filter deleted files since last startup
+    return cached.filter(([path]) => existsSync(resolve(path)))
   } catch {
     return []
   }
