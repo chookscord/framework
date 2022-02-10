@@ -1,7 +1,8 @@
-import type { SlashCommand, GenericHandler, Subcommand, SubcommandGroup, EmptyObject, SlashSubcommand, UserCommand, MessageCommand, Event, Command, ChooksScript, CommandStore } from 'chooksie'
-import { createKey } from '../internals'
+import type { ChooksScript, Command, CommandStore, EmptyObject, Event, GenericHandler, MessageCommand, Option, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from 'chooksie'
+import { getAutocompletes } from 'chooksie/internals'
 import type { Awaitable, Client, ClientEvents } from 'discord.js'
 import { relative } from 'path'
+import { createKey } from '../internals'
 import type { SourceMap, Store } from '../lib'
 import { unrequire } from './require'
 
@@ -23,19 +24,36 @@ function hasOnLoad(mod: Record<string, unknown>): mod is Required<ChooksScript> 
   return typeof mod.chooksOnLoad === 'function'
 }
 
+function loadAutocompletes(store: CommandStore, parentKey: string, options: Option[] | undefined) {
+  for (const option of getAutocompletes(options)) {
+    const setup = option.setup ?? (() => ({}))
+    const execute: GenericHandler = async ctx => {
+      const deps = await setup()
+      await (<GenericHandler>option.autocomplete).call(deps, ctx)
+    }
+
+    const key = createKey('auto', parentKey, option.name)
+    store.set(key, execute)
+  }
+}
+
 function loadSlashCommand(store: CommandStore, command: SlashCommand): void {
+  const parentKey = createKey(command.name)
+  const key = createKey('cmd', parentKey)
+
   const setup = command.setup ?? (() => ({}))
   const execute: GenericHandler = async ctx => {
     const deps = await setup()
     await (<GenericHandler>command.execute).call(deps, ctx)
   }
 
-  // @todo: autocompletes
-  store.set(createKey('cmd', command.name), execute)
+  store.set(key, execute)
+  loadAutocompletes(store, parentKey, command.options)
 }
 
 function loadSubcommand(store: CommandStore, parentName: string, subcommand: Subcommand) {
-  const key = createKey('cmd', parentName, subcommand.name)
+  const parentKey = createKey(parentName, subcommand.name)
+  const key = createKey('cmd', parentKey)
 
   const setup = subcommand.setup ?? (() => ({}))
   const execute: GenericHandler = async ctx => {
@@ -43,13 +61,14 @@ function loadSubcommand(store: CommandStore, parentName: string, subcommand: Sub
     await (<GenericHandler>subcommand.execute).call(deps, ctx)
   }
 
-  // @todo: autocompletes
   store.set(key, execute)
+  loadAutocompletes(store, parentKey, subcommand.options)
 }
 
 function loadSubcommandGroup(store: CommandStore, parentName: string, group: SubcommandGroup) {
   for (const subcommand of group.options) {
-    const key = createKey('cmd', parentName, group.name, subcommand.name)
+    const parentKey = createKey(parentName, group.name, subcommand.name)
+    const key = createKey('cmd', parentKey)
 
     const setup = subcommand.setup ?? (() => ({}))
     const execute: GenericHandler = async ctx => {
@@ -57,8 +76,8 @@ function loadSubcommandGroup(store: CommandStore, parentName: string, group: Sub
       await (<GenericHandler>subcommand.execute).call(deps, ctx)
     }
 
-    // @todo: autocompletes
     store.set(key, execute)
+    loadAutocompletes(store, parentKey, subcommand.options)
   }
 }
 
