@@ -118,3 +118,4 @@ async function loadScript(client: Client, script: ChooksScript): Promise<void> {
 }
 
 export { loadEvent, loadSlashCommand, loadSlashSubcommand, loadUserCommand, loadMessageCommand, loadScript }
+export { getAutocompletes }
