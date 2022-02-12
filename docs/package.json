@@ -9,7 +9,7 @@
     "serve": "vuepress serve guide"
   },
   "devDependencies": {
-    "@sapphire/framework": "^3.0.0-next.9ed3d98.0",
+    "@sapphire/framework": "next",
     "chooksie": "workspace:*",
     "discord.js": "^13.6.0",
     "eslint-config-lint": "workspace:*",
