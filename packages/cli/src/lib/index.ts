@@ -1,6 +1,7 @@
 export { compile, unlink, write } from './compile'
 export { resolveConfigFile, validateConfig, validateDevConfig } from './config'
 export { diffCommand, diffOption } from './diff'
+export { default as registerCommands } from './register'
 export { getFileType, mapSourceFile, MODULES, sourceFromFile } from './sourcemap'
 export type { FileOptions, FileType, SourceDir, SourceMap } from './sourcemap'
 export { default as Store } from './store'

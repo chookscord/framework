@@ -1,8 +1,7 @@
 import type { Command } from 'chooksie'
-import fetch from 'chooksie/fetch'
 import type { AppCommand } from 'chooksie/internals'
 import { createKey, getAutocompletes } from '../internals'
-import { diffCommand, tokenToAppId, transformCommand } from '../lib'
+import { diffCommand, registerCommands, tokenToAppId, transformCommand } from '../lib'
 import type { Stores } from './loaders'
 
 function isAbortError(error: unknown): error is Error {
@@ -49,7 +48,7 @@ function* getCommandKeys(command: Command) {
 function watchCommands(stores: Stores, token: string, devServer: string): void {
   const appId = tokenToAppId(token)
   const url = `https://discord.com/api/v8/applications/${appId}/guilds/${devServer}/commands`
-  const credential = `Bot ${token}`
+  const credentials = `Bot ${token}`
 
   const unsyncedCommands: Command[] = []
   let timeout: NodeJS.Timeout
@@ -66,33 +65,6 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
       })
   }
 
-  const registerCommands = async (commands: AppCommand[]) => {
-    const res = await fetch.put(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': credential,
-      },
-      body: JSON.stringify(commands),
-      signal: controller.signal,
-    })
-
-    if (res.ok) {
-      console.info('Updated commands.')
-      console.info(`Updates left before reset: ${res.headers.get('X-RateLimit-Remaining')}`)
-    } else if (res.status !== 429) {
-      // @todo: parse dapi error
-      console.error(`Updating commands resulted in status code "${res.status}"`)
-    }
-
-    // Handle rate limits
-    if (res.headers.get('X-RateLimit-Remaining') === '0') {
-      const nextReset = res.headers.get('X-RateLimit-Reset-After')
-      resetAfter = Date.now() + Number(nextReset) * 1000
-      console.warn(`Rate limit reached! Next register available in: ${nextReset}s`)
-    }
-
-    return res.ok
-  }
 
   // Parse modules, reset controller and register commands
   const _register = async () => {
@@ -106,8 +78,16 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
     try {
       // only sync commands once commands actually are updated
       controller = new AbortController()
-      if (await registerCommands(commands)) {
+      const signal = controller.signal
+      const res = await registerCommands({ url, credentials, commands, signal })
+
+      if (res.status === 'OK') {
         syncCommands()
+        return
+      }
+
+      if (res.status === 'RATE_LIMIT') {
+        resetAfter = res.resetAfter
       }
     } catch (error) {
       if (!isAbortError(error)) {
