@@ -4,6 +4,7 @@ const conf = require('jest-config')
 module.exports = {
   ...conf,
   moduleNameMapper: {
+    '^chooksie/fetch$': '<rootDir>/../chooksie/src/fetch.ts',
     '^chooksie/internals$': '<rootDir>/../chooksie/src/internals/index.ts',
   },
 }
