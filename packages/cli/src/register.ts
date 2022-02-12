@@ -1,4 +1,4 @@
-import type { ChooksConfig, Command } from 'chooksie'
+import type { ChooksConfig, Command, MessageCommand, UserCommand } from 'chooksie'
 import type { AppCommand } from 'chooksie/internals'
 import { access } from 'fs/promises'
 import { join, relative } from 'path'
@@ -13,8 +13,23 @@ const outDir = join(root, 'dist')
 
 type ExitCode = number
 
-function fileIsCommand(file: SourceMap) {
-  return file.type !== 'config' && file.type !== 'event' && file.type !== 'script'
+async function resolveMod(file: SourceMap): Promise<Command | null> {
+  if (file.type === 'user') {
+    const mod = await import(file.target) as { default: UserCommand }
+    return { type: 'USER', ...mod.default }
+  }
+
+  if (file.type === 'message') {
+    const mod = await import(file.target) as { default: MessageCommand }
+    return { type: 'MESSAGE', ...mod.default }
+  }
+
+  if (file.type === 'command' || file.type === 'subcommand') {
+    const mod = await import(file.target) as { default: Command }
+    return mod.default
+  }
+
+  return null
 }
 
 async function _register(opts: RegisterOptions): Promise<ExitCode> {
@@ -52,19 +67,21 @@ async function register(): Promise<void> {
   const commands: AppCommand[] = []
 
   for await (const file of walk(outDir)) {
+    const relpath = relative(outDir, file.path)
     const source = toSource(file.path)
-    if (fileIsCommand(source)) {
-      const relpath = relative(outDir, file.path)
-      try {
-        const mod = await import(file.path) as { default: Command }
-        commands.push(transformCommand(mod.default))
-        console.info(`Loaded ${relpath}`)
-      } catch (error) {
-        console.error(error)
-        console.error(`Could not load file ${relpath}!`)
-        process.exit(1)
-      }
+    let command: Command | null
+
+    try {
+      command = await resolveMod(source)
+      if (command === null) continue
+    } catch (error) {
+      console.error(error)
+      console.error(`Could not load file ${relpath}!`)
+      process.exit(1)
     }
+
+    commands.push(transformCommand(command))
+    console.info(`Loaded ${relpath}`)
   }
 
   console.info(`Found ${commands.length} commands.`)
