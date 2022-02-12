@@ -42,9 +42,8 @@ async function registerCommands(opts: RegisterOptions): Promise<RegisterResult> 
   // Handle rate limits
   if (res.headers.get('X-RateLimit-Remaining') === '0') {
     const nextReset = res.headers.get('X-RateLimit-Reset-After')
-    const resetAfter = Date.now() + Number(nextReset) * 1000
     console.warn(`Rate limit reached! Next register available in: ${nextReset}s`)
-    return { status: 'RATE_LIMIT', resetAfter }
+    return { status: 'RATE_LIMIT', resetAfter: Number(nextReset) }
   }
 
   // @todo: parse dapi error

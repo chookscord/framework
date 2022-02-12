@@ -87,7 +87,7 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
       }
 
       if (res.status === 'RATE_LIMIT') {
-        resetAfter = res.resetAfter
+        resetAfter = Date.now() + res.resetAfter * 1000
       }
     } catch (error) {
       if (!isAbortError(error)) {
