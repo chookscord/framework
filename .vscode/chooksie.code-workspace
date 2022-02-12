@@ -9,6 +9,10 @@
       "path": "../packages/chooksie"
     },
     {
+      "name": "📖 Docs",
+      "path": "../docs"
+    },
+    {
       "name": "🔧 Configs",
       "path": "../configs"
     },
@@ -26,9 +30,11 @@
   "settings": {
     "files.exclude": {
       "configs/": true,
-      "packages/": true
+      "packages/": true,
+      "docs/": true
     },
     "jest.disabledWorkspaceFolders": [
+      "📖 Docs",
       "🔧 Configs",
       "🌱 Root"
     ]

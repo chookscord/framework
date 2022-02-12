@@ -1,0 +1,19 @@
+{
+  "name": "chookscord-docs",
+  "version": "2.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "vuepress dev guide",
+    "build": "vuepress build guide",
+    "serve": "vuepress serve guide"
+  },
+  "devDependencies": {
+    "@sapphire/framework": "^3.0.0-next.9ed3d98.0",
+    "chooksie": "workspace:*",
+    "discord.js": "^13.6.0",
+    "eslint-config-lint": "workspace:*",
+    "tsconfig": "workspace:*",
+    "vuepress-vite": "^2.0.0-beta.35"
+  }
+}
