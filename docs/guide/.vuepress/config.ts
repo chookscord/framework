@@ -6,7 +6,7 @@ const link = (text: string, link: string) => ({ text, link })
 export default defineUserConfig({
   lang: 'en-US',
   title: 'Chooksie',
-  description: 'Guide for the Chooksie Framework',
+  description: 'Fast Discord.JS Framework',
   themeConfig: {
     sidebar: [
       {
