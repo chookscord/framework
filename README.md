@@ -4,6 +4,7 @@
 
 [![npm (scoped)](https://img.shields.io/npm/v/chooksie)](https://npmjs.com/package/chooksie)
 [![npm](https://img.shields.io/npm/dt/chooksie)](https://npmjs.com/package/chooksie)
+[![Discord Server](https://discord.com/api/guilds/942452845322600569/embed.png)](https://discord.gg/24Kh8sf8hu)
 [![GitHub Stars](https://img.shields.io/github/stars/chookscord/framework?style=social)](https://github.com/chookscord/framework)
 
 ## Features
