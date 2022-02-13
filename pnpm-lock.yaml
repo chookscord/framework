@@ -34,7 +34,7 @@ importers:
       jest: ^27.4.7
     devDependencies:
       '@jest/types': 27.4.2
-      '@swc/jest': 0.2.17_@swc+core@1.2.136
+      '@swc/jest': 0.2.17_@swc+core@1.2.139
       '@types/jest': 27.4.0
       jest: 27.4.7
 
@@ -94,6 +94,7 @@ importers:
       '@swc/helpers': ^0.3.2
       chokidar: ^3.5.2
       chooksie: workspace:^2.0.0
+      create-chooks-bot: workspace:*
       discord.js: ^13.6.0
       dotenv: ^15.0.0
       eslint-config-lint: workspace:*
@@ -104,6 +105,7 @@ importers:
       '@swc/core': 1.2.130
       '@swc/helpers': 0.3.2
       chokidar: 3.5.3
+      create-chooks-bot: link:../create-chooks-bot
       joi: 17.5.0
     devDependencies:
       chooksie: link:../chooksie
@@ -111,6 +113,25 @@ importers:
       dotenv: 15.0.0
       eslint-config-lint: link:../../configs/lint
       jest-config: link:../../configs/jest
+      tsconfig: link:../../configs/tsconfig
+
+  packages/create-chooks-bot:
+    specifiers:
+      '@types/package-name-regex': ^2.0.0
+      '@types/prompts': ^2.0.14
+      eslint-config-lint: workspace:*
+      nanospinner: ^1.0.0
+      package-name-regex: ^2.0.6
+      prompts: ^2.4.2
+      tsconfig: workspace:*
+    dependencies:
+      nanospinner: 1.0.0
+      package-name-regex: 2.0.6
+      prompts: 2.4.2
+    devDependencies:
+      '@types/package-name-regex': 2.0.0
+      '@types/prompts': 2.0.14
+      eslint-config-lint: link:../../configs/lint
       tsconfig: link:../../configs/tsconfig
 
 packages:
@@ -1598,14 +1619,14 @@ packages:
     resolution: {integrity: sha512-NdRQSjcceaXsQDNYyK0wWyRvrn5rsvugK8vnTiRB2i0UCaD2slUFUq28tmojILW5A04oF+sZRMxd0Cy7xS/y0A==}
     dev: true
 
-  /@swc/jest/0.2.17_@swc+core@1.2.136:
+  /@swc/jest/0.2.17_@swc+core@1.2.139:
     resolution: {integrity: sha512-n/g989+O8xxMcTZnP0phDrrgezGZBQBf7cX4QuzEsn07QkWbqmMsfaCxdF0kzajXublXWJ8yk5vRe3VNk1tczA==}
     engines: {npm: '>= 7.0.0'}
     peerDependencies:
       '@swc/core': '*'
     dependencies:
       '@jest/create-cache-key-function': 27.4.2
-      '@swc/core': 1.2.136
+      '@swc/core': 1.2.139
     dev: true
 
   /@tootallnate/once/1.1.2:
@@ -1725,12 +1746,22 @@ packages:
     resolution: {integrity: sha512-e8PUNQy1HgJGV3iU/Bp2+D/DXh3PYeyli8LgIwsQcs1Ar1LoaWHSIT6Rw+H2rNJmiq6SNWiDytfx8+gYj7wDHw==}
     dev: true
 
+  /@types/package-name-regex/2.0.0:
+    resolution: {integrity: sha512-DM0dpUWqqkjHhy0j/yyxW7H2AkN/hhqwThsnkTg8CnC2cAURuqusogheWRya7UEZ8ceVTsbiK9T/JeL5GklcxA==}
+    dev: true
+
   /@types/prettier/2.4.3:
     resolution: {integrity: sha512-QzSuZMBuG5u8HqYz01qtMdg/Jfctlnvj1z/lYnIDXs/golxw0fxtRAHd9KrzjR7Yxz1qVeI00o0kiO3PmVdJ9w==}
     dev: true
 
   /@types/prettier/2.4.4:
     resolution: {integrity: sha512-ReVR2rLTV1kvtlWFyuot+d1pkpG2Fw/XKE3PDAdj57rbM97ttSp9JZ2UsP+2EHTylra9cUf6JA7tGwW1INzUrA==}
+    dev: true
+
+  /@types/prompts/2.0.14:
+    resolution: {integrity: sha512-HZBd99fKxRWpYCErtm2/yxUZv6/PBI9J7N4TNFffl5JbrYMHBwF25DjQGTW3b3jmXq+9P6/8fCIb2ee57BFfYA==}
+    dependencies:
+      '@types/node': 17.0.17
     dev: true
 
   /@types/stack-utils/2.0.1:
@@ -5006,7 +5037,6 @@ packages:
   /kleur/3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
-    dev: true
 
   /klona/2.0.5:
     resolution: {integrity: sha512-pJiBpiXMbt7dkzXe8Ghj/u4FfXOOa98fPW+bihOJ4SjnoijweJrNThJfd3ifXpXhREjpoF2mZVH1GfS9LV3kHQ==}
@@ -5203,6 +5233,12 @@ packages:
     hasBin: true
     dev: true
 
+  /nanospinner/1.0.0:
+    resolution: {integrity: sha512-14c2r2QQ9xfTmdbqdF51FKCNvww+0ZON9GeEHur+pBdOufoFvxD4CZQRaYWmFrGH3Nuv7PZ/9Q+wsV+hFSp32g==}
+    dependencies:
+      picocolors: 1.0.0
+    dev: false
+
   /natural-compare/1.4.0:
     resolution: {integrity: sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=}
     dev: true
@@ -5330,6 +5366,11 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /package-name-regex/2.0.6:
+    resolution: {integrity: sha512-gFL35q7kbE/zBaPA3UKhp2vSzcPYx2ecbYuwv1ucE9Il6IIgBDweBlH8D68UFGZic2MkllKa2KHCfC1IQBQUYA==}
+    engines: {node: '>=12'}
+    dev: false
+
   /parent-module/1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -5383,7 +5424,6 @@ packages:
 
   /picocolors/1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
-    dev: true
 
   /picomatch/2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
@@ -5468,7 +5508,6 @@ packages:
     dependencies:
       kleur: 3.0.3
       sisteransi: 1.0.5
-    dev: true
 
   /ps-tree/1.2.0:
     resolution: {integrity: sha512-0VnamPPYHl4uaU/nSFeZZpR21QAWRz+sRv4iW9+v/GS/J5U5iZB5BNN6J0RMoOvdx2gWM2+ZFMIm58q24e4UYA==}
@@ -5694,7 +5733,6 @@ packages:
 
   /sisteransi/1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
-    dev: true
 
   /slash/3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}

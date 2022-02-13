@@ -1,6 +1,7 @@
 import { watch } from 'chokidar'
 import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
+import 'dotenv/config'
 import { existsSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { join, relative, resolve } from 'path'

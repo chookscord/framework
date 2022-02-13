@@ -9,6 +9,10 @@
       "path": "../packages/chooksie"
     },
     {
+      "name": "🏗 Scaffold",
+      "path": "../packages/create-chooks-bot"
+    },
+    {
       "name": "📖 Docs",
       "path": "../docs"
     },
@@ -34,6 +38,7 @@
       "docs/": true
     },
     "jest.disabledWorkspaceFolders": [
+      "🏗 Scaffold",
       "📖 Docs",
       "🔧 Configs",
       "🌱 Root"

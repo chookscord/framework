@@ -1,3 +1,4 @@
+process.env.NODE_ENV = 'production'
 import type { ChooksScript, Event, GenericHandler, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import { createClient, loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
 import type { ClientEvents } from 'discord.js'

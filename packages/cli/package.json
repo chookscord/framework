@@ -17,6 +17,7 @@
     "@swc/core": "^1.2.130",
     "@swc/helpers": "^0.3.2",
     "chokidar": "^3.5.2",
+    "create-chooks-bot": "workspace:*",
     "joi": "^17.5.0"
   },
   "devDependencies": {
