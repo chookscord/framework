@@ -1,9 +1,9 @@
 import type { AutocompleteInteraction, CommandInteraction } from 'discord.js'
 import { createKey, resolveInteraction } from '../src/internals/resolve'
 
-const execute = { [Symbol('foo')]: 0 }
+const command = { [Symbol('foo')]: 0 }
 class FakeMap extends Map {
-  public get = jest.fn().mockReturnValue(execute)
+  public get = jest.fn().mockReturnValue(command)
 }
 
 function fakeInteraction(type: 'command' | 'user' | 'message' | 'autocomplete', opts: {
@@ -47,7 +47,7 @@ describe('resolving interactions', () => {
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
-    expect(res).toStrictEqual({ key, execute })
+    expect(res).toStrictEqual({ key, command })
   })
 
   test('slash subcommand', () => {
@@ -61,7 +61,7 @@ describe('resolving interactions', () => {
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
-    expect(res).toStrictEqual({ key, execute })
+    expect(res).toStrictEqual({ key, command })
   })
 
   test('slash subcommand group', () => {
@@ -76,7 +76,7 @@ describe('resolving interactions', () => {
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
-    expect(res).toStrictEqual({ key, execute })
+    expect(res).toStrictEqual({ key, command })
   })
 
   test('user command', () => {
@@ -87,7 +87,7 @@ describe('resolving interactions', () => {
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
-    expect(res).toStrictEqual({ key, execute })
+    expect(res).toStrictEqual({ key, command })
   })
 
   test('message command', () => {
@@ -98,7 +98,7 @@ describe('resolving interactions', () => {
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
-    expect(res).toStrictEqual({ key, execute })
+    expect(res).toStrictEqual({ key, command })
   })
 
   test('autocomplete', () => {
@@ -112,7 +112,7 @@ describe('resolving interactions', () => {
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
-    expect(res).toStrictEqual({ key, execute })
+    expect(res).toStrictEqual({ key, command })
   })
 
   test('nested autocomplete', () => {
@@ -128,6 +128,6 @@ describe('resolving interactions', () => {
     const res = resolveInteraction(map, interaction)
 
     expect(map.get).toHaveBeenCalledWith(key)
-    expect(res).toStrictEqual({ key, execute })
+    expect(res).toStrictEqual({ key, command })
   })
 })

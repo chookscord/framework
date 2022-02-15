@@ -12,6 +12,7 @@ import type {
   MessageContextMenuInteraction,
   UserContextMenuInteraction,
 } from 'discord.js'
+import type { Logger as PinoLogger } from 'pino'
 import type {
   AppChannelType,
   AppCommandOptionType,
@@ -84,8 +85,11 @@ export function defineConfig(config: ChooksConfig) {
 /**
  * The base context.
  */
+export type Logger = Pick<PinoLogger, 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace'>
+
 export interface Context {
   client: Client<true>
+  logger: Logger
 }
 
 /**
@@ -146,7 +150,12 @@ type DefineOption<T> =
 export type InferSetupType<Setup> = Setup extends () => Awaitable<infer U> ? U : never
 
 export type GenericHandler = (ctx: CommandContext<Interaction>) => Awaitable<void>
-export type CommandStore = Map<string, GenericHandler>
+export interface CommandModule {
+  execute: GenericHandler
+  logger: Logger
+}
+
+export type CommandStore = Map<string, CommandModule>
 // #endregion
 // #region Events
 /**

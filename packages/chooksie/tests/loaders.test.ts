@@ -1,7 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/unbound-method */
 import type { Client } from 'discord.js'
+import type { Logger } from 'pino'
+import _pino from 'pino'
 import { loadEvent, loadSlashCommand, loadSlashSubcommand } from '../src/internals/loaders'
 import { createKey } from '../src/internals/resolve'
+
+jest.mock('pino', () => {
+  const pino = jest.fn() as unknown as Logger
+  pino.child = jest.fn(val => val) as never
+  return () => pino
+})
+
+const pino = _pino()
 
 class FakeMap extends Map {
   public set = jest.fn()
@@ -50,9 +62,19 @@ describe('loaders', () => {
     expect(execute.bind).toHaveBeenCalledWith(deps)
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
-    const key = 'foo'
-    expect(store.set).toHaveBeenCalledWith(createKey('cmd', key), execute.bind())
-    expect(store.set).toHaveBeenCalledWith(createKey('auto', key, 'bar'), autocomplete.bind())
+    const parentKey = 'foo'
+    const key = createKey('cmd', parentKey)
+
+    expect(store.set).toHaveBeenCalledWith(key, {
+      execute: execute.bind(),
+      logger: pino.child({ type: 'command', name: key }),
+    })
+
+    const autocompleteKey = createKey('auto', parentKey, 'bar')
+    expect(store.set).toHaveBeenCalledWith(autocompleteKey, {
+      execute: autocomplete.bind(),
+      logger: pino.child({ type: 'autocomplete', name: autocompleteKey }),
+    })
   })
 
   test('slash subcommands', async () => {
@@ -83,9 +105,19 @@ describe('loaders', () => {
     expect(execute.bind).toHaveBeenCalledWith(deps)
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
-    const key = createKey('foo', 'bar')
-    expect(store.set).toHaveBeenCalledWith(createKey('cmd', key), execute.bind())
-    expect(store.set).toHaveBeenCalledWith(createKey('auto', key, 'baz'), autocomplete.bind())
+    const parentKey = createKey('foo', 'bar')
+    const key = createKey('cmd', parentKey)
+
+    expect(store.set).toHaveBeenCalledWith(key, {
+      execute: execute.bind(),
+      logger: pino.child({ type: 'subcommand', name: key }),
+    })
+
+    const autocompleteKey = createKey('auto', parentKey, 'baz')
+    expect(store.set).toHaveBeenCalledWith(autocompleteKey, {
+      execute: autocomplete.bind(),
+      logger: pino.child({ type: 'autocomplete', name: autocompleteKey }),
+    })
   })
 
   test('slash subcommand groups', async () => {
@@ -123,9 +155,19 @@ describe('loaders', () => {
     expect(execute.bind).toHaveBeenCalledWith(deps)
     expect(autocomplete.bind).toHaveBeenCalledWith(deps)
 
-    const key = createKey('foo', 'bar', 'baz')
-    expect(store.set).toHaveBeenCalledWith(createKey('cmd', key), execute.bind())
-    expect(store.set).toHaveBeenCalledWith(createKey('auto', key, 'qux'), autocomplete.bind())
+    const parentKey = createKey('foo', 'bar', 'baz')
+    const key = createKey('cmd', parentKey)
+
+    expect(store.set).toHaveBeenCalledWith(key, {
+      execute: execute.bind(),
+      logger: pino.child({ type: 'subcommand', name: key }),
+    })
+
+    const autocompleteKey = createKey('auto', parentKey, 'qux')
+    expect(store.set).toHaveBeenCalledWith(autocompleteKey, {
+      execute: autocomplete.bind(),
+      logger: pino.child({ type: 'autocomplete', name: autocompleteKey }),
+    })
   })
 
   test('events', async () => {
@@ -142,7 +184,9 @@ describe('loaders', () => {
 
     expect(client.on).toHaveBeenCalled()
     expect(client.once).not.toHaveBeenCalled()
-    expect(execute.bind).toHaveBeenCalledWith(deps, { client })
+
+    const logger = pino.child({ type: 'event', name: 'ready' })
+    expect(execute.bind).toHaveBeenCalledWith(deps, { client, logger })
   })
 
   test('once events', async () => {
@@ -160,6 +204,8 @@ describe('loaders', () => {
 
     expect(client.on).not.toHaveBeenCalled()
     expect(client.once).toHaveBeenCalled()
-    expect(execute.bind).toHaveBeenCalledWith(deps, { client })
+
+    const logger = pino.child({ type: 'event', name: 'ready' })
+    expect(execute.bind).toHaveBeenCalledWith(deps, { client, logger })
   })
 })

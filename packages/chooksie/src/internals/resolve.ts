@@ -1,9 +1,9 @@
 import type { Interaction } from 'discord.js'
-import type { CommandStore, GenericHandler } from '../types'
+import type { CommandModule, CommandStore } from '../types'
 
 export interface ResolvedHandler {
   key: string
-  execute: GenericHandler | null
+  command: CommandModule | null
 }
 
 function createKey(...keys: (string | null)[]): string {
@@ -16,17 +16,17 @@ function resolveInteraction(store: CommandStore, interaction: Interaction): Reso
     const subcommand = interaction.options.getSubcommand(false)
 
     const key = createKey('cmd', interaction.commandName, group, subcommand)
-    const execute = store.get(key) ?? null
+    const command = store.get(key) ?? null
 
-    return { key, execute }
+    return { key, command }
   }
 
   if (interaction.isContextMenu()) {
     const namespace = interaction.isUserContextMenu() ? 'usr' : 'msg'
     const key = createKey(namespace, interaction.commandName)
-    const execute = store.get(key) ?? null
+    const command = store.get(key) ?? null
 
-    return { key, execute }
+    return { key, command }
   }
 
   if (interaction.isAutocomplete()) {
@@ -35,9 +35,9 @@ function resolveInteraction(store: CommandStore, interaction: Interaction): Reso
     const option = interaction.options.getFocused(true)
 
     const key = createKey('auto', interaction.commandName, group, subcommand, option.name)
-    const execute = store.get(key) ?? null
+    const command = store.get(key) ?? null
 
-    return { key, execute }
+    return { key, command }
   }
 
   return null
