@@ -1,9 +1,9 @@
 import type { Client, ClientEvents } from 'discord.js'
-import _pino from 'pino'
 import type { ChooksScript, CommandStore, EmptyObject, Event, GenericHandler, MessageCommand, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types'
+import newPino from './logger'
 import { createKey } from './resolve'
 
-const pino = _pino()
+const createLogger = newPino()
 
 function getAutocompletes(options: Option[] | undefined): OptionWithAutocomplete[] {
   if (!options) return []
@@ -20,7 +20,7 @@ async function loadEvent(client: Client, event: Event<keyof ClientEvents>): Prom
   const freq = event.once ? 'once' : 'on'
   const deps = await event.setup?.() ?? {}
 
-  const logger = pino.child({ type: 'event', name: event.name })
+  const logger = createLogger('event', event.name)
   const execute = event.execute.bind(deps, { client, logger })
 
   client[freq](event.name, execute)
@@ -35,7 +35,7 @@ async function loadAutocompletes(store: CommandStore, parentKey: string, options
     const autocomplete = <GenericHandler>option.autocomplete!.bind(deps)
 
     const key = createKey('auto', parentKey, option.name)
-    const logger = pino.child({ type: 'autocomplete', name: key })
+    const logger = createLogger('autocomplete', key)
 
     store.set(key, { execute: autocomplete, logger })
   })
@@ -48,7 +48,7 @@ async function loadSlashCommand(store: CommandStore, command: SlashCommand): Pro
   const execute = <GenericHandler>command.execute.bind(deps)
 
   const key = createKey('cmd', command.name)
-  const logger = pino.child({ type: 'command', name: key })
+  const logger = createLogger('command', key)
 
   store.set(key, { execute, logger })
 
@@ -61,7 +61,7 @@ async function loadSubcommand(store: CommandStore, parentName: string, subcomman
 
   const parentKey = createKey(parentName, subcommand.name)
   const key = createKey('cmd', parentKey)
-  const logger = pino.child({ type: 'subcommand', name: key })
+  const logger = createLogger('subcommand', key)
   store.set(key, { execute, logger })
 
   await loadAutocompletes(store, parentKey, subcommand.options)
@@ -74,7 +74,7 @@ async function loadSubcommandGroup(store: CommandStore, parentName: string, grou
 
     const parentKey = createKey(parentName, group.name, subcommand.name)
     const key = createKey('cmd', parentKey)
-    const logger = pino.child({ type: 'subcommand', name: key })
+    const logger = createLogger('subcommand', key)
     store.set(key, { execute, logger })
 
     await loadAutocompletes(store, parentKey, subcommand.options)
@@ -110,7 +110,7 @@ async function loadUserCommand(store: CommandStore, command: UserCommand): Promi
   const execute = <GenericHandler>command.execute.bind(deps)
 
   const key = createKey('usr', command.name)
-  const logger = pino.child({ type: 'user', name: key })
+  const logger = createLogger('user', key)
 
   store.set(key, { execute, logger })
 }
@@ -123,7 +123,7 @@ async function loadMessageCommand(store: CommandStore, command: MessageCommand):
   const execute = <GenericHandler>command.execute.bind(deps)
 
   const key = createKey('msg', command.name)
-  const logger = pino.child({ type: 'message', name: key })
+  const logger = createLogger('message', key)
 
   store.set(key, { execute, logger })
 }
@@ -133,7 +133,7 @@ async function loadMessageCommand(store: CommandStore, command: MessageCommand):
  */
 async function loadScript(client: Client, relpath: string, script: ChooksScript): Promise<void> {
   if (typeof script.chooksOnLoad === 'function') {
-    const logger = pino.child({ type: 'script', name: relpath })
+    const logger = createLogger('script', relpath)
     await script.chooksOnLoad({ client, logger })
   }
 }
