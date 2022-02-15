@@ -12,7 +12,7 @@
   "dependencies": {
     "@swc/helpers": "^0.3.2",
     "dotenv": "^15.0.0",
-    "pino": "^7.6.5"
+    "pino": "^7.7.0"
   },
   "devDependencies": {
     "discord.js": "^13.6.0",
