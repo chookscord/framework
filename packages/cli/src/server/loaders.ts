@@ -6,6 +6,7 @@ import { createKey, getAutocompletes } from '../internals'
 import type { SourceMap, Store } from '../lib'
 
 interface EventModule {
+  name: keyof ClientEvents
   execute: () => Awaitable<void>
   logger: Logger
 }
@@ -130,8 +131,22 @@ function loadMessageCommand(store: CommandStore, pino: LoggerFactory, command: M
   store.set(key, { execute, logger })
 }
 
-function loadEvent(store: EventStore, client: Client, pino: LoggerFactory, event: Event<keyof ClientEvents>): void {
-  const logger = pino('event', event.name)
+function unloadEvent(store: EventStore, client: Client, key: string, logger?: Logger): void {
+  if (!store.has(key)) {
+    logger?.warn('Tried to unload an event that wasn\'t saved!')
+    return
+  }
+
+  const event = store.get(key)!
+  client.off(event.name, event.execute)
+  logger?.info(`Unloaded "${event.name}" listener!`)
+}
+
+// eslint-disable-next-line max-params, max-len
+function loadEvent(store: EventStore, client: Client, key: string, pino: LoggerFactory, event: Event<keyof ClientEvents>): void {
+  const name = event.name
+  const logger = pino('event', name)
+
   const setup = event.setup ?? (() => ({}))
   const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
     const deps = await setup()
@@ -139,13 +154,13 @@ function loadEvent(store: EventStore, client: Client, pino: LoggerFactory, event
     await event.execute.call(deps, { client, logger }, ...args)
   }
 
-  const oldListener = store.get(event.name)
-  if (oldListener) {
-    client.off(event.name, oldListener.execute)
+  if (store.has(key)) {
+    const oldListener = store.get(event.name)!
+    client.off(key, oldListener.execute)
   }
 
-  store.set(event.name, { execute, logger })
-  client[event.once ? 'once' : 'on'](event.name, execute)
+  store.set(key, { name, execute, logger })
+  client[event.once ? 'once' : 'on'](name, execute)
 }
 
 async function unloadScript(store: ScriptStore, logger: Logger, root: string, file: SourceMap): Promise<void> {
@@ -182,4 +197,4 @@ async function loadScript(store: ScriptStore, client: Client, pino: LoggerFactor
 }
 
 export { loadEvent, loadSlashCommand, loadSlashSubcommand, loadUserCommand, loadMessageCommand, loadScript }
-export { unloadScript }
+export { unloadEvent, unloadScript }

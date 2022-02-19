@@ -11,7 +11,7 @@ import { validateEvent, validateMessageCommand, validateSlashCommand, validateSl
 import { target } from '../logger'
 import { createWatchCompiler } from './compiler'
 import type { Stores } from './loaders'
-import { loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadScript } from './loaders'
+import { loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadScript } from './loaders'
 import watchCommands from './register'
 import { unloadMod, unrequire } from './require'
 import { resolveConfig } from './resolve-config'
@@ -82,7 +82,7 @@ async function createServer(): Promise<void> {
 
   // Watches command modules and updates using Discord API
   // Also syncs commands when modules are deleted.
-  watchCommands(stores, config.token, config.devServer!)
+  watchCommands(stores, config.token, config.devServer!, pino)
 
   const compiler = createWatchCompiler(watcher, { root, outDir })
   const listener = onInteractionCreate(stores.command)
@@ -149,7 +149,7 @@ async function createServer(): Promise<void> {
     if (file.type === 'event') {
       const event = mod.default as Event<keyof ClientEvents>
       if (await validate(event, validateEvent)) {
-        loadEvent(stores.event, client, pino, event)
+        loadEvent(stores.event, client, relpath, pino, event)
       }
       return
     }
@@ -165,6 +165,11 @@ async function createServer(): Promise<void> {
   })
 
   compiler.on('delete', async file => {
+    const relpath = relative(root, file.source)
+    if (file.type === 'event') {
+      unloadEvent(stores.event, client, relpath, logger)
+    }
+
     if (file.type === 'script') {
       await unloadScript(stores.cleanup, logger, root, file)
       return
@@ -172,7 +177,6 @@ async function createServer(): Promise<void> {
 
     // No need to handle commands since it's handled by the module register.
     if (file.type !== 'config') {
-      const relpath = relative(root, file.source)
       stores.module.delete(relpath)
       return
     }
