@@ -187,7 +187,7 @@ export interface Event<Name extends keyof ClientEvents, T = EmptyObject> {
  *   name: 'ready',
  *   once: true,
  *   execute(ctx) {
- *     console.log(`Logged in as ${ctx.client.user.username}!`)
+ *     ctx.logger.info(`Logged in as ${ctx.client.user.username}!`)
  *   },
  * })
  *
@@ -198,7 +198,7 @@ export interface Event<Name extends keyof ClientEvents, T = EmptyObject> {
  * export default defineEvent({
  *   name: 'interactionCreate',
  *   execute(ctx, interaction) {
- *     console.log(`Received an interaction at ${interaction.createdAt}`)
+ *     ctx.logger.info(`Received an interaction at ${interaction.createdAt}`)
  *   },
  * })
  */
@@ -840,9 +840,9 @@ export function defineChoice<T extends string | number>(choice: Choice<T>) {
  *
  * @example
  * export const chooksOnLoad: OnLoad = (ctx) => {
- *   console.log('File loaded!')
+ *   ctx.logger.info('File loaded!')
  *   return () => {
- *     console.log('File reloading...')
+ *     ctx.logger.info('File reloading...')
  *   }
  * }
  */
@@ -884,17 +884,17 @@ export interface ChooksScript {
  *   })
  *
  *   // start our server
- *   console.log('Starting express server...')
+ *   ctx.logger.info('Starting express server...')
  *   app.listen(3000, () => {
- *     console.log('Express server started!')
+ *     ctx.logger.info('Express server started!')
  *   })
  *
  *   // return a function that will stop our
  *   // outdated server when the file gets updated
  *   return () => {
- *     console.log('Stopping express server...')
+ *     ctx.logger.info('Stopping express server...')
  *     app.close(() => {
- *       console.log('Express server stopped!')
+ *       ctx.logger.info('Express server stopped!')
  *     })
  *   }
  * })

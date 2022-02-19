@@ -4,6 +4,6 @@ export default defineEvent({
   name: 'ready',
   once: true,
   execute(ctx) {
-    console.log(`Logged in as ${ctx.client.user.username}!`)
+    ctx.logger.info(`Logged in as ${ctx.client.user.username}!`)
   },
 })

@@ -1,5 +1,5 @@
 import type { Command } from 'chooksie'
-import type { AppCommand } from 'chooksie/internals'
+import type { AppCommand, LoggerFactory } from 'chooksie/internals'
 import { createKey, getAutocompletes } from '../internals'
 import { diffCommand, registerCommands, tokenToAppId, transformCommand } from '../lib'
 import type { Stores } from './loaders'
@@ -45,10 +45,11 @@ function* getCommandKeys(command: Command) {
   }
 }
 
-function watchCommands(stores: Stores, token: string, devServer: string): void {
+function watchCommands(stores: Stores, token: string, devServer: string, pino: LoggerFactory): void {
   const appId = tokenToAppId(token)
   const url = `https://discord.com/api/v8/applications/${appId}/guilds/${devServer}/commands`
   const credentials = `Bot ${token}`
+  const logger = pino('app', 'register')
 
   const unsyncedCommands: Command[] = []
   let timeout: NodeJS.Timeout
@@ -68,7 +69,7 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
 
   // Parse modules, reset controller and register commands
   const _register = async () => {
-    console.debug('Updating commands...')
+    logger.debug('Updating commands...')
 
     const commands: AppCommand[] = []
     for (const cmd of stores.module.values()) {
@@ -79,7 +80,7 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
       // only sync commands once commands actually are updated
       controller = new AbortController()
       const signal = controller.signal
-      const res = await registerCommands({ url, credentials, commands, signal })
+      const res = await registerCommands({ url, credentials, commands, signal, logger })
 
       if (res.status === 'OK') {
         syncCommands()
@@ -114,14 +115,14 @@ function watchCommands(stores: Stores, token: string, devServer: string): void {
     }
 
     if (diffCommand(a, b)) {
-      console.info(`Updating command "${a.name}"...`)
+      logger.info(`Updating command "${a.name}"...`)
       unsyncedCommands.push(b)
       register()
     }
   })
 
   stores.module.events.on('delete', command => {
-    console.info(`Deleting command "${command.name}"...`)
+    logger.info(`Deleting command "${command.name}"...`)
     unsyncedCommands.push(command)
     register()
   })

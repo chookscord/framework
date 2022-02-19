@@ -1,15 +1,21 @@
 import type { Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
-import { timer, walk } from 'chooksie/internals'
 import type { ClientEvents } from 'discord.js'
 import type { Dirent } from 'fs'
 import { cp, readdir } from 'fs/promises'
 import { join } from 'path'
+import { createLogger, timer, walk } from '../internals'
 import type { SourceMap } from '../lib'
 import { compile, mapSourceFile, resolveConfigFile, write } from '../lib'
 import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
+import { target } from '../logger'
 
 const root = process.cwd()
 const outDir = join(root, 'dist')
+
+const pino = createLogger({
+  transport: { target },
+})
+const logger = pino('app', 'chooks')
 
 const toSourceMap = mapSourceFile({
   root,
@@ -70,7 +76,7 @@ async function compileConfigFile(files: Dirent[]) {
 }
 
 async function build(): Promise<void> {
-  console.info('Starting production build...')
+  logger.info('Starting production build...')
   const measure = timer()
   const rootFiles = await readdir(root, { withFileTypes: true })
 
@@ -96,8 +102,8 @@ async function build(): Promise<void> {
   const res = await Promise.all([...jobList, jobConfig, jobCopy])
   const elapsed = measure()
 
-  console.info(`Wrote ${res.flat().length} files to ${outDir}`)
-  console.info(`Time Took: ${elapsed}`)
+  logger.info(`Wrote ${res.flat().length} files to ${outDir}`)
+  logger.info(`Time Took: ${elapsed}`)
 
   process.exit(0)
 }

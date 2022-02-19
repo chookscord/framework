@@ -1,6 +1,7 @@
 import type { Interaction } from 'discord.js'
 import { Client } from 'discord.js'
 import type { ChooksConfig, CommandStore } from '../types'
+import createLogger from './logger'
 import { resolveInteraction } from './resolve'
 
 function createClient(config: Partial<ChooksConfig>): Client {
@@ -13,23 +14,24 @@ function createClient(config: Partial<ChooksConfig>): Client {
 }
 
 function onInteractionCreate(store: CommandStore): (interaction: Interaction) => Awaited<void> {
+  const logger = createLogger()('app', 'interactions')
   return async (interaction: Interaction) => {
     const handler = resolveInteraction(store, interaction)
     if (!handler)
       return
 
     if (!handler.command) {
-      console.warn(`Handler for "${handler.key}" is missing.`)
+      logger.warn(`Handler for "${handler.key}" is missing.`)
       return
     }
 
     try {
       const client = interaction.client
-      const logger = handler.command.logger
-      await handler.command.execute({ client, interaction, logger })
+      const _logger = handler.command.logger
+      await handler.command.execute({ client, interaction, logger: _logger })
     } catch (error) {
-      console.error(`Handler for "${handler.key}" threw an error!`)
-      console.error(error)
+      logger.error(`Handler for "${handler.key}" threw an error!`)
+      logger.error(error)
     }
   }
 }

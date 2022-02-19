@@ -1,3 +1,4 @@
+import type { Logger } from 'chooksie'
 import fetch from 'chooksie/fetch'
 import type { AppCommand } from 'chooksie/internals'
 
@@ -21,6 +22,7 @@ export interface RegisterOptions {
   credentials: string
   commands: AppCommand[]
   signal?: AbortSignal
+  logger?: Logger
 }
 
 async function registerCommands(opts: RegisterOptions): Promise<RegisterResult> {
@@ -34,20 +36,20 @@ async function registerCommands(opts: RegisterOptions): Promise<RegisterResult> 
   })
 
   if (res.ok) {
-    console.info('Updated commands.')
-    console.info(`Updates left before reset: ${res.headers.get('X-RateLimit-Remaining')}`)
+    opts.logger?.info('Updated commands.')
+    opts.logger?.info(`Updates left before reset: ${res.headers.get('X-RateLimit-Remaining')}`)
     return { status: 'OK' }
   }
 
   // Handle rate limits
   if (res.headers.get('X-RateLimit-Remaining') === '0') {
     const nextReset = res.headers.get('X-RateLimit-Reset-After')
-    console.warn(`Rate limit reached! Next register available in: ${nextReset}s`)
+    opts.logger?.warn(`Rate limit reached! Next register available in: ${nextReset}s`)
     return { status: 'RATE_LIMIT', resetAfter: Number(nextReset) }
   }
 
   // @todo: parse dapi error
-  console.error(`Updating commands resulted in status code "${res.status}"`)
+  opts.logger?.error(`Updating commands resulted in status code "${res.status}"`)
   const error = await res.json()
 
   return { status: 'ERROR', error }

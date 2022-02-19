@@ -1,11 +1,14 @@
 process.env.NODE_ENV = 'production'
-import type { ChooksScript, Event, GenericHandler, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
-import { createClient, loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
+import type { ChooksScript, CommandModule, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import { createClient, createLogger, loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
 import type { ClientEvents } from 'discord.js'
 import 'dotenv/config'
 import { relative } from 'path'
 import type { SourceDir } from '../lib'
 import config from './chooks.config.js'
+
+const pino = createLogger()
+const logger = pino('app', 'chooks')
 
 const MODULE_NAMES: SourceDir[] = ['commands', 'subcommands', 'messages', 'users', 'events']
 
@@ -22,16 +25,15 @@ function getFileType(path: string): SourceDir | 'scripts' {
     : 'scripts'
 }
 
-
 async function main() {
-  console.info('Starting bot...')
+  logger.info('Starting bot...')
   const measure = timer()
 
   const client = createClient(config)
   const login = client.login(config.token)
 
   const files = walk(__dirname, { ignore: file => file.path === __filename })
-  const store = new Map<string, GenericHandler>()
+  const store = new Map<string, CommandModule>()
   const listener = onInteractionCreate(store)
 
   client.on('interactionCreate', listener)
@@ -40,48 +42,48 @@ async function main() {
     const relpath = relative(__dirname, file.path)
     const mod = await import(file.path) as { default: unknown }
     const type = getFileType(file.path)
-    console.info(`Loading file "${relpath}"...`)
+    logger.info(`Loading file "${relpath}"...`)
 
     if (type === 'commands') {
       const command = mod.default as SlashCommand
       await loadSlashCommand(store, command)
-      console.info(`Loaded slash command "${command.name}".`)
+      logger.info(`Loaded slash command "${command.name}".`)
       continue
     }
 
     if (type === 'subcommands') {
       const command = mod.default as SlashSubcommand
       await loadSlashSubcommand(store, command)
-      console.info(`Loaded slash subcommand "${command.name}".`)
+      logger.info(`Loaded slash subcommand "${command.name}".`)
       continue
     }
 
     if (type === 'users') {
       const command = mod.default as UserCommand
       await loadUserCommand(store, command)
-      console.info(`Loaded user command "${command.name}".`)
+      logger.info(`Loaded user command "${command.name}".`)
       continue
     }
 
     if (type === 'messages') {
       const command = mod.default as MessageCommand
       await loadMessageCommand(store, command)
-      console.info(`Loaded message command "${command.name}".`)
+      logger.info(`Loaded message command "${command.name}".`)
       continue
     }
 
     if (type === 'events') {
       const event = mod.default as Event<keyof ClientEvents>
       await loadEvent(client, event)
-      console.info(`Loaded event "${event.name}".`)
+      logger.info(`Loaded event "${event.name}".`)
       continue
     }
 
     if (type === 'scripts') {
       const script = mod as Record<string, unknown>
       if (hasScript(script)) {
-        await loadScript(client, script)
-        console.info(`Loaded script at ${relpath}`)
+        await loadScript(client, relpath, script)
+        logger.info(`Loaded script at ${relpath}`)
       }
     }
   }
@@ -89,8 +91,8 @@ async function main() {
   await login
   const elapsed = measure()
 
-  console.info('Bot started!')
-  console.info(`Time Took: ${elapsed}`)
+  logger.info('Bot started!')
+  logger.info(`Time Took: ${elapsed}`)
 }
 
 void main()
