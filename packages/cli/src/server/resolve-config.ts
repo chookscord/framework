@@ -31,5 +31,13 @@ export async function resolveConfig(
       : new Error(error)
   }
 
+  // Delete token from process env
+  for (const key in process.env) {
+    const value = process.env[key]
+    if (value === config.token) {
+      delete process.env[key]
+    }
+  }
+
   return config
 }
