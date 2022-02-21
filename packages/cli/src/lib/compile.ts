@@ -6,6 +6,7 @@ import type { SourceMap } from './sourcemap'
 
 const SWC_OPTIONS: Readonly<Options> = {
   module: { type: 'commonjs' },
+  sourceMaps: process.env.NODE_ENV !== 'production' && 'inline',
   jsc: {
     loose: true,
     parser: { syntax: 'typescript' },

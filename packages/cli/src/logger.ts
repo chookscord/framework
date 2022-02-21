@@ -15,28 +15,46 @@ interface PinoError {
   stack?: string
 }
 
-function prettifyStack(stack: string, indent: string) {
-  const lines = stack.split('\n')
-  let message = ''
+function prettifyCode(codes: string[]) {
+  const source = pc.yellow(codes[0])
+  const target = pc.red(codes.at(-2))
+  const code = codes.slice(1, -2).join('\n')
 
-  for (let i = 1, n = lines.length; i < n; i++) {
-    const line = lines[i].trim().slice(3) // remove 'at'
+  return `\n${source}\n${code}\n${target}\n`
+}
+
+function prettifyStack(error: Error, indent: string) {
+  const stack = error.stack!.split('\n')
+  const header = stack.indexOf(`${error.name}: ${error.message}`)
+
+  // Removes header, includes cases with source maps enabled
+  const codes = stack.slice(0, header)
+  const lines = stack.slice(header + 1)
+
+  let message = codes.length > 0
+    ? prettifyCode(codes)
+    : ''
+
+  const prefix = `\n${indent}${at} `
+  for (let i = 0, n = lines.length; i < n; i++) {
+    const line = lines[i].trim().slice(3) // removes 'at'
+
     const trace = line.includes('(')
       ? line.replace(stackRegex, stackFormat)
       : pc.cyan(line)
 
-    message += `\n${indent}${at} ${trace}`
+    message += prefix + trace
   }
 
   return message
 }
 
-function prettifyError(error: Error | PinoError) {
-  const name = pc.red(pc.inverse(` ${(<PinoError>error).type ?? (<Error>error).name} `))
+function prettifyError(error: Error) {
+  const name = pc.red(pc.inverse(` ${error.name} `))
   const header = `  ${name} ${error.message}`.trimEnd()
 
   if (error.stack) {
-    return `${header}\n${prettifyStack(error.stack, '    ')}`
+    return `${header}\n${prettifyStack(error, '    ')}`
   }
 
   return header
@@ -52,14 +70,21 @@ const LEVELS: Record<number, string> = {
 }
 
 const TYPES: Record<LoggerType, string> = {
-  app: pc.red('app'),
+  app: pc.blue('app'),
+  script: pc.blue('script'),
   autocomplete: pc.cyan('autocomplete'),
   event: pc.cyan('event'),
   command: pc.green('command'),
   subcommand: pc.green('subcommand'),
   message: pc.yellow('message'),
   user: pc.yellow('user'),
-  script: pc.blue('script'),
+}
+
+function toError(err: PinoError): Error {
+  const error = new Error(err.message)
+  error.name = err.type
+  error.stack = err.stack
+  return error
 }
 
 function format(chunk: Record<string, string | number | object>): string {
@@ -70,7 +95,7 @@ function format(chunk: Record<string, string | number | object>): string {
   const name = pc.yellow(chunk.name as string)
 
   const message = chunk.err
-    ? `\n\n${prettifyError(chunk.err as PinoError)}\n`
+    ? `\n\n${prettifyError(toError(chunk.err as PinoError))}\n`
     : chunk.msg as string
 
   return `[${time}] [${level}] (${type}) (${name}): ${message}\n`
