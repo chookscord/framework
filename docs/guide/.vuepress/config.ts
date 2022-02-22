@@ -1,13 +1,20 @@
+import type { DefaultThemeOptions } from 'vuepress-vite'
 import { defineUserConfig } from 'vuepress-vite'
 
 // eslint-disable-next-line @typescript-eslint/no-shadow
 const link = (text: string, link: string) => ({ text, link })
 
-export default defineUserConfig({
+export default defineUserConfig<DefaultThemeOptions>({
   lang: 'en-US',
   title: 'Chooksie',
   description: 'Fast Discord.JS Framework',
+  head: [
+    ['meta', { property: 'theme-color', content: '#3aa675' }],
+  ],
   themeConfig: {
+    contributors: false,
+    repo: 'chookscord/framework',
+    docsDir: 'docs/guide',
     sidebar: [
       {
         text: 'Home',
