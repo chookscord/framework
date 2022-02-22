@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    // recommended, noImplicitThis is required to have "this" types available.
+    "strict": true,
+    // just so you don't accidentally build your project using tsc
+    "noEmit": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".chooks"
+  ]
+}
