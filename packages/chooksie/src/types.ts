@@ -85,7 +85,7 @@ export function defineConfig(config: ChooksConfig) {
 /**
  * The base context.
  */
-export type Logger = Pick<PinoLogger, 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace'>
+export type Logger = Pick<PinoLogger, 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace' | 'child'>
 
 export interface Context {
   client: Client<true>

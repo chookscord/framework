@@ -87,16 +87,57 @@ function toError(err: PinoError): Error {
   return error
 }
 
+function statusCode(code: number) {
+  // 100-299
+  if (code < 300) return pc.green(code)
+  // 300-399
+  if (code < 400) return pc.yellow(code)
+  // 400-599
+  return pc.red(code)
+}
+
+interface FastifyReq {
+  method: string
+  url: string
+  hostname: string
+  remoteAddress: string
+  remotePort: number
+}
+
+interface FastifyRes {
+  statusCode: number
+}
+
 function format(chunk: Record<string, string | number | object>): string {
   const time = pc.green(new Date(chunk.time as number).toLocaleTimeString())
 
-  const level = LEVELS[chunk.level as number]
-  const type = TYPES[chunk.type as LoggerType]
-  const name = pc.yellow(chunk.name as string)
-
+  // @todo: handle passing object as log
   const message = chunk.err
     ? `\n\n${prettifyError(toError(chunk.err as PinoError))}\n`
     : chunk.msg as string
+
+  const level = LEVELS[chunk.level as number]
+
+  if (chunk.type === 'fastify') {
+    const name = pc.red(`${chunk.type}:${chunk.reqId as string}`)
+
+    if (chunk.req) {
+      const req = chunk.req as FastifyReq
+      const method = pc.green(req.method)
+      const url = pc.cyan(req.hostname + req.url)
+      return `[${time}] [${level}] (${name}) (${method} ${url}): ${message}\n`
+    }
+
+    if (chunk.res) {
+      const res = chunk.res as FastifyRes
+      const status = statusCode(res.statusCode)
+      const resTime = pc.cyan(`${(chunk.responseTime as number).toFixed(2)}ms`)
+      return `[${time}] [${level}] (${name}) (${status} ${resTime}): ${message}\n`
+    }
+  }
+
+  const type = TYPES[chunk.type as LoggerType]
+  const name = pc.yellow(chunk.name as string)
 
   return `[${time}] [${level}] (${type}) (${name}): ${message}\n`
 }
