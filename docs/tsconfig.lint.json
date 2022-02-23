@@ -1,9 +1,5 @@
 {
-  "extends": "tsconfig/base",
-  "compilerOptions": {
-    "allowJs": true,
-    "noEmit": true
-  },
+  "extends": "./tsconfig.json",
   "include": [
     "guide/.vuepress/**/*.ts",
     "guide"
