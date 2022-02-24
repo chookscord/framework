@@ -18,30 +18,44 @@ For type support for **Subcommands** and **Subcommand Groups**, you can use the 
 For more advanced uses, visit the [Setup Method](../../advanced/setup/README.md) guide.
 :::
 
-## Subcommands (Inlined)
-
-:::: code-group
-::: code-group-item subcommands/string.ts
-@[code ts{14-33}](./string-inlined.ts)
-:::
-::: code-group-item subcommands/string.js
-@[code js{14-33}](./string-inlined.mjs)
-:::
-::: code-group-item subcommands/string.js (CJS)
-@[code js{14-33}](./string-inlined.cjs)
-:::
-::::
-
 ## Subcommands (Composed)
 
 :::: code-group
+::: code-group-item subcommands/math.ts
+@[code ts{29-39,41-51,57-58}](./math.ts)
+:::
+::: code-group-item subcommands/math.js
+@[code js{28-38,40-50,56-57}](./math.mjs)
+:::
+::: code-group-item subcommands/math.js (CJS)
+@[code js{28-38,40-50,56-57}](./math.cjs)
+:::
+::::
+
+## Subcommand Groups (Inlined)
+
+:::: code-group
 ::: code-group-item subcommands/string.ts
-@[code ts{10-19,21-30,36-37}](./string-composed.ts)
+@[code ts{14-38}](./string-inlined.ts)
 :::
 ::: code-group-item subcommands/string.js
-@[code js{10-19,21-30,36-37}](./string-composed.mjs)
+@[code js{14-38}](./string-inlined.mjs)
 :::
 ::: code-group-item subcommands/string.js (CJS)
-@[code js{10-19,21-30,36-37}](./string-composed.cjs)
+@[code js{14-38}](./string-inlined.cjs)
+:::
+::::
+
+## Subcommand Groups (Composed)
+
+:::: code-group
+::: code-group-item subcommands/string.ts
+@[code ts{10-19,21-30,32-40,45}](./string-composed.ts)
+:::
+::: code-group-item subcommands/string.js
+@[code js{10-19,21-30,32-40,45}](./string-composed.mjs)
+:::
+::: code-group-item subcommands/string.js (CJS)
+@[code js{10-19,21-30,32-40,45}](./string-composed.cjs)
 :::
 ::::

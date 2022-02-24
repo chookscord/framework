@@ -1,4 +1,4 @@
-import { defineOption, defineSlashSubcommand, defineSubcommand } from 'chooksie'
+import { defineOption, defineSlashSubcommand, defineSubcommand, defineSubcommandGroup } from 'chooksie'
 
 const stringOption = defineOption({
   name: 'text',
@@ -29,11 +29,18 @@ const lower = defineSubcommand({
   options: [stringOption],
 })
 
-export default defineSlashSubcommand({
-  name: 'string',
+const changeCase = defineSubcommandGroup({
+  name: 'case',
   description: 'Change a string\'s case.',
+  type: 'SUB_COMMAND_GROUP',
   options: [
     upper,
     lower,
   ],
+})
+
+export default defineSlashSubcommand({
+  name: 'string',
+  description: 'Perform string manipulations.',
+  options: [changeCase],
 })
