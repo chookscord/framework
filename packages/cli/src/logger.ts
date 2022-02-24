@@ -119,7 +119,12 @@ function format(chunk: Record<string, string | number | object>): string {
   const level = LEVELS[chunk.level as number]
 
   if (chunk.type === 'fastify') {
-    const name = pc.red(`${chunk.type}:${chunk.reqId as string}`)
+    // For system messages, request id does not exist
+    const name = pc.red(
+      typeof chunk.reqId === 'string'
+        ? `${chunk.type}:${chunk.reqId}`
+        : chunk.type,
+    )
 
     if (chunk.req) {
       const req = chunk.req as FastifyReq
@@ -134,6 +139,9 @@ function format(chunk: Record<string, string | number | object>): string {
       const resTime = pc.cyan(`${(chunk.responseTime as number).toFixed(2)}ms`)
       return `[${time}] [${level}] (${name}) (${status} ${resTime}): ${message}\n`
     }
+
+    // For system messages
+    return `[${time}] [${level}] (${name}): ${message}\n`
   }
 
   const type = TYPES[chunk.type as LoggerType]
