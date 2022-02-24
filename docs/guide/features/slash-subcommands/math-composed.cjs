@@ -1,5 +1,15 @@
 const { defineOption, defineSlashSubcommand, defineSubcommand } = require('chooksie')
 
+function setup() {
+  const getNumbers = interaction => {
+    const x = interaction.options.getNumber('x', true)
+    const y = interaction.options.getNumber('y', true)
+    return [x, y]
+  }
+
+  return { getNumbers }
+}
+
 const numbers = [
   defineOption({
     name: 'x',
@@ -14,16 +24,6 @@ const numbers = [
     required: true,
   }),
 ]
-
-function setup() {
-  const getNumbers = interaction => {
-    const x = interaction.options.getNumber('x', true)
-    const y = interaction.options.getNumber('y', true)
-    return [x, y]
-  }
-
-  return { getNumbers }
-}
 
 const addition = defineSubcommand({
   name: 'add',

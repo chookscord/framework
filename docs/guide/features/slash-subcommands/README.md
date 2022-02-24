@@ -18,17 +18,31 @@ For type support for **Subcommands** and **Subcommand Groups**, you can use the 
 For more advanced uses, visit the [Setup Method](../../advanced/setup/README.md) guide.
 :::
 
+## Subcommands (Inlined)
+
+:::: code-group
+::: code-group-item subcommands/math.ts
+@[code ts{33-54}](./math-inlined.ts)
+:::
+::: code-group-item subcommands/math.js
+@[code js{32-53}](./math-inlined.mjs)
+:::
+::: code-group-item subcommands/math.js (CJS)
+@[code js{32-53}](./math-inlined.cjs)
+:::
+::::
+
 ## Subcommands (Composed)
 
 :::: code-group
 ::: code-group-item subcommands/math.ts
-@[code ts{29-39,41-51,57-58}](./math.ts)
+@[code ts{29-39,41-51,57-58}](./math-composed.ts)
 :::
 ::: code-group-item subcommands/math.js
-@[code js{28-38,40-50,56-57}](./math.mjs)
+@[code js{28-38,40-50,56-57}](./math-composed.mjs)
 :::
 ::: code-group-item subcommands/math.js (CJS)
-@[code js{28-38,40-50,56-57}](./math.cjs)
+@[code js{28-38,40-50,56-57}](./math-composed.cjs)
 :::
 ::::
 

@@ -1,5 +1,14 @@
 import { defineOption, defineSlashSubcommand, defineSubcommand } from 'chooksie'
-import type { CommandInteraction } from 'discord.js'
+
+function setup() {
+  const getNumbers = interaction => {
+    const x = interaction.options.getNumber('x', true)
+    const y = interaction.options.getNumber('y', true)
+    return [x, y]
+  }
+
+  return { getNumbers }
+}
 
 const numbers = [
   defineOption({
@@ -15,16 +24,6 @@ const numbers = [
     required: true,
   }),
 ]
-
-function setup() {
-  const getNumbers = (interaction: CommandInteraction) => {
-    const x = interaction.options.getNumber('x', true)
-    const y = interaction.options.getNumber('y', true)
-    return [x, y] as const
-  }
-
-  return { getNumbers }
-}
 
 const addition = defineSubcommand({
   name: 'add',
