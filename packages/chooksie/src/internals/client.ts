@@ -15,12 +15,12 @@ function createClient(config: Partial<ChooksConfig>): Client {
 }
 
 async function sendGenericError(interaction: CommandInteraction | ContextMenuInteraction, id: string) {
-  const iconURL = interaction.user.avatarURL()!
+  const iconURL = interaction.client.user!.avatarURL({ size: 64 }) ?? undefined
   const errorEmbed = new MessageEmbed()
     .setColor('RED')
     .setAuthor({ name: 'An unexpected error has occured!', iconURL })
-    .setDescription('Please contact the developers with the **Request ID** about this issue.')
-    .setFooter({ text: `Request ID: ${id}` })
+    .setDescription('Please contact the developers with the Request ID about this issue.')
+    .addField('Request ID', id)
     .setTimestamp(interaction.createdTimestamp)
 
   if (interaction.deferred) {
