@@ -25,7 +25,7 @@ function prettifyCode(codes: string[]) {
 
 function prettifyStack(error: Error, indent: string) {
   const stack = error.stack!.split('\n')
-  const header = stack.indexOf(`${error.name}: ${error.message}`)
+  const header = stack.findIndex(line => line.startsWith(`${indent}at`)) - 1
 
   // Removes header, includes cases with source maps enabled
   const codes = stack.slice(0, header)
@@ -69,7 +69,8 @@ const LEVELS: Record<number, string> = {
   10: pc.dim('TRACE'),
 }
 
-const TYPES: Record<LoggerType, string> = {
+const TYPES: Record<LoggerType | 'fastify', string> = {
+  fastify: pc.red('fastify'),
   app: pc.blue('app'),
   script: pc.blue('script'),
   autocomplete: pc.cyan('autocomplete'),
@@ -108,46 +109,57 @@ interface FastifyRes {
   statusCode: number
 }
 
+function formatReqId(id: string) {
+  return id.length === 36
+    ? id.split('-')[0] // Shorten UUID
+    : id
+}
+
 function format(chunk: Record<string, string | number | object>): string {
+  const level = LEVELS[chunk.level as number]
   const time = pc.green(new Date(chunk.time as number).toLocaleTimeString())
+
+  // For fastify system messages, request id does not exist
+  const reqId = typeof chunk.reqId === 'string'
+    ? pc.magenta(formatReqId(chunk.reqId))
+    : ''
+
+  const resTime = typeof chunk.responseTime === 'number'
+    ? pc.cyan(`${chunk.responseTime.toFixed(2)}ms`)
+    : ''
+
+  const type = TYPES[chunk.type as LoggerType]
+  const id = `${type} ${reqId}`.trim()
 
   // @todo: handle passing object as log
   const message = chunk.err
     ? `\n\n${prettifyError(toError(chunk.err as PinoError))}\n`
     : chunk.msg as string
 
-  const level = LEVELS[chunk.level as number]
-
   if (chunk.type === 'fastify') {
-    // For system messages, request id does not exist
-    const name = pc.red(
-      typeof chunk.reqId === 'string'
-        ? `${chunk.type}:${chunk.reqId}`
-        : chunk.type,
-    )
-
     if (chunk.req) {
       const req = chunk.req as FastifyReq
       const method = pc.green(req.method)
       const url = pc.cyan(req.hostname + req.url)
-      return `[${time}] [${level}] (${name}) (${method} ${url}): ${message}\n`
+      return `[${time}] [${level}] (${id}) (${method} ${url}): ${message}\n`
     }
 
     if (chunk.res) {
       const res = chunk.res as FastifyRes
       const status = statusCode(res.statusCode)
-      const resTime = pc.cyan(`${(chunk.responseTime as number).toFixed(2)}ms`)
-      return `[${time}] [${level}] (${name}) (${status} ${resTime}): ${message}\n`
+      const result = `${status} ${resTime}`.trim()
+
+      return `[${time}] [${level}] (${id}) (${result}): ${message}\n`
     }
 
     // For system messages
-    return `[${time}] [${level}] (${name}): ${message}\n`
+    return `[${time}] [${level}] (${id}): ${message}\n`
   }
 
-  const type = TYPES[chunk.type as LoggerType]
   const name = pc.yellow(chunk.name as string)
+  const res = `${name} ${resTime}`.trim()
 
-  return `[${time}] [${level}] (${type}) (${name}): ${message}\n`
+  return `[${time}] [${level}] (${id}) (${res}): ${message}\n`
 }
 
 function transport(): Transform {

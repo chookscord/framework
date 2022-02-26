@@ -27,14 +27,14 @@ function getFileType(path: string): SourceDir | 'scripts' {
 
 async function main() {
   logger.info('Starting bot...')
-  const measure = timer()
+  const endTimer = timer()
 
   const client = createClient(config)
   const login = client.login(config.token)
 
   const files = walk(__dirname, { ignore: file => file.path === __filename })
   const store = new Map<string, CommandModule>()
-  const listener = onInteractionCreate(store, createLogger)
+  const listener = onInteractionCreate(store, pino)
 
   client.on('interactionCreate', listener)
 
@@ -89,10 +89,10 @@ async function main() {
   }
 
   await login
-  const elapsed = measure()
+  const elapsed = endTimer()
 
   logger.info('Bot started!')
-  logger.info(`Time Took: ${elapsed}`)
+  logger.info(`Time Took: ${elapsed.toFixed(2)}ms`)
 }
 
 void main()

@@ -1,5 +1,7 @@
+import { randomUUID } from 'crypto'
 import type { Client, ClientEvents } from 'discord.js'
 import type { ChooksScript, CommandStore, EmptyObject, Event, GenericHandler, MessageCommand, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types'
+import timer from './chrono'
 import createLogger from './logger'
 import { createKey } from './resolve'
 
@@ -20,8 +22,31 @@ async function loadEvent(client: Client, event: Event<keyof ClientEvents>): Prom
   const freq = event.once ? 'once' : 'on'
   const deps = await event.setup?.() ?? {}
 
-  const logger = pino('event', event.name)
-  const execute = event.execute.bind(deps, { client, logger })
+  const _logger = pino('event', event.name)
+  const _execute = event.execute.bind(deps)
+
+  const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
+    const reqId = randomUUID()
+    const logger = _logger.child({ reqId })
+
+    try {
+      logger.info(`Running handler for "${event.name}"...`)
+
+      const endTimer = timer()
+      // @ts-ignore: 'this' context blah blah complex type
+      await _execute({ client, logger }, ...args)
+
+      logger.info({
+        responseTime: endTimer(),
+        msg: `Successfully ran handler for "${event.name}".`,
+      })
+    } catch (error) {
+      _logger.info(`Handler for "${event.name}" did not run successfully.`)
+
+      logger.error('An unexpected error has occured!')
+      logger.error(error)
+    }
+  }
 
   client[freq](event.name, execute)
 }

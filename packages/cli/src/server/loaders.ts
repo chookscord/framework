@@ -1,8 +1,9 @@
 import type { ChooksScript, Command, CommandModule, CommandStore, EmptyObject, Event, GenericHandler, Logger, MessageCommand, Option, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from 'chooksie'
 import type { LoggerFactory } from 'chooksie/internals'
 import type { Awaitable, Client, ClientEvents } from 'discord.js'
+import { randomUUID } from 'node:crypto'
 import { relative } from 'node:path'
-import { createKey, getAutocompletes } from '../internals'
+import { createKey, getAutocompletes, timer } from '../internals'
 import type { SourceMap, Store } from '../lib'
 
 interface EventModule {
@@ -145,13 +146,31 @@ function unloadEvent(store: EventStore, client: Client, key: string, logger?: Lo
 // eslint-disable-next-line max-params, max-len
 function loadEvent(store: EventStore, client: Client, key: string, pino: LoggerFactory, event: Event<keyof ClientEvents>): void {
   const name = event.name
-  const logger = pino('event', name)
+  const _logger = pino('event', name)
 
   const setup = event.setup ?? (() => ({}))
   const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
-    const deps = await setup()
-    // @ts-ignore: 'this' context blah blah complex type
-    await event.execute.call(deps, { client, logger }, ...args)
+    const reqId = randomUUID()
+    const logger = _logger.child({ reqId })
+
+    try {
+      const deps = await setup()
+      logger.info(`Running handler for "${event.name}"...`)
+
+      const endTimer = timer()
+      // @ts-ignore: 'this' context blah blah complex type
+      await event.execute.call(deps, { client, logger }, ...args)
+
+      logger.info({
+        responseTime: endTimer(),
+        msg: `Successfully ran handler for "${event.name}".`,
+      })
+    } catch (error) {
+      _logger.info(`Handler for "${event.name}" did not run successfully.`)
+
+      logger.error('An unexpected error has occured!')
+      logger.error(error)
+    }
   }
 
   if (store.has(key)) {
@@ -159,7 +178,7 @@ function loadEvent(store: EventStore, client: Client, key: string, pino: LoggerF
     client.off(key, oldListener.execute)
   }
 
-  store.set(key, { name, execute, logger })
+  store.set(key, { name, execute, logger: _logger })
   client[event.once ? 'once' : 'on'](name, execute)
 }
 

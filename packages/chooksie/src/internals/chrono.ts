@@ -1,12 +1,8 @@
-function timer(): () => string {
+function timer(): () => number {
   const start = process.hrtime()
   return () => {
-    const [secs, nsecs] = process.hrtime(start)
-    const msecs = Math.floor(nsecs / 1e6)
-
-    return secs > 0
-      ? `${secs + msecs / 1e3}s`
-      : `${msecs}ms`
+    const [s, ns] = process.hrtime(start)
+    return s * 1e3 + ns / 1e6
   }
 }
 

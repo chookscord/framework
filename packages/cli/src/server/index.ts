@@ -85,7 +85,7 @@ async function createServer(): Promise<void> {
   watchCommands(stores, config.token, config.devServer!, pino)
 
   const compiler = createWatchCompiler(watcher, { root, outDir })
-  const listener = onInteractionCreate(stores.command)
+  const listener = onInteractionCreate(stores.command, pino)
 
   client.on('interactionCreate', listener)
 

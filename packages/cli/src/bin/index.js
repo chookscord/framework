@@ -15,7 +15,7 @@ if (!command) {
   // Replaces all env variables
   child.fork(script, {
     env,
-    execArgv: ['--enable-source-maps'],
+    execArgv: ['--enable-source-maps', '--title=chooksie'],
   })
 } else if (command === 'init') {
   process.env.CHOOKSIE_CLI = ''

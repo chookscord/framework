@@ -12,28 +12,13 @@ describe('timer', () => {
     hrtime.mockReset().mockReturnValueOnce([0, 0])
   })
 
-  test('small ms', () => {
-    hrtime.mockReturnValueOnce([0, 12010000])
-    expect(timer()()).toBe('12ms')
-  })
-
-  test('big ms', () => {
+  test('ms', () => {
     hrtime.mockReturnValueOnce([0, 923450000])
-    expect(timer()()).toBe('923ms')
+    expect(timer()()).toBe(923.45)
   })
 
-  test('s + small ms', () => {
+  test('s', () => {
     hrtime.mockReturnValueOnce([1, 12010000])
-    expect(timer()()).toBe('1.012s')
-  })
-
-  test('s + big ms', () => {
-    hrtime.mockReturnValueOnce([1, 923450000])
-    expect(timer()()).toBe('1.923s')
-  })
-
-  test('s + big ms trailing', () => {
-    hrtime.mockReturnValueOnce([1, 920450000])
-    expect(timer()()).toBe('1.92s')
+    expect(timer()()).toBe(1012.01)
   })
 })

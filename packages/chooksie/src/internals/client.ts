@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto'
 import type { CommandInteraction, ContextMenuInteraction, Interaction } from 'discord.js'
 import { Client, MessageEmbed } from 'discord.js'
 import type { ChooksConfig, CommandStore } from '../types'
+import timer from './chrono'
 import pino from './logger'
 import { resolveInteraction } from './resolve'
 
@@ -30,25 +31,37 @@ async function sendGenericError(interaction: CommandInteraction | ContextMenuInt
   }
 }
 
-function onInteractionCreate(store: CommandStore, createLogger = pino): (interaction: Interaction) => Awaited<void> {
-  const logger = createLogger()('app', 'interactions')
+function onInteractionCreate(store: CommandStore, createLogger = pino()): (interaction: Interaction) => Awaited<void> {
+  const _logger = createLogger('app', 'interactions')
   return async interaction => {
     const handler = resolveInteraction(store, interaction)
     if (!handler) return
 
+    const reqId = randomUUID()
+    const appLogger = _logger.child({ reqId })
+
     if (!handler.command) {
-      logger.warn(`Handler for "${handler.key}" is missing.`)
+      appLogger.warn(`Handler for "${handler.key}" is missing.`)
       return
     }
 
-    const reqId = randomUUID()
+    const client = interaction.client
+    const logger = handler.command.logger.child({ reqId })
 
     try {
-      const client = interaction.client
-      const _logger = handler.command.logger.child({ requestId: reqId })
-      await handler.command.execute({ client, interaction, logger: _logger })
+      appLogger.info(`Running handler for "${handler.key}"...`)
+
+      const endTimer = timer()
+      await handler.command.execute({ client, interaction, logger })
+
+      appLogger.info({
+        responseTime: endTimer(),
+        msg: `Successfully ran handler for "${handler.key}".`,
+      })
     } catch (error) {
-      logger.error(`Handler for "${handler.key}" threw an error!`)
+      appLogger.error(`Handler for "${handler.key}" did not run successfully.`)
+
+      logger.error('An unexpected error has occured!')
       logger.error(error)
 
       // If interaction hasn't been handled, reply with a generic error message.
@@ -58,7 +71,7 @@ function onInteractionCreate(store: CommandStore, createLogger = pino): (interac
         try {
           await sendGenericError(interaction, reqId)
         } catch {
-          logger.error('Failed to notify user of unhandled error!')
+          appLogger.error('Failed to notify user of unhandled error!')
         }
       }
     }
