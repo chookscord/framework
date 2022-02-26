@@ -1,7 +1,7 @@
 import type { Interaction } from 'discord.js'
 import { Client } from 'discord.js'
 import type { ChooksConfig, CommandStore } from '../types'
-import createLogger from './logger'
+import pino from './logger'
 import { resolveInteraction } from './resolve'
 
 function createClient(config: Partial<ChooksConfig>): Client {
@@ -13,7 +13,7 @@ function createClient(config: Partial<ChooksConfig>): Client {
   return client
 }
 
-function onInteractionCreate(store: CommandStore): (interaction: Interaction) => Awaited<void> {
+function onInteractionCreate(store: CommandStore, createLogger = pino): (interaction: Interaction) => Awaited<void> {
   const logger = createLogger()('app', 'interactions')
   return async (interaction: Interaction) => {
     const handler = resolveInteraction(store, interaction)

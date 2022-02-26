@@ -34,7 +34,7 @@ async function main() {
 
   const files = walk(__dirname, { ignore: file => file.path === __filename })
   const store = new Map<string, CommandModule>()
-  const listener = onInteractionCreate(store)
+  const listener = onInteractionCreate(store, createLogger)
 
   client.on('interactionCreate', listener)
 
