@@ -185,8 +185,7 @@ describe('loaders', () => {
     expect(client.on).toHaveBeenCalled()
     expect(client.once).not.toHaveBeenCalled()
 
-    const logger = pino.child({ type: 'event', name: 'ready' })
-    expect(execute.bind).toHaveBeenCalledWith(deps, { client, logger })
+    expect(execute.bind).toHaveBeenCalledWith(deps)
   })
 
   test('once events', async () => {
@@ -205,7 +204,6 @@ describe('loaders', () => {
     expect(client.on).not.toHaveBeenCalled()
     expect(client.once).toHaveBeenCalled()
 
-    const logger = pino.child({ type: 'event', name: 'ready' })
-    expect(execute.bind).toHaveBeenCalledWith(deps, { client, logger })
+    expect(execute.bind).toHaveBeenCalledWith(deps)
   })
 })
