@@ -1,0 +1,22 @@
+{
+  "Code Block Group": {
+    "prefix": "cg",
+    "body": [
+      ":::: code-group",
+      "$1",
+      "::::"
+    ]
+  },
+  "Code Block Item": {
+    "prefix": "cgi",
+    "body": [
+      "::: code-group-item $1",
+      "$2",
+      ":::"
+    ]
+  },
+  "File Snippet": {
+    "prefix": "code",
+    "body": "@[code$1]($2)"
+  }
+}

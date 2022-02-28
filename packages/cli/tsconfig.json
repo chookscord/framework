@@ -1,12 +1,19 @@
 {
-  "extends": "tsconfig/base.json",
+  "extends": "tsconfig/base",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false,
+    "paths": {
+      "chooksie/internals": [
+        "../chooksie/dist/internals/index.d.ts"
+      ]
+    }
+  },
   "include": [
     "src",
-    "templates"
-  ],
-  "exclude": [
-    "bin",
-    "dist",
-    "node_modules"
+    "types"
   ]
 }

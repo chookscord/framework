@@ -1,78 +1,50 @@
-# chookscord
+# chookscord-project
 
-The next generation Discord.JS Framework for advanced and rapid development.
+## Fast Discord.JS Framework
 
-[![npm (scoped)](https://img.shields.io/npm/v/chookscord)](https://npmjs.com/package/chookscord)
-[![npm](https://img.shields.io/npm/dt/chookscord)](https://npmjs.com/package/chookscord)
+[![npm (scoped)](https://img.shields.io/npm/v/chooksie)](https://npmjs.com/package/chooksie)
+[![npm](https://img.shields.io/npm/dt/chooksie)](https://npmjs.com/package/chooksie)
+[![Discord Server](https://discord.com/api/guilds/942452845322600569/embed.png)](https://discord.gg/24Kh8sf8hu)
+[![GitHub Stars](https://img.shields.io/github/stars/chookscord/framework?style=social)](https://github.com/chookscord/framework)
 
 ## Features
 
-- First class TypeScript support
-- Support for slash commands and context menus
-- Hot command reloading. Instantly reloads even your TypeScript files
-- Zero boilerplate. No constructing classes, no unnecessary imports
-- Auto registers interactions
+- :rocket: Simple, Declarative Interface
+- :muscle: Powerful Application Command Integration
+- :hammer: First Class TypeScript Support
+- :fire: Hot Command Reloading
 
 ## Documentation
 
-Visit the guide at https://guide.chooks.app for more info.
+Visit the guide at <https://guide.chooks.app> for more info.
 
-## Getting started
+## Quick Start
 
-Initialize your project:
+Using the [`create-chooks-bot`](https://npmjs.com/package/create-chooks-bot) scaffold:
 
 ```sh
-# Install the framework
-$ yarn init -y
-$ yarn add chookscord
+# Create a new bot using the scaffold package
+$ npm create chooks-bot my-bot
 
-# Create your files
-$ mkdir commands
-$ touch chooks.config.js commands/hello-world.js
+# Start your new bot
+$ cd my-bot
+$ npm run dev
 ```
 
-Add the script in your `package.json` file to run your bot:
+Using the [CLI tool](https://npmjs.com/package/@chookscord/cli):
 
-```json
-{
-  "scripts": {
-    "dev": "chooks"
-  }
-}
+```sh
+# Install the CLI tool
+$ npm i -g @chookscord/cli
+
+# Create a new bot using the CLI tool
+$ chooks init my-bot
+
+# Start your new bot
+$ cd my-bot
+$ chooks
 ```
 
-Setup your config:
+## License
 
-```js
-// chooks.config.js
-module.exports = {
-  credentials: {
-    token: 'bot-token',
-    applicationId: 'application-id',
-  },
-  devServer: 'dev-server-id',
-  intents: [],
-};
-```
-
-Create your slash command:
-
-```js
-// commands/hello-world.js
-module.exports = {
-  name: 'hello',
-  description: 'My basic slash command!',
-  async execute(ctx) {
-    await ctx.interaction.reply('Hello, world!');
-  },
-};
-```
-
-Now run your bot using `yarn dev`, and congratulations, you now have a working Discord bot!
-
-Learn more in detail at https://guide.chooks.app/installation.html
-
-## Sample Projects
-
-You can go to the [`samples`](https://github.com/chookscord/framework/tree/master/sample)
-directory inside the repository to see working templates using JavaScript or TypeScript.
+MIT
