@@ -48,8 +48,8 @@ export default defineUserConfig<DefaultThemeOptions>({
       {
         text: 'Miscellaneous',
         children: [
-          link('Fetch API', '/misc/fetch'),
-          link('Updating from v1', '/misc/updating'),
+          link('Fetch API', '/misc/fetch/'),
+          link('Updating from v1', '/misc/updating/'),
         ],
       },
     ],
