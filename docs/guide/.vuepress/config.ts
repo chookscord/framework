@@ -45,6 +45,13 @@ export default defineUserConfig<DefaultThemeOptions>({
           link('Usage with TypeScript', '/advanced/typescript/'),
         ],
       },
+      {
+        text: 'Miscellaneous',
+        children: [
+          link('Fetch API', '/misc/fetch'),
+          link('Updating from v1', '/misc/updating'),
+        ],
+      },
     ],
   },
 })
