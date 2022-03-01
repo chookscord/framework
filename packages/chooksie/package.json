@@ -7,7 +7,7 @@
     "test": "jest",
     "build:swc": "swc src -d dist --config-file ../../.swcrc",
     "build:tsc": "tsc",
-    "dev": "concurrently -r 'pnpm:build:* -- -w'"
+    "dev": "concurrently -r 'yarn:build:* -w'"
   },
   "dependencies": {
     "@swc/helpers": "^0.3.2",
@@ -16,9 +16,9 @@
   },
   "devDependencies": {
     "discord.js": "^13.6.0",
-    "eslint-config-lint": "workspace:*",
-    "jest-config": "workspace:*",
-    "tsconfig": "workspace:*",
+    "eslint-config-lint": "*",
+    "jest-config": "*",
+    "tsconfig": "*",
     "undici": "^4.13.0"
   },
   "peerDependencies": {

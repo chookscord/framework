@@ -11,13 +11,13 @@
     "test": "jest",
     "build:swc": "swc src -d dist --config-file ../../.swcrc",
     "build:tsc": "tsc",
-    "dev": "concurrently -r 'pnpm:build:* -- -w'"
+    "dev": "concurrently -r 'yarn:build:* -w'"
   },
   "dependencies": {
     "@swc/core": "^1.2.130",
     "@swc/helpers": "^0.3.2",
     "chokidar": "^3.5.2",
-    "create-chooks-bot": "workspace:*",
+    "create-chooks-bot": "^2.0.0",
     "joi": "^17.5.0",
     "picocolors": "^1.0.0",
     "pino-abstract-transport": "^0.5.0",
@@ -25,12 +25,12 @@
     "sonic-boom": "^2.6.0"
   },
   "devDependencies": {
-    "chooksie": "workspace:^2.0.0",
+    "chooksie": "^2.0.0",
     "discord.js": "^13.6.0",
     "dotenv": "^15.0.0",
-    "eslint-config-lint": "workspace:*",
-    "jest-config": "workspace:*",
-    "tsconfig": "workspace:*"
+    "eslint-config-lint": "*",
+    "jest-config": "*",
+    "tsconfig": "*"
   },
   "repository": {
     "type": "git",

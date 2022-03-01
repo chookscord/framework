@@ -10,13 +10,13 @@
   },
   "devDependencies": {
     "@sapphire/framework": "next",
-    "chooksie": "workspace:*",
+    "chooksie": "*",
     "discord.js": "^13.6.0",
-    "eslint-config-lint": "workspace:*",
+    "eslint-config-lint": "*",
     "fastify": "^3.27.2",
     "sequelize": "^6.16.2",
     "sqlite3": "^5.0.2",
-    "tsconfig": "workspace:*",
+    "tsconfig": "*",
     "vuepress-vite": "^2.0.0-beta.35"
   }
 }

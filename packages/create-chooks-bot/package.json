@@ -13,7 +13,7 @@
   "scripts": {
     "build:swc": "swc src -d dist --config-file ../../.swcrc -C module.type=es6",
     "build:tsc": "tsc",
-    "dev": "concurrently -r 'pnpm:build:* -- -w'"
+    "dev": "concurrently -r 'yarn:build:* -w'"
   },
   "dependencies": {
     "nanospinner": "^1.0.0",
@@ -23,8 +23,8 @@
   "devDependencies": {
     "@types/package-name-regex": "^2.0.0",
     "@types/prompts": "^2.0.14",
-    "eslint-config-lint": "workspace:*",
-    "tsconfig": "workspace:*"
+    "eslint-config-lint": "*",
+    "tsconfig": "*"
   },
   "repository": {
     "type": "git",

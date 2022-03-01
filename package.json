@@ -2,7 +2,15 @@
   "name": "chookscord-project",
   "private": true,
   "license": "MIT",
-  "packageManager": "pnpm@6.28.0",
+  "packageManager": "yarn@1.22.17",
+  "workspaces": {
+    "nohoist": ["packages/*"],
+    "packages": [
+      "packages/*",
+      "configs/*",
+      "docs"
+    ]
+  },
   "scripts": {
     "test": "turbo run test",
     "build": "turbo run build types",
