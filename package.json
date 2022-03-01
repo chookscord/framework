@@ -2,9 +2,11 @@
   "name": "chookscord-project",
   "private": true,
   "license": "MIT",
-  "packageManager": "yarn@1.22.17",
+  "packageManager": "yarn@3.2.0",
   "workspaces": {
-    "nohoist": ["packages/*"],
+    "nohoist": [
+      "packages/*"
+    ],
     "packages": [
       "packages/*",
       "configs/*",
