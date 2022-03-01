@@ -53,7 +53,8 @@ export interface ChooksConfig {
  * ```
  *
  * ## See Also
- * - {@link ChooksConfig Config Definition}
+ * - {@link ChooksConfig Config} Definition
+ * - [Configuration](https://guide.chooks.app/configuration/) Web Docs
  *
  * ## Examples
  *
@@ -62,7 +63,7 @@ export interface ChooksConfig {
  * - Using variables from `.env` files
  *
  * @example
- * <caption>Config</caption>
+ * <caption>### Config</caption>
  * import { defineConfig } from 'chooksie'
  *
  * // .env files are automatically loaded
@@ -82,11 +83,11 @@ export function defineConfig(config: ChooksConfig) {
 // #endregion
 
 // #region Contexts
+export type Logger = Pick<PinoLogger, 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace' | 'child'>
+
 /**
  * The base context.
  */
-export type Logger = Pick<PinoLogger, 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace' | 'child'>
-
 export interface Context {
   client: Client<true>
   logger: Logger
@@ -172,7 +173,9 @@ export interface Event<Name extends keyof ClientEvents, T = EmptyObject> {
  * **Definition Function**: define an event handler.
  *
  * ## See Also
- * - {@link Event Event Definition}
+ * - {@link Event Event} Definition
+ * - [Event Listeners](https://guide.chooks.app/features/event-listeners/) Web Docs
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
  *
  * ## Examples
  *
@@ -231,8 +234,10 @@ export interface SlashCommand<T = EmptyObject> {
  * **Definition Function**: define a slash command.
  *
  * ## See Also
- * - {@link SlashCommand Slash Command Definition}
+ * - {@link SlashCommand Slash Command} Definition
+ * - [Slash Commands](https://guide.chooks.app/features/slash-commands/) Web Docs
  * - {@link defineSlashSubcommand Slash Subcommands}
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
  *
  * ## Examples
  *
@@ -271,9 +276,10 @@ export interface SlashSubcommand {
  * **Definition Function**: define a slash command with subcommands.
  *
  * ## See Also
- * - {@link SlashSubcommand Slash Subcommand Definition}
- * - {@link Subcommand Subcommand Definition}
- * - {@link SubcommandGroup Subcommand Group Definition}
+ * - {@link SlashSubcommand Slash Subcommand} Definition
+ * - [Slash Subcommands](https://guide.chooks.app/features/slash-subcommands/) Web Docs
+ * - {@link Subcommand Subcommand} Definition
+ * - {@link SubcommandGroup Subcommand Group} Definition
  * - {@link SlashCommand Slash Commands}
  *
  * ## Examples
@@ -407,11 +413,13 @@ export interface UserCommand<T = EmptyObject> {
 }
 
 /**
- * **Definition Function**: define a slash subcommand.
+ * **Definition Function**: define a user command.
  *
  * ## See Also
- * - {@link UserCommand User Command Definition}
+ * - {@link UserCommand User Command} Definition
+ * - [User Commands](https://guide.chooks.app/features/slash-commands/) Web Docs
  * - {@link defineMessageCommand Message Commands}
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
  *
  * ## Examples
  *
@@ -451,8 +459,10 @@ export interface MessageCommand<T = EmptyObject> {
  * **Definition Function**: define a message context menu command.
  *
  * ## See Also
- * - {@link MessageCommand Message Command Definition}
+ * - {@link MessageCommand Message Command} Definition
+ * - [Message Commands](https://guide.chooks.app/features/message-commands/) Web Docs
  * - {@link defineUserCommand User Commands}
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
  *
  * ## Examples
  *
@@ -497,9 +507,11 @@ export interface Subcommand<T = EmptyObject> {
  * **Definition Function**: define a subcommand.
  *
  * ## See Also
- * - {@link Subcommand Subcommand Definition}
+ * - {@link Subcommand Subcommand} Definition
+ * - [Subcommands](https://guide.chooks.app/features/slash-subcommands/#subcommands-inlined) Web Docs
  * - {@link defineSlashSubcommand Slash Subcommands}
  * - {@link defineSubcommandGroup Subcommand Groups}
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
  *
  * ## Examples
  *
@@ -553,7 +565,8 @@ export interface SubcommandGroup {
  * **Definition Function**: define a subcommand group.
  *
  * ## See Also
- * - {@link SubcommandGroup Subcommand Group Definition}
+ * - {@link SubcommandGroup Subcommand Group} Definition
+ * - [Subcommand Groups](https://guide.chooks.app/features/slash-subcommands/#subcommand-groups-inlined) Web Docs
  * - {@link defineSlashSubcommand Slash Subcommands}
  * - {@link defineSubcommand Subcommands}
  *
@@ -700,14 +713,15 @@ export interface MentionableOption {
  *
  * ## See Also
  * - [`AutocompleteInteraction`](https://discord.js.org/#/docs/discord.js/stable/class/AutocompleteInteraction) documentation
- * - {@link ChannelOption Channel Option Definition}
- * - {@link NumberOption Number Option Definition}
- * - {@link StringOption String Option Definition}
- * - {@link BoolOption  Bool Option Definition}
- * - {@link UserOption User Option Definition}
- * - {@link RoleOption Role Option Definition}
- * - {@link MentionableOption Mentionable Option Definition}
+ * - {@link ChannelOption Channel Option} Definition
+ * - {@link NumberOption Number Option} Definition
+ * - {@link StringOption String Option} Definition
+ * - {@link BoolOption  Bool Option} Definition
+ * - {@link UserOption User Option} Definition
+ * - {@link RoleOption Role Option} Definition
+ * - {@link MentionableOption Mentionable Option} Definition
  * - {@link defineChoice Choices}
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
  *
  * ## Examples
  *
@@ -864,6 +878,8 @@ export interface ChooksScript {
  *
  * ## See Also
  * - {@link OnLoad On Load Script}
+ * - [External Scripts](https://guide.chooks.app/advanced/scripts/) Web Guide
+ * - [Database and Servers](https://guide.chooks.app/advanced/database-servers/) Web Guide
  * - {@link ChooksScript Scripts}
  *
  * ## Examples
