@@ -883,35 +883,32 @@ export interface ChooksScript {
  * - {@link ChooksScript Scripts}
  *
  * ## Examples
- * - Running an [`Express`](https://www.npmjs.com/package/express) server
+ * - Running a [`Fastify`](https://www.npmjs.com/package/fastify) server
  *
  * @example
- * import { chooksOnLoad } from 'chooksie'
- * import express from 'express'
+ * import { defineOnLoad } from 'chooksie'
+ * import { fastify } from 'fastify'
  *
  * // IMPORTANT: the variable name must match
- * export const chooksOnLoad = defineOnLoad(ctx => {
- *   // create our server
- *   const app = express()
- *
- *   // create an endpoint that returns how many servers our bot is in
- *   app.get('/guilds', (req, res) => {
- *     res.json({ count: ctx.client.guilds.cache.size })
+ * export const chooksOnLoad = defineOnLoad(async ctx => {
+ *   const app = fastify({
+ *     // Since Fastify actually uses Pino under the hood for logging, we can
+ *     // pass "type": "fastify" to enable logging integration with Chooksie!
+ *     logger: ctx.logger.child({ type: 'fastify' }),
  *   })
  *
- *   // start our server
- *   ctx.logger.info('Starting express server...')
- *   app.listen(3000, () => {
- *     ctx.logger.info('Express server started!')
+ *   // Create an endpoint that returns how many servers our bot is in
+ *   app.get('/guilds', async (req, reply) => {
+ *     await reply.send({ count: ctx.client.guilds.cache.size })
  *   })
  *
- *   // return a function that will stop our
- *   // outdated server when the file gets updated
- *   return () => {
- *     ctx.logger.info('Stopping express server...')
- *     app.close(() => {
- *       ctx.logger.info('Express server stopped!')
- *     })
+ *   // Start listening on port 3000.
+ *   await app.listen(3000)
+ *
+ *   // Stop our server when it gets updated.
+ *   return async () => {
+ *     ctx.logger.info('Stopping server...')
+ *     await app.close()
  *   }
  * })
  */
