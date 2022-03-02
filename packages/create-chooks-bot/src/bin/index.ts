@@ -7,7 +7,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pkgNameRegex from 'package-name-regex'
 import prompts from 'prompts'
-import { initGit, installDeps, writeEnv, writeHoist, writePackageJson, writeTsconfig } from '../scripts.js'
+import { initGit, installDeps, rebuildStore, writeEnv, writeHoist, writePackageJson, writeTsconfig } from '../scripts.js'
 import { mv, toTmp } from '../utils.js'
 
 type PackageManager = 'npm' | 'yarn' | 'pnpm'
@@ -28,6 +28,12 @@ const __dirname = dirname(__filename)
 const templates = join(__dirname, '..', '..', 'templates')
 const isLocal = 'CHOOKSIE_CLI' in process.env
 
+function getInstallScript(manager: PackageManager) {
+  if (manager === 'npm') return 'npm i'
+  if (manager === 'yarn') return 'yarn add'
+
+  return 'pnpm add --store-dir'
+}
 const INSTALL_SCRIPTS: Record<PackageManager, string> = {
   npm: 'npm i',
   yarn: 'yarn add',
@@ -181,3 +187,8 @@ if (!isLocal)
   await installDeps(installer, 'dev', '@chookscord/cli')
 
 await mv(tmpdir, projectDir)
+
+if (pkgmanager === 'pnpm') {
+  process.chdir(projectDir)
+  await rebuildStore()
+}

@@ -111,3 +111,13 @@ dist/
     spinner.error({ text: 'Failed to initialize git repo!' })
   }
 }
+
+export async function rebuildStore(): Promise<void> {
+  const spinner = createSpinner('Doing some final cleanup...')
+  try {
+    await run('pnpm install')
+    spinner.success({ text: 'Relinked PNPM store.' })
+  } catch {
+    spinner.error({ text: 'Failed to move PNPM store!' })
+  }
+}
