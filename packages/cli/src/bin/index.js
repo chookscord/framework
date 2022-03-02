@@ -8,6 +8,7 @@ if (!command) {
 
   const env = {
     CHOOKSIE_CLI: '',
+    CHOOKSIE_UNDICI_PATH: require.resolve('undici'),
     NODE_ENV: 'development',
     CHOOKSIE_VERSION: require('../../package.json').version,
   }
