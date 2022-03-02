@@ -1,17 +1,5 @@
-/* eslint-disable
-@typescript-eslint/no-unsafe-assignment,
-@typescript-eslint/consistent-type-imports,
-@typescript-eslint/no-require-imports,
-@typescript-eslint/no-var-requires */
+import { resolveLocal } from './lib'
 
-function resolveLocal<T>(id: string): T {
-  try {
-    return <T>require(id)
-  } catch {
-    const resolved = require.resolve(id, { paths: [process.cwd()] })
-    return <T>require(resolved)
-  }
-}
-
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 const internals = resolveLocal<typeof import('chooksie/internals')>('chooksie/internals')
 export = internals
