@@ -1,12 +1,15 @@
 {
   "name": "@chookscord/cli",
-  "version": "2.0.0",
+  "version": "2.0.0-rc.1",
   "description": "CLI package for the Chooksie Framework",
   "license": "MIT",
   "preferGlobal": true,
   "bin": {
     "chooks": "./dist/bin/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "jest",
     "build": "concurrently -r 'yarn:build:*'",
@@ -18,7 +21,7 @@
     "@swc/core": "^1.2.130",
     "@swc/helpers": "^0.3.2",
     "chokidar": "^3.5.2",
-    "create-chooks-bot": "workspace:^2.0.0",
+    "create-chooks-bot": "workspace:^2.0.0-rc.1",
     "joi": "^17.5.0",
     "picocolors": "^1.0.0",
     "pino-abstract-transport": "^0.5.0",
@@ -26,7 +29,7 @@
     "sonic-boom": "^2.6.0"
   },
   "devDependencies": {
-    "chooksie": "workspace:^2.0.0",
+    "chooksie": "workspace:^2.0.0-rc.1",
     "discord.js": "^13.6.0",
     "dotenv": "^15.0.0"
   },
