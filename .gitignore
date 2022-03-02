@@ -21,3 +21,10 @@ dist
 
 # Turborepo
 .turbo
+
+# Yarn
+.yarn/*
+!.yarn/cache
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions

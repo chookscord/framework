@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
+    "build": "concurrently -r 'yarn:build:*'",
     "build:swc": "swc src -d dist --config-file ../../.swcrc",
     "build:tsc": "tsc",
     "dev": "concurrently -r 'yarn:build:* -w'"
@@ -16,9 +17,6 @@
   },
   "devDependencies": {
     "discord.js": "^13.6.0",
-    "eslint-config-lint": "*",
-    "jest-config": "*",
-    "tsconfig": "*",
     "undici": "^4.13.0"
   },
   "peerDependencies": {
@@ -33,7 +31,9 @@
   },
   "typesVersions": {
     "*": {
-      "fetch": ["./dist/fetch.d.ts"]
+      "fetch": [
+        "./dist/fetch.d.ts"
+      ]
     }
   },
   "repository": {
