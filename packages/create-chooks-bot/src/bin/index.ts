@@ -28,12 +28,6 @@ const __dirname = dirname(__filename)
 const templates = join(__dirname, '..', '..', 'templates')
 const isLocal = 'CHOOKSIE_CLI' in process.env
 
-function getInstallScript(manager: PackageManager) {
-  if (manager === 'npm') return 'npm i'
-  if (manager === 'yarn') return 'yarn add'
-
-  return 'pnpm add --store-dir'
-}
 const INSTALL_SCRIPTS: Record<PackageManager, string> = {
   npm: 'npm i',
   yarn: 'yarn add',
