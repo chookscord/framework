@@ -13,9 +13,11 @@ if (!command) {
     CHOOKSIE_VERSION: require('../../package.json').version,
   }
 
-  // Replaces all env variables
   child.fork(script, {
-    env,
+    env: {
+      ...process.env,
+      ...env, // Inject custom env
+    },
     execArgv: ['--enable-source-maps', '--title=chooksie'],
   })
 } else if (command === 'init') {
