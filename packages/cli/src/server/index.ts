@@ -1,12 +1,11 @@
 import { watch } from 'chokidar'
 import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
-import 'dotenv/config'
 import { existsSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { join, relative, resolve } from 'path'
 import { createClient, createLogger, onInteractionCreate } from '../internals'
-import { sourceFromFile, Store, validateDevConfig } from '../lib'
+import { resolveLocal, sourceFromFile, Store, validateDevConfig } from '../lib'
 import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
 import { target } from '../logger'
 import { createWatchCompiler } from './compiler'
@@ -15,6 +14,7 @@ import { loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashS
 import watchCommands from './register'
 import { unloadMod, unrequire } from './require'
 import { resolveConfig } from './resolve-config'
+resolveLocal('dotenv/config')
 
 type CachedCommand = [key: string, module: Command]
 
