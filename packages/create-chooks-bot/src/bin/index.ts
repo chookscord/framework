@@ -7,8 +7,10 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pkgNameRegex from 'package-name-regex'
 import prompts from 'prompts'
-import { initGit, installDeps, writeEnv, writePackageJson, writeTsconfig } from '../scripts.js'
+import { initGit, installDeps, writeEnv, writeHoist, writePackageJson, writeTsconfig } from '../scripts.js'
 import { mv, toTmp } from '../utils.js'
+
+type PackageManager = 'npm' | 'yarn' | 'pnpm'
 
 interface Result {
   name: string
@@ -16,7 +18,7 @@ interface Result {
   flavor: 'ts' | 'esm' | 'cjs'
   token: string
   server: string
-  manager: string
+  manager: PackageManager
   git: boolean
 }
 
@@ -25,6 +27,12 @@ const __dirname = dirname(__filename)
 
 const templates = join(__dirname, '..', '..', 'templates')
 const isLocal = 'CHOOKSIE_CLI' in process.env
+
+const INSTALL_SCRIPTS: Record<PackageManager, string> = {
+  npm: 'npm i',
+  yarn: 'yarn add',
+  pnpm: 'pnpm add',
+}
 
 // If "chooks init" is run, shift input
 const args = process.argv.slice(2)
@@ -100,15 +108,15 @@ const response: Result = await prompts([
     choices: [
       {
         title: kleur.red('NPM'),
-        value: 'npm i',
+        value: 'npm',
       },
       {
         title: kleur.cyan('Yarn'),
-        value: 'yarn add',
+        value: 'yarn',
       },
       {
         title: kleur.yellow('PNPM'),
-        value: 'pnpm add',
+        value: 'pnpm',
       },
     ],
   },
@@ -147,6 +155,10 @@ async function initTemplate() {
   if (response.flavor === 'ts')
     jobs.push(writeTsconfig())
 
+  if (response.manager === 'pnpm') {
+    jobs.push(writeHoist())
+  }
+
   try {
     await Promise.all(jobs)
     spinner.success({ text: 'Template initialized.' })
@@ -161,10 +173,11 @@ await initTemplate()
 if (useGit)
   await initGit()
 
-await installDeps(pkgmanager, 'prod', 'discord.js', 'chooksie')
+const installer = INSTALL_SCRIPTS[pkgmanager]
+await installDeps(installer, 'prod', 'discord.js', 'chooksie')
 
 // If user didn't use "chooks init", add the cli as dev dep
 if (!isLocal)
-  await installDeps(pkgmanager, 'dev', '@chookscord/cli')
+  await installDeps(installer, 'dev', '@chookscord/cli')
 
 await mv(tmpdir, projectDir)
