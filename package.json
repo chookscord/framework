@@ -9,9 +9,9 @@
     "docs"
   ],
   "scripts": {
-    "test": "yarn workspaces foreach -pi run test",
-    "build": "yarn workspaces foreach -pit run build",
-    "dev": "yarn workspaces foreach -pi run dev"
+    "test": "yarn workspaces foreach -vip run test",
+    "build": "yarn workspaces foreach -pivt run build",
+    "dev": "yarn workspaces foreach -vip run dev"
   },
   "devDependencies": {
     "@swc/cli": "^0.1.55",
