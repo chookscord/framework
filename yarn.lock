@@ -407,8 +407,8 @@ __metadata:
     "@swc/core": ^1.2.130
     "@swc/helpers": ^0.3.2
     chokidar: ^3.5.2
-    chooksie: "workspace:^2.0.0"
-    create-chooks-bot: "workspace:^2.0.0"
+    chooksie: "workspace:^2.0.0-rc.1"
+    create-chooks-bot: "workspace:^2.0.0-rc.1"
     discord.js: ^13.6.0
     dotenv: ^15.0.0
     joi: ^17.5.0
@@ -416,6 +416,7 @@ __metadata:
     pino-abstract-transport: ^0.5.0
     pino-pretty: ^7.5.1
     sonic-boom: ^2.6.0
+    undici: ^4.14.1
   bin:
     chooks: ./dist/bin/index.js
   languageName: unknown
@@ -2645,7 +2646,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"chooksie@workspace:*, chooksie@workspace:^2.0.0, chooksie@workspace:packages/chooksie":
+"chooksie@workspace:*, chooksie@workspace:^2.0.0-rc.1, chooksie@workspace:packages/chooksie":
   version: 0.0.0-use.local
   resolution: "chooksie@workspace:packages/chooksie"
   dependencies:
@@ -2883,7 +2884,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"create-chooks-bot@workspace:^2.0.0, create-chooks-bot@workspace:packages/create-chooks-bot":
+"create-chooks-bot@workspace:^2.0.0-rc.1, create-chooks-bot@workspace:packages/create-chooks-bot":
   version: 0.0.0-use.local
   resolution: "create-chooks-bot@workspace:packages/create-chooks-bot"
   dependencies:
@@ -8078,7 +8079,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:^4.13.0":
+"undici@npm:^4.13.0, undici@npm:^4.14.1":
   version: 4.14.1
   resolution: "undici@npm:4.14.1"
   checksum: d64a7fa0e388a43819bb7860268f9f2c917bc14a3e6ab7956bdc73492016bfc58c8d5055eca8f5c3d402f275a1c87a92c2467d77ec34dbaca2c4a6e35e760e5a
