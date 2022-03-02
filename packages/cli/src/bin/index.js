@@ -8,13 +8,16 @@ if (!command) {
 
   const env = {
     CHOOKSIE_CLI: '',
+    CHOOKSIE_UNDICI_PATH: require.resolve('undici'),
     NODE_ENV: 'development',
     CHOOKSIE_VERSION: require('../../package.json').version,
   }
 
-  // Replaces all env variables
   child.fork(script, {
-    env,
+    env: {
+      ...process.env,
+      ...env, // Inject custom env
+    },
     execArgv: ['--enable-source-maps', '--title=chooksie'],
   })
 } else if (command === 'init') {
