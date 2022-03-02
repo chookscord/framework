@@ -98,6 +98,10 @@ Create a config file and use your credentials:
 :::
 ::::
 
+---
+
+#### For TypeScript Users
+
 If you plan to use TypeScript, you must enable `strict` (or at the very least, `noImplicitThis`)
 for `this` context to work.
 
@@ -106,6 +110,25 @@ for `this` context to work.
 @[code](./tsconfig.sample.json)
 :::
 ::::
+
+---
+
+#### For PNPM Users
+
+Since PNPM [handles `node_modules` differently](https://pnpm.io/motivation), you need to enable
+[`shamefully-hoist`](https://pnpm.io/npmrc#shamefully-hoist) in your `.npmrc` file
+
+:::: code-group
+::: code-group-item .npmrc
+
+```ini
+shamefully-hoist = true
+```
+
+:::
+::::
+
+---
 
 Once you did all of the above, you can run the `dev` script above and start creating files and
 the framework will detect and update your bot.
