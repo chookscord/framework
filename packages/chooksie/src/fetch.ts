@@ -1,5 +1,6 @@
-import type { Response, RequestInfo, RequestInit, ControlledAsyncIterable } from 'undici'
-import { fetch as _fetch } from 'undici'
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
+const { fetch: _fetch } = require(process.env.CHOOKSIE_UNDICI_PATH ?? 'undici') as typeof import('undici')
+import type { ControlledAsyncIterable, RequestInfo, RequestInit, Response } from 'undici'
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export type FetchParams = [url: RequestInfo, init?: RequestInit]
