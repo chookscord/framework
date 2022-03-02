@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "description": "Fast Discord.JS Framework",
   "license": "MIT",
+  "files": [
+    "dist/**/*.{js,d.ts}"
+  ],
   "scripts": {
     "test": "jest",
     "build": "concurrently -r 'yarn:build:*'",

@@ -7,6 +7,9 @@
   "bin": {
     "chooks": "./dist/bin/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "jest",
     "build": "concurrently -r 'yarn:build:*'",
