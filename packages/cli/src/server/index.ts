@@ -60,7 +60,7 @@ async function validate<T>(mod: T, validator: (mod: T) => Promise<unknown>): Pro
 }
 
 async function createServer(): Promise<void> {
-  await mkdir(outDir)
+  await mkdir(outDir, { recursive: true })
   logger.info(`Using chooksie v${version}`)
   logger.info('Starting bot...')
 
