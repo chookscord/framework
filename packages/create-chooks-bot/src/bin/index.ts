@@ -57,35 +57,35 @@ const canInitPathBeName = initPath && pkgNameRegex.test(initPath)
 const response: Result = await prompts([
   {
     name: 'name',
-    message: 'Enter project name:',
+    message: `${kleur.cyan('Enter project name')}:`,
     type: 'text',
     initial: canInitPathBeName ? initPath : 'chooksie-bot',
     validate: (value: string) => pkgNameRegex.test(value) || 'Invalid package.json name!',
   },
   {
     name: 'dirname',
-    message: 'Enter directory:',
+    message: `${kleur.cyan('Enter directory')}:`,
     type: initPath && isEmpty(initPath) ? null : 'text',
     initial: (prev: string) => prev,
     validate: (dir: string) => isEmpty(dir) || 'Directory is not empty!',
   },
   {
     name: 'flavor',
-    message: 'JavaScript Flavor',
+    message: `${kleur.green('JavaScript Flavor')}:`,
     type: 'select',
     choices: [
       {
-        title: 'TypeScript',
+        title: kleur.cyan('TypeScript'),
         description: 'Recommended!',
         value: 'ts',
       },
       {
-        title: 'ES Modules',
+        title: kleur.green('ES Modules'),
         description: 'import, export',
         value: 'esm',
       },
       {
-        title: 'CommonJS',
+        title: kleur.yellow('CommonJS'),
         description: 'require, module.exports',
         value: 'cjs',
       },
@@ -93,17 +93,17 @@ const response: Result = await prompts([
   },
   {
     name: 'token',
-    message: `Bot Token (${kleur.dim('Optional.')})`,
+    message: `${kleur.red('Bot Token')} (${kleur.dim('Optional.')})`,
     type: 'password',
   },
   {
     name: 'server',
-    message: 'Dev Discord Server ID:',
+    message: kleur.green('Dev Discord Server ID:'),
     type: 'text',
   },
   {
     name: 'manager',
-    message: 'Package Manager',
+    message: kleur.green('Package Manager'),
     type: 'select',
     choices: [
       {
