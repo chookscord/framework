@@ -156,10 +156,6 @@ async function initTemplate() {
   if (response.flavor === 'ts')
     jobs.push(writeTsconfig())
 
-  if (response.manager === 'pnpm') {
-    jobs.push(writeHoist())
-  }
-
   try {
     await Promise.all(jobs)
     spinner.success({ text: 'Template initialized.' })
