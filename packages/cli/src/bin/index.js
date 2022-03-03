@@ -1,7 +1,15 @@
 #! /usr/bin/env node
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-const command = process.argv.slice(2)[0]
-process.env.CHOOKSIE_CLI_VERSION = require('../../package.json').version
+const args = process.argv.slice(2)
+const command = args[0]
+
+const version = require('../../package.json').version
+if (args.includes('-v') || args.includes('--v')) {
+  console.info(`v${version}`)
+  process.exit(0)
+}
+
+process.env.CHOOKSIE_CLI_VERSION = version
 process.env.CHOOKSIE_UNDICI_PATH = require.resolve('undici')
 
 // Set default env as production
