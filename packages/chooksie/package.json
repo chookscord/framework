@@ -30,12 +30,16 @@
   "exports": {
     ".": "./dist/types.js",
     "./fetch": "./dist/fetch.js",
-    "./internals": "./dist/internals/index.js"
+    "./internals": "./dist/internals/index.js",
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "fetch": [
         "./dist/fetch.d.ts"
+      ],
+      "package.json": [
+        "./package.json"
       ]
     }
   },
