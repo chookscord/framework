@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 import kleur from 'kleur'
-import { createSpinner } from 'nanospinner'
 import { readdirSync } from 'node:fs'
 import { cp } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
@@ -8,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 import pkgNameRegex from 'package-name-regex'
 import prompts from 'prompts'
 import { initGit, installDeps, rebuildStore, writeEnv, writePackageJson, writeTsconfig } from '../scripts.js'
-import { mv, toTmp } from '../utils.js'
+import { mv, run, toTmp } from '../utils.js'
 
 type PackageManager = 'npm' | 'yarn' | 'pnpm'
 
@@ -141,31 +140,24 @@ const closeTmp = await toTmp()
 const tmpdir = process.cwd()
 process.on('exit', closeTmp)
 
-async function copyTemplate() {
-  await cp(template, tmpdir, { recursive: true })
-}
+await run({
+  message: 'Initializing template...',
+  success: 'Template initialized.',
+  error: 'Failed to initialize template!',
+  exec: async () => {
+    const jobs: Promise<unknown>[] = []
 
-async function initTemplate() {
-  const spinner = createSpinner('Initializing template...').start()
-  const jobs: Promise<unknown>[] = []
+    jobs.push(writeEnv(token, guildId))
+    jobs.push(writePackageJson(projectName))
+    jobs.push(cp(template, tmpdir, { recursive: true }))
 
-  jobs.push(writeEnv(token, guildId))
-  jobs.push(writePackageJson(projectName))
-  jobs.push(copyTemplate())
+    if (response.flavor === 'ts')
+      jobs.push(writeTsconfig())
 
-  if (response.flavor === 'ts')
-    jobs.push(writeTsconfig())
-
-  try {
     await Promise.all(jobs)
-    spinner.success({ text: 'Template initialized.' })
-  } catch {
-    spinner.error({ text: 'Failed to initialize template!' })
-    process.exit(1)
-  }
-}
-
-await initTemplate()
+  },
+  onError: () => process.exit(1),
+})
 
 if (useGit)
   await initGit()
