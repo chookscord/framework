@@ -2,7 +2,7 @@ import { watch } from 'chokidar'
 import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
 import { existsSync } from 'fs'
-import { readFile, writeFile } from 'fs/promises'
+import { mkdir, readFile, writeFile } from 'fs/promises'
 import { join, relative, resolve } from 'path'
 import { createClient, createLogger, onInteractionCreate } from '../internals'
 import { resolveLocal, sourceFromFile, Store, validateDevConfig } from '../lib'
@@ -60,8 +60,10 @@ async function validate<T>(mod: T, validator: (mod: T) => Promise<unknown>): Pro
 }
 
 async function createServer(): Promise<void> {
+  await mkdir(outDir)
   logger.info(`Using chooksie v${version}`)
   logger.info('Starting bot...')
+
   const config = await resolveConfig(
     { root, outDir },
     { validator: validateDevConfig },
