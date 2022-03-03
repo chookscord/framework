@@ -100,6 +100,7 @@ const response: Result = await prompts([
     name: 'server',
     message: kleur.green('Dev Discord Server ID:'),
     type: 'text',
+    validate: (id: string) => id.length === 18 && !Number.isNaN(id) || 'Invalid Server ID!',
   },
   {
     name: 'manager',
