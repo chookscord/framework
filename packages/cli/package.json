@@ -30,8 +30,7 @@
   },
   "devDependencies": {
     "chooksie": "workspace:^2.0.0-rc.2",
-    "discord.js": "^13.6.0",
-    "dotenv": "^16.0.0"
+    "discord.js": "^13.6.0"
   },
   "repository": {
     "type": "git",
