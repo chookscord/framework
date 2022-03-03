@@ -130,7 +130,7 @@ const response: Result = await prompts([
 ], { onCancel })
 
 const projectName = response.name
-const projectDir = resolve(response.dirname ?? projectName)
+const projectDir = resolve(initPath ?? response.dirname ?? projectName)
 const template = join(templates, response.flavor)
 const token = response.token
 const guildId = response.server
