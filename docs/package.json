@@ -13,7 +13,7 @@
     "chooksie": "workspace:*",
     "discord.js": "^13.6.0",
     "fastify": "^3.27.2",
-    "sequelize": "^6.16.2",
+    "sequelize": "^6.17.0",
     "sqlite3": "^5.0.2",
     "vuepress-vite": "^2.0.0-beta.35"
   }
