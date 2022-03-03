@@ -21,7 +21,7 @@ const exec = promisify(child.exec)
 export const stringify = (value: object): string => JSON.stringify(value, null, 2)
 
 export async function run(opts: RunOptions): Promise<void> {
-  const spinner = createSpinner(opts.message)
+  const spinner = createSpinner(opts.message).start()
   try {
     await opts.exec(exec)
     spinner.success({ text: opts.success })
