@@ -190,7 +190,7 @@ async function createServer(): Promise<void> {
 
 export = createServer
 
-if ('CHOOKSIE_CLI' in process.env) {
+if ('CHOOKSIE_CLI_VERSION' in process.env) {
   // bootstrap self when forked from CLI
   void createServer()
 }
