@@ -8,6 +8,7 @@ import type { SourceMap } from './lib'
 import { registerCommands, resolveLocal, sourceFromFile, tokenToAppId, transformCommand } from './lib'
 import type { RegisterOptions } from './lib/register'
 import { target } from './logger'
+resolveLocal('chooksie/dotenv')
 
 const root = process.cwd()
 const outDir = join(root, 'dist')
