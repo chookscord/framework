@@ -10,6 +10,7 @@
     "moduleResolution": "Node",
     "declarationMap": true,
     "declaration": true,
+    "resolveJsonModule": true,
     "emitDeclarationOnly": true,
     "preserveWatchOutput": true
   }

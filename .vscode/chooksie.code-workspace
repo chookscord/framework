@@ -32,6 +32,7 @@
     ]
   },
   "settings": {
+    "typescript.tsdk": "🌱 Root/node_modules/typescript/lib",
     "files.exclude": {
       "configs/": true,
       "packages/": true,

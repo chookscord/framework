@@ -1,6 +1,7 @@
 process.env.NODE_ENV = 'production'
 import type { ChooksScript, CommandModule, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import { createClient, createLogger, loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
+import { version } from 'chooksie/package.json'
 import type { ClientEvents } from 'discord.js'
 import 'dotenv/config'
 import { relative } from 'path'
@@ -26,6 +27,7 @@ function getFileType(path: string): SourceDir | 'scripts' {
 }
 
 async function main() {
+  logger.info(`Using chooksie v${version}`)
   logger.info('Starting bot...')
   const endTimer = timer()
 

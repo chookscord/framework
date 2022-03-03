@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-empty-interface */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any */
 import type {
   AutocompleteInteraction,
   Awaitable,
@@ -34,7 +33,6 @@ export interface ChooksConfig {
   }
 }
 
-/* eslint-disable no-trailing-spaces */
 /**
  * **Definition Function**: define your bot's config.
  *
@@ -46,7 +44,7 @@ export interface ChooksConfig {
  * put your token and **SHOULD NOT** be tracked.
  *
  * **Sample `.env` file:**
- * 
+ *
  * ```sh
  * BOT_TOKEN=your-bot-token-here
  * DEV_SERVER=your-dev-server-id
@@ -76,7 +74,6 @@ export interface ChooksConfig {
  *   ],
  * })
  */
-/* eslint-enable no-trailing-spaces */
 export function defineConfig(config: ChooksConfig) {
   return config
 }

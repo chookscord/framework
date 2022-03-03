@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
 const { fetch: _fetch } = require(process.env.CHOOKSIE_UNDICI_PATH ?? 'undici') as typeof import('undici')
 import type { ControlledAsyncIterable, RequestInfo, RequestInit, Response } from 'undici'
 

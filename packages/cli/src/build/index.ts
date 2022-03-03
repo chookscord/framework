@@ -5,12 +5,14 @@ import { cp, readdir } from 'fs/promises'
 import { join } from 'path'
 import { createLogger, timer, walk } from '../internals'
 import type { SourceMap } from '../lib'
-import { compile, mapSourceFile, resolveConfigFile, write } from '../lib'
+import { compile, mapSourceFile, resolveConfigFile, resolveLocal, write } from '../lib'
 import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
 import { target } from '../logger'
 
 const root = process.cwd()
 const outDir = join(root, 'dist')
+
+const version = resolveLocal<{ version: string }>('chooksie/package.json').version
 
 const pino = createLogger({
   transport: { target },
@@ -76,6 +78,7 @@ async function compileConfigFile(files: Dirent[]) {
 }
 
 async function build(): Promise<void> {
+  logger.info(`Using chooksie v${version}`)
   logger.info('Starting production build...')
   const measure = timer()
   const rootFiles = await readdir(root, { withFileTypes: true })

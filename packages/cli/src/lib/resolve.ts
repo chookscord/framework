@@ -1,7 +1,3 @@
-/* eslint-disable
-  @typescript-eslint/no-var-requires,
-  @typescript-eslint/no-require-imports
-*/
 function resolveLocal<T>(id: string): T {
   try {
     return <T>require(id)

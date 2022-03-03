@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { ChooksConfig } from 'chooksie'
 import type { Dirent } from 'fs'
 import { readdir } from 'fs/promises'

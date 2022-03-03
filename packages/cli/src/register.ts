@@ -5,12 +5,14 @@ import { join, relative } from 'path'
 import { setTimeout } from 'timers/promises'
 import { createLogger, walk } from './internals'
 import type { SourceMap } from './lib'
-import { registerCommands, sourceFromFile, tokenToAppId, transformCommand } from './lib'
+import { registerCommands, resolveLocal, sourceFromFile, tokenToAppId, transformCommand } from './lib'
 import type { RegisterOptions } from './lib/register'
 import { target } from './logger'
 
 const root = process.cwd()
 const outDir = join(root, 'dist')
+
+const version = resolveLocal<{ version: string }>('chooksie/package.json').version
 
 const pino = createLogger({
   transport: { target },
@@ -60,6 +62,7 @@ async function _register(opts: RegisterOptions): Promise<ExitCode> {
 }
 
 async function register(): Promise<void> {
+  logger.info(`Using chooksie v${version}`)
   // Check if prod build exists
   await access(outDir)
 

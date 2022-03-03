@@ -34,6 +34,7 @@ const pino = createLogger({
   },
 })
 
+const version = resolveLocal<{ version: string }>('chooksie/package.json').version
 const logger = pino('app', 'chooks')
 
 async function getCached() {
@@ -59,6 +60,7 @@ async function validate<T>(mod: T, validator: (mod: T) => Promise<unknown>): Pro
 }
 
 async function createServer(): Promise<void> {
+  logger.info(`Using chooksie v${version}`)
   logger.info('Starting bot...')
   const config = await resolveConfig(
     { root, outDir },

@@ -1,6 +1,6 @@
 {
   "name": "chooksie",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0-rc.2",
   "description": "Fast Discord.JS Framework",
   "license": "MIT",
   "files": [
@@ -15,12 +15,12 @@
   },
   "dependencies": {
     "@swc/helpers": "^0.3.2",
-    "dotenv": "^15.0.0",
-    "pino": "^7.7.0"
+    "dotenv": "^16.0.0",
+    "pino": "^7.8.0"
   },
   "devDependencies": {
     "discord.js": "^13.6.0",
-    "undici": "^4.13.0"
+    "undici": "^4.14.1"
   },
   "peerDependencies": {
     "discord.js": "^13.6.0",
@@ -30,12 +30,16 @@
   "exports": {
     ".": "./dist/types.js",
     "./fetch": "./dist/fetch.js",
-    "./internals": "./dist/internals/index.js"
+    "./internals": "./dist/internals/index.js",
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "fetch": [
         "./dist/fetch.d.ts"
+      ],
+      "package.json": [
+        "./package.json"
       ]
     }
   },

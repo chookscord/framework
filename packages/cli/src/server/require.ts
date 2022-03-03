@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
 import { interopRequireDefault } from '@swc/helpers'
 
 // Exclude unloading files outside the dev dir
