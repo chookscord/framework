@@ -18,8 +18,8 @@
     "dev": "concurrently -r 'yarn:build:* -w'"
   },
   "dependencies": {
-    "@swc/core": "^1.2.130",
-    "@swc/helpers": "^0.3.2",
+    "@swc/core": "^1.2.147",
+    "@swc/helpers": "^0.3.6",
     "chokidar": "^3.5.3",
     "create-chooks-bot": "workspace:^2.0.0-rc.5",
     "joi": "^17.6.0",

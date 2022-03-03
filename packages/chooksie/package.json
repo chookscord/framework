@@ -14,7 +14,7 @@
     "dev": "concurrently -r 'yarn:build:* -w'"
   },
   "dependencies": {
-    "@swc/helpers": "^0.3.2",
+    "@swc/helpers": "^0.3.6",
     "dotenv": "^16.0.0",
     "pino": "^7.8.0"
   },
