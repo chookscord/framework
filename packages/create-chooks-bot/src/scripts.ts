@@ -1,7 +1,6 @@
-import { createSpinner } from 'nanospinner'
+import kleur from 'kleur'
 import { writeFile } from 'node:fs/promises'
 import { run, stringify } from './utils.js'
-import kleur from 'kleur'
 
 export async function writePackageJson(projectName: string): Promise<void> {
   const scripts = {
@@ -75,20 +74,20 @@ export async function writeHoist(): Promise<void> {
 export async function installDeps(installer: string, type: 'prod' | 'dev', ...deps: string[]): Promise<void> {
   const flag = type === 'dev' ? ' -D' : ''
   const depType = type === 'dev' ? 'dev dependencies' : 'dependencies'
-  const spinner = createSpinner(`Installing ${depType}...`).start()
 
-  try {
-    await run(`${installer + flag} ${deps.join(' ')}`)
-    spinner.success({ text: `Installed ${depType}.` })
-  } catch {
-    spinner.error({ text: `Failed to install ${depType}!` })
-    console.error(`${kleur.yellow('ℹ')} Please add the following ${depType} manually!`)
-    console.error(deps.map(dep => `- ${dep}`).join('\n'))
-  }
+  await run({
+    message: `Installing ${depType}...`,
+    success: `Installed ${depType}.`,
+    error: `Failed to install ${depType}!`,
+    exec: exec => exec(`${installer + flag} ${deps.join(' ')}`),
+    onError: () => {
+      console.error(`${kleur.yellow('ℹ')} Please add the following ${depType} manually!`)
+      console.error(deps.map(dep => `- ${dep}`).join('\n'))
+    },
+  })
 }
 
 export async function initGit(): Promise<void> {
-  const spinner = createSpinner('Initializing git repo...').start()
   const gitignore = `
 node_modules/
 
@@ -103,21 +102,22 @@ dist/
 .env*.local
 `.trimStart()
 
-  try {
-    await run('git init')
-    await writeFile('.gitignore', gitignore)
-    spinner.success({ text: 'Initialized git repo.' })
-  } catch {
-    spinner.error({ text: 'Failed to initialize git repo!' })
-  }
+  await run({
+    message: 'Initializing git repo...',
+    success: 'Initialized git repo.',
+    error: 'Failed to initialize git repo!',
+    exec: async exec => {
+      await exec('git init')
+      await writeFile('.gitignore', gitignore)
+    },
+  })
 }
 
 export async function rebuildStore(): Promise<void> {
-  const spinner = createSpinner('Doing some final cleanup...')
-  try {
-    await run('pnpm install')
-    spinner.success({ text: 'Relinked PNPM store.' })
-  } catch {
-    spinner.error({ text: 'Failed to move PNPM store!' })
-  }
+  await run({
+    message: 'Doing some final cleanup...',
+    success: 'Rebuilt PNPM store.',
+    error: 'Failed to rebuild PNPM store!',
+    exec: exec => exec('pnpm install'),
+  })
 }
