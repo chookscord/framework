@@ -1,3 +1,4 @@
+import kleur from 'kleur'
 import { createSpinner } from 'nanospinner'
 import child from 'node:child_process'
 import fs from 'node:fs'
@@ -21,12 +22,12 @@ const exec = promisify(child.exec)
 export const stringify = (value: object): string => JSON.stringify(value, null, 2)
 
 export async function run(opts: RunOptions): Promise<void> {
-  const spinner = createSpinner(opts.message).start()
+  const spinner = createSpinner(kleur.yellow(opts.message)).start()
   try {
     await opts.exec(exec)
-    spinner.success({ text: opts.success })
+    spinner.success({ text: kleur.green(opts.success) })
   } catch {
-    spinner.error({ text: opts.error })
+    spinner.error({ text: kleur.red(opts.error) })
     if (opts.onError) opts.onError()
   }
 }
