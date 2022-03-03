@@ -25,7 +25,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const templates = join(__dirname, '..', '..', 'templates')
-const isLocal = 'CHOOKSIE_CLI' in process.env
+const isLocal = 'CHOOKSIE_CLI_VERSION' in process.env
 
 const INSTALL_SCRIPTS: Record<PackageManager, string> = {
   npm: 'npm i',
