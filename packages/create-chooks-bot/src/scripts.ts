@@ -65,12 +65,6 @@ export async function writeTsconfig(): Promise<void> {
   await writeFile('tsconfig.json', tsconfig)
 }
 
-// Required to resolve dotenv/config
-export async function writeHoist(): Promise<void> {
-  const config = 'shamefully-hoist = true'
-  await writeFile('.npmrc', config)
-}
-
 export async function installDeps(installer: string, type: 'prod' | 'dev', ...deps: string[]): Promise<void> {
   const flag = type === 'dev' ? ' -D' : ''
   const depType = type === 'dev' ? 'dev dependencies' : 'dependencies'

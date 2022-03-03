@@ -1,6 +1,6 @@
 {
   "name": "@chookscord/cli",
-  "version": "2.0.0-rc.5",
+  "version": "2.0.0-rc.6",
   "description": "CLI package for the Chooksie Framework",
   "license": "MIT",
   "preferGlobal": true,
@@ -21,7 +21,7 @@
     "@swc/core": "^1.2.130",
     "@swc/helpers": "^0.3.2",
     "chokidar": "^3.5.3",
-    "create-chooks-bot": "workspace:^2.0.0-rc.3",
+    "create-chooks-bot": "workspace:^2.0.0-rc.4",
     "joi": "^17.6.0",
     "picocolors": "^1.0.0",
     "pino-abstract-transport": "^0.5.0",
@@ -29,9 +29,8 @@
     "undici": "^4.14.1"
   },
   "devDependencies": {
-    "chooksie": "workspace:^2.0.0-rc.2",
-    "discord.js": "^13.6.0",
-    "dotenv": "^16.0.0"
+    "chooksie": "workspace:^2.0.0-rc.3",
+    "discord.js": "^13.6.0"
   },
   "repository": {
     "type": "git",

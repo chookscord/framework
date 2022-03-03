@@ -1,6 +1,6 @@
 {
   "name": "chooksie",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0-rc.3",
   "description": "Fast Discord.JS Framework",
   "license": "MIT",
   "files": [
@@ -29,6 +29,7 @@
   "main": "./dist/types.js",
   "exports": {
     ".": "./dist/types.js",
+    "./dotenv": "./dist/dotenv",
     "./fetch": "./dist/fetch.js",
     "./internals": "./dist/internals/index.js",
     "./package.json": "./package.json"
@@ -37,6 +38,9 @@
     "*": {
       "fetch": [
         "./dist/fetch.d.ts"
+      ],
+      "dotenv": [
+        "./dist/dotenv.d.ts"
       ],
       "package.json": [
         "./package.json"

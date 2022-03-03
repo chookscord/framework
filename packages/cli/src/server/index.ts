@@ -14,7 +14,7 @@ import { loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashS
 import watchCommands from './register'
 import { unloadMod, unrequire } from './require'
 import { resolveConfig } from './resolve-config'
-resolveLocal('dotenv/config')
+resolveLocal('chooksie/dotenv')
 
 type CachedCommand = [key: string, module: Command]
 
