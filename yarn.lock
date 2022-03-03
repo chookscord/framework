@@ -404,8 +404,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@chookscord/cli@workspace:packages/cli"
   dependencies:
-    "@swc/core": ^1.2.130
-    "@swc/helpers": ^0.3.2
+    "@swc/core": ^1.2.147
+    "@swc/helpers": ^0.3.6
     chokidar: ^3.5.3
     chooksie: "workspace:^2.0.0-rc.3"
     create-chooks-bot: "workspace:^2.0.0-rc.5"
@@ -1004,140 +1004,114 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-android-arm-eabi@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-android-arm-eabi@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-android-arm-eabi@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-android-arm-eabi@npm:1.2.147"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-android-arm64@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-android-arm64@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-android-arm64@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-android-arm64@npm:1.2.147"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-darwin-arm64@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-darwin-arm64@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-darwin-arm64@npm:1.2.147"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-darwin-x64@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-darwin-x64@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-darwin-x64@npm:1.2.147"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-freebsd-x64@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-freebsd-x64@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-freebsd-x64@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-freebsd-x64@npm:1.2.147"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-linux-arm-gnueabihf@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.2.147"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-linux-arm64-gnu@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.2.147"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-linux-arm64-musl@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-linux-arm64-musl@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-linux-arm64-musl@npm:1.2.147"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-linux-x64-gnu@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-linux-x64-gnu@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-linux-x64-gnu@npm:1.2.147"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-linux-x64-musl@npm:1.2.146"
-  bin:
-    swcx: swc
+"@swc/core-linux-x64-musl@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-linux-x64-musl@npm:1.2.147"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.2.146"
-  bin:
-    swcx: swc.exe
+"@swc/core-win32-arm64-msvc@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.2.147"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.2.146"
-  bin:
-    swcx: swc.exe
+"@swc/core-win32-ia32-msvc@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.2.147"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.2.146":
-  version: 1.2.146
-  resolution: "@swc/core-win32-x64-msvc@npm:1.2.146"
-  bin:
-    swcx: swc.exe
+"@swc/core-win32-x64-msvc@npm:1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core-win32-x64-msvc@npm:1.2.147"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.2.130, @swc/core@npm:^1.2.143":
-  version: 1.2.146
-  resolution: "@swc/core@npm:1.2.146"
+"@swc/core@npm:^1.2.147":
+  version: 1.2.147
+  resolution: "@swc/core@npm:1.2.147"
   dependencies:
-    "@swc/core-android-arm-eabi": 1.2.146
-    "@swc/core-android-arm64": 1.2.146
-    "@swc/core-darwin-arm64": 1.2.146
-    "@swc/core-darwin-x64": 1.2.146
-    "@swc/core-freebsd-x64": 1.2.146
-    "@swc/core-linux-arm-gnueabihf": 1.2.146
-    "@swc/core-linux-arm64-gnu": 1.2.146
-    "@swc/core-linux-arm64-musl": 1.2.146
-    "@swc/core-linux-x64-gnu": 1.2.146
-    "@swc/core-linux-x64-musl": 1.2.146
-    "@swc/core-win32-arm64-msvc": 1.2.146
-    "@swc/core-win32-ia32-msvc": 1.2.146
-    "@swc/core-win32-x64-msvc": 1.2.146
+    "@swc/core-android-arm-eabi": 1.2.147
+    "@swc/core-android-arm64": 1.2.147
+    "@swc/core-darwin-arm64": 1.2.147
+    "@swc/core-darwin-x64": 1.2.147
+    "@swc/core-freebsd-x64": 1.2.147
+    "@swc/core-linux-arm-gnueabihf": 1.2.147
+    "@swc/core-linux-arm64-gnu": 1.2.147
+    "@swc/core-linux-arm64-musl": 1.2.147
+    "@swc/core-linux-x64-gnu": 1.2.147
+    "@swc/core-linux-x64-musl": 1.2.147
+    "@swc/core-win32-arm64-msvc": 1.2.147
+    "@swc/core-win32-ia32-msvc": 1.2.147
+    "@swc/core-win32-x64-msvc": 1.2.147
   dependenciesMeta:
     "@swc/core-android-arm-eabi":
       optional: true
@@ -1165,18 +1139,20 @@ __metadata:
       optional: true
     "@swc/core-win32-x64-msvc":
       optional: true
-  checksum: 9dae149a2a28cfccef8eaab59fa776ca20c6070c7aaaec60e55cfc7d17d514580bb6173de7d069ecf44f1dcec3a193f4f19d89e70df759ffc77b67f449b75630
+  bin:
+    swcx: run_swcx.js
+  checksum: 6cf22c758e1a2fd018b809662a3a12e1d3e1be3a261ed76e7372e5325ad9447ae1538cce54964bdbe00343318b6810524715e0d294bc4c32d5e8cd4c170e9a23
   languageName: node
   linkType: hard
 
-"@swc/helpers@npm:^0.3.2, @swc/helpers@npm:^0.3.3":
+"@swc/helpers@npm:^0.3.6":
   version: 0.3.6
   resolution: "@swc/helpers@npm:0.3.6"
   checksum: 94122aa282e543125d8bc6262917362234a23e434f04a39f657f871201431dc8ba39892d708d423713b6f80ccbd1d6a5f7efd68c0921031a13c8c1d0b1ef87e6
   languageName: node
   linkType: hard
 
-"@swc/jest@npm:^0.2.17":
+"@swc/jest@npm:^0.2.20":
   version: 0.2.20
   resolution: "@swc/jest@npm:0.2.20"
   dependencies:
@@ -2613,8 +2589,8 @@ __metadata:
   resolution: "chookscord-project@workspace:."
   dependencies:
     "@swc/cli": ^0.1.55
-    "@swc/core": ^1.2.143
-    "@swc/helpers": ^0.3.3
+    "@swc/core": ^1.2.147
+    "@swc/helpers": ^0.3.6
     "@types/node": ^17.0.19
     chokidar: ^3.5.3
     concurrently: ^7.0.0
@@ -2629,7 +2605,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "chooksie@workspace:packages/chooksie"
   dependencies:
-    "@swc/helpers": ^0.3.2
+    "@swc/helpers": ^0.3.6
     discord.js: ^13.6.0
     dotenv: ^16.0.0
     pino: ^7.8.0
@@ -4967,7 +4943,7 @@ __metadata:
   resolution: "jest-config@workspace:configs/jest"
   dependencies:
     "@jest/types": ^27.4.2
-    "@swc/jest": ^0.2.17
+    "@swc/jest": ^0.2.20
     "@types/jest": ^27.4.0
     jest: ^27.5.1
   languageName: unknown
