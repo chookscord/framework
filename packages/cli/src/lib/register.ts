@@ -2,7 +2,6 @@ import type { Logger } from 'chooksie'
 import type { AppCommand } from 'chooksie/internals'
 import resolveLocal from './resolve'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 const { fetch } = resolveLocal<typeof import('chooksie/fetch')>('chooksie/fetch')
 
 interface SuccessResult {
