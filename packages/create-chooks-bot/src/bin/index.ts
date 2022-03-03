@@ -7,7 +7,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pkgNameRegex from 'package-name-regex'
 import prompts from 'prompts'
-import { initGit, installDeps, rebuildStore, writeEnv, writeHoist, writePackageJson, writeTsconfig } from '../scripts.js'
+import { initGit, installDeps, rebuildStore, writeEnv, writePackageJson, writeTsconfig } from '../scripts.js'
 import { mv, toTmp } from '../utils.js'
 
 type PackageManager = 'npm' | 'yarn' | 'pnpm'
