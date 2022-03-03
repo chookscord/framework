@@ -1,27 +1,25 @@
 #! /usr/bin/env node
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const command = process.argv.slice(2)[0]
+process.env.CHOOKSIE_CLI_VERSION = require('../../package.json').version
+process.env.CHOOKSIE_UNDICI_PATH = require.resolve('undici')
+
+// Set default env as production
+process.env.NODE_ENV = 'production'
 
 if (!command) {
   const child = require('node:child_process')
   const script = require.resolve('../server')
 
-  const env = {
-    CHOOKSIE_CLI: '',
-    CHOOKSIE_UNDICI_PATH: require.resolve('undici'),
-    NODE_ENV: 'development',
-    CHOOKSIE_VERSION: require('../../package.json').version,
-  }
-
   child.fork(script, {
     env: {
       ...process.env,
-      ...env, // Inject custom env
+      // Override default env as development
+      NODE_ENV: 'development',
     },
     execArgv: ['--enable-source-maps', '--title=chooksie'],
   })
 } else if (command === 'init') {
-  process.env.CHOOKSIE_CLI = ''
   // eslint-disable-next-line no-eval
   eval('import("create-chooks-bot")')
 } else if (command === 'build') {
