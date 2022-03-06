@@ -1,0 +1,48 @@
+{
+  "folders": [
+    {
+      "name": "🛠 CLI",
+      "path": "../packages/cli"
+    },
+    {
+      "name": "🚀 Framework",
+      "path": "../packages/chooksie"
+    },
+    {
+      "name": "🏗 Scaffold",
+      "path": "../packages/create-chooks-bot"
+    },
+    {
+      "name": "📖 Docs",
+      "path": "../docs"
+    },
+    {
+      "name": "🔧 Configs",
+      "path": "../configs"
+    },
+    {
+      "name": "🌱 Root",
+      "path": "../"
+    }
+  ],
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "Orta.vscode-jest"
+    ]
+  },
+  "settings": {
+    "typescript.tsdk": "🌱 Root/node_modules/typescript/lib",
+    "files.exclude": {
+      "configs/": true,
+      "packages/": true,
+      "docs/": true
+    },
+    "jest.disabledWorkspaceFolders": [
+      "🏗 Scaffold",
+      "📖 Docs",
+      "🔧 Configs",
+      "🌱 Root"
+    ]
+  }
+}

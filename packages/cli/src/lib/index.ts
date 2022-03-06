@@ -1,20 +1,10 @@
-export * from './register';
-export * from './validation';
-export * from './compile';
-export * from './config';
-export * from './diff';
-export * from './errors';
-export * from './files';
-export * from './transform';
-export * from './unload';
-
-export const resolveLocal = <T>(id: string): T => {
-  try {
-    return require(id);
-  } catch {
-    return require(require.resolve(id, { paths: [process.cwd()] }));
-  }
-};
-
-export const chooksie = resolveLocal<typeof import('chooksie/lib')>('chooksie/lib');
-export const types = resolveLocal<typeof import('chooksie/types')>('chooksie/types');
+export { compile, unlink, write } from './compile'
+export { resolveConfigFile, validateConfig, validateDevConfig } from './config'
+export { diffCommand, diffOption } from './diff'
+export { default as registerCommands } from './register'
+export { default as resolveLocal } from './resolve'
+export { getFileType, mapSourceFile, MODULES, sourceFromFile } from './sourcemap'
+export type { FileOptions, FileType, SourceDir, SourceMap } from './sourcemap'
+export { default as Store } from './store'
+export { default as tokenToAppId } from './token-id'
+export { transformCommand, transformOption } from './transform'
