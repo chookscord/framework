@@ -80,7 +80,7 @@ async function createServer(): Promise<void> {
   const login = client.login(config.token)
 
   const watcher = watch('*/**/*.?(m|c){js,ts}', {
-    ignored: ['node_modules', 'dist', 'test?(s)', '.*', '*.d.?(m|c)ts'],
+    ignored: ['node_modules', 'dist', 'test?(s)', '.*', '**/*.d.?(m|c)ts'],
     cwd: root,
   })
 
