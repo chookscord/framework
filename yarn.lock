@@ -407,8 +407,8 @@ __metadata:
     "@swc/core": ^1.2.147
     "@swc/helpers": ^0.3.6
     chokidar: ^3.5.3
-    chooksie: "workspace:^2.0.0-rc.3"
-    create-chooks-bot: "workspace:^2.0.0-rc.5"
+    chooksie: "workspace:^2.0.0"
+    create-chooks-bot: "workspace:^2.0.0"
     discord.js: ^13.6.0
     joi: ^17.6.0
     picocolors: ^1.0.0
@@ -2601,7 +2601,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"chooksie@workspace:*, chooksie@workspace:^2.0.0-rc.3, chooksie@workspace:packages/chooksie":
+"chooksie@workspace:*, chooksie@workspace:^2.0.0, chooksie@workspace:packages/chooksie":
   version: 0.0.0-use.local
   resolution: "chooksie@workspace:packages/chooksie"
   dependencies:
@@ -2832,7 +2832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"create-chooks-bot@workspace:^2.0.0-rc.5, create-chooks-bot@workspace:packages/create-chooks-bot":
+"create-chooks-bot@workspace:^2.0.0, create-chooks-bot@workspace:packages/create-chooks-bot":
   version: 0.0.0-use.local
   resolution: "create-chooks-bot@workspace:packages/create-chooks-bot"
   dependencies:
