@@ -88,7 +88,7 @@ async function createServer(): Promise<void> {
   // Also syncs commands when modules are deleted.
   watchCommands(stores, config.token, config.devServer!, pino)
 
-  const compiler = createWatchCompiler(watcher, { root, outDir })
+  const compiler = createWatchCompiler(watcher, { root, outDir, createLogger: pino })
   const listener = onInteractionCreate(stores.command, pino)
 
   client.on('interactionCreate', listener)
