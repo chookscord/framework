@@ -153,7 +153,11 @@ async function createServer(): Promise<void> {
     if (file.type === 'event') {
       const event = mod.default as Event<keyof ClientEvents>
       if (await validate(event, validateEvent)) {
-        loadEvent(stores.event, client, relpath, pino, event)
+        loadEvent(stores.event, pino, {
+          client,
+          key: relpath,
+          event,
+        })
       }
       return
     }

@@ -149,6 +149,7 @@ export type InferSetupType<Setup> = Setup extends () => Awaitable<infer U> ? U :
 
 export type GenericHandler = (ctx: CommandContext<Interaction>) => Awaitable<void>
 export interface CommandModule {
+  updatedAt?: number
   execute: GenericHandler
   logger: Logger
 }

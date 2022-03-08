@@ -10,6 +10,7 @@ interface EventModule {
   name: keyof ClientEvents
   execute: () => Awaitable<void>
   logger: Logger
+  updatedAt: number
 }
 
 type EventStore = Map<string, EventModule>
@@ -30,7 +31,13 @@ function hasOnLoad(mod: Record<string, unknown>): mod is Required<ChooksScript> 
   return typeof mod.chooksOnLoad === 'function'
 }
 
-function loadAutocompletes(store: CommandStore, parentKey: string, pino: LoggerFactory, options: Option[] | undefined) {
+function loadAutocompletes(
+  store: CommandStore,
+  pino: LoggerFactory,
+  data: { parentKey: string; updatedAt: number; options: Option[] | undefined },
+) {
+  const { parentKey, updatedAt, options } = data
+
   for (const option of getAutocompletes(options)) {
     const key = createKey('auto', parentKey, option.name)
     const logger = pino('autocomplete', key)
@@ -41,7 +48,7 @@ function loadAutocompletes(store: CommandStore, parentKey: string, pino: LoggerF
       await (<GenericHandler>option.autocomplete).call(deps, ctx)
     }
 
-    store.set(key, { execute, logger })
+    store.set(key, { execute, logger, updatedAt })
   }
 }
 
@@ -56,11 +63,22 @@ function loadSlashCommand(store: CommandStore, pino: LoggerFactory, command: Sla
     await (<GenericHandler>command.execute).call(deps, ctx)
   }
 
-  store.set(key, { execute, logger })
-  loadAutocompletes(store, parentKey, pino, command.options)
+  const updatedAt = Date.now()
+  store.set(key, { execute, logger, updatedAt })
+
+  loadAutocompletes(store, pino, {
+    parentKey: key,
+    updatedAt,
+    options: command.options,
+  })
 }
 
-function loadSubcommand(store: CommandStore, parentName: string, pino: LoggerFactory, subcommand: Subcommand) {
+function loadSubcommand(
+  store: CommandStore,
+  pino: LoggerFactory,
+  data: { parentName: string; subcommand: Subcommand; updatedAt: number },
+) {
+  const { parentName, subcommand, updatedAt } = data
   const parentKey = createKey(parentName, subcommand.name)
   const key = createKey('cmd', parentKey)
   const logger = pino('subcommand', key)
@@ -71,11 +89,21 @@ function loadSubcommand(store: CommandStore, parentName: string, pino: LoggerFac
     await (<GenericHandler>subcommand.execute).call(deps, ctx)
   }
 
-  store.set(key, { execute, logger })
-  loadAutocompletes(store, parentKey, pino, subcommand.options)
+  store.set(key, { execute, logger, updatedAt })
+  loadAutocompletes(store, pino, {
+    updatedAt,
+    parentKey,
+    options: subcommand.options,
+  })
 }
 
-function loadSubcommandGroup(store: CommandStore, parentName: string, pino: LoggerFactory, group: SubcommandGroup) {
+function loadSubcommandGroup(
+  store: CommandStore,
+  pino: LoggerFactory,
+  data: { parentName: string; group: SubcommandGroup; updatedAt: number },
+) {
+  const { parentName, group, updatedAt } = data
+
   for (const subcommand of group.options) {
     const parentKey = createKey(parentName, group.name, subcommand.name)
     const key = createKey('cmd', parentKey)
@@ -87,20 +115,29 @@ function loadSubcommandGroup(store: CommandStore, parentName: string, pino: Logg
       await (<GenericHandler>subcommand.execute).call(deps, ctx)
     }
 
-    store.set(key, { execute, logger })
-    loadAutocompletes(store, parentKey, pino, subcommand.options)
+    store.set(key, { execute, logger, updatedAt })
+    loadAutocompletes(store, pino, {
+      parentKey,
+      updatedAt,
+      options: subcommand.options,
+    })
   }
 }
 
 function loadSlashSubcommand(store: CommandStore, pino: LoggerFactory, command: SlashSubcommand): void {
+  const updatedAt = Date.now()
+  const parentName = command.name
+
   for (const option of command.options) {
     if (option.type === 'SUB_COMMAND') {
-      loadSubcommand(store, command.name, pino, option as Subcommand)
+      const subcommand = <Subcommand>option
+      loadSubcommand(store, pino, { updatedAt, parentName, subcommand })
       continue
     }
 
     if (option.type === 'SUB_COMMAND_GROUP') {
-      loadSubcommandGroup(store, command.name, pino, option)
+      const group = option
+      loadSubcommandGroup(store, pino, { updatedAt, parentName, group })
       continue
     }
   }
@@ -116,7 +153,8 @@ function loadUserCommand(store: CommandStore, pino: LoggerFactory, command: User
     await (<GenericHandler>command.execute).call(deps, ctx)
   }
 
-  store.set(key, { execute, logger })
+  const updatedAt = Date.now()
+  store.set(key, { execute, logger, updatedAt })
 }
 
 function loadMessageCommand(store: CommandStore, pino: LoggerFactory, command: MessageCommand): void {
@@ -129,7 +167,8 @@ function loadMessageCommand(store: CommandStore, pino: LoggerFactory, command: M
     await (<GenericHandler>command.execute).call(deps, ctx)
   }
 
-  store.set(key, { execute, logger })
+  const updatedAt = Date.now()
+  store.set(key, { execute, logger, updatedAt })
 }
 
 function unloadEvent(store: EventStore, client: Client, key: string, logger?: Logger): void {
@@ -143,15 +182,18 @@ function unloadEvent(store: EventStore, client: Client, key: string, logger?: Lo
   logger?.info(`Unloaded "${event.name}" listener!`)
 }
 
-// eslint-disable-next-line max-params, max-len
-function loadEvent(store: EventStore, client: Client, key: string, pino: LoggerFactory, event: Event<keyof ClientEvents>): void {
-  const name = event.name
-  const _logger = pino('event', name)
+function loadEvent(
+  store: EventStore,
+  pino: LoggerFactory,
+  data: { client: Client; key: string; event: Event<keyof ClientEvents> },
+): void {
+  const { client, key, event } = data
+  const appLogger = pino('event', event.name)
 
   const setup = event.setup ?? (() => ({}))
   const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
     const reqId = randomUUID()
-    const logger = _logger.child({ reqId })
+    const logger = appLogger.child({ reqId })
 
     try {
       const deps = await setup()
@@ -166,7 +208,7 @@ function loadEvent(store: EventStore, client: Client, key: string, pino: LoggerF
         msg: `Successfully ran handler for "${event.name}".`,
       })
     } catch (error) {
-      _logger.info(`Handler for "${event.name}" did not run successfully.`)
+      appLogger.info(`Handler for "${event.name}" did not run successfully.`)
 
       logger.error('An unexpected error has occured!')
       logger.error(error)
@@ -178,8 +220,15 @@ function loadEvent(store: EventStore, client: Client, key: string, pino: LoggerF
     client.off(key, oldListener.execute)
   }
 
-  store.set(key, { name, execute, logger: _logger })
-  client[event.once ? 'once' : 'on'](name, execute)
+  store.set(key, {
+    name: event.name,
+    logger: appLogger,
+    updatedAt: Date.now(),
+    execute,
+  })
+
+  client[event.once ? 'once' : 'on'](event.name, execute)
+  appLogger.info(`Registered "${event.name}" listener.`)
 }
 
 async function unloadScript(store: ScriptStore, logger: Logger, root: string, file: SourceMap): Promise<void> {
