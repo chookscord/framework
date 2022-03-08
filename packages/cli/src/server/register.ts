@@ -57,18 +57,26 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
   let resetAfter = 0
 
   const syncCommands = () => {
-    unsyncedCommands.splice(0)
-      .map(getCommandKeys)
-      .forEach(keys => {
-        for (const key of keys) {
-          stores.command.delete(key)
-        }
+    const store = stores.command
+    const toSync = unsyncedCommands
+      .splice(0)
+      .flatMap(commands => Array.from(getCommandKeys(commands)))
+      .map(key => [key, store.get(key)!] as const)
+
+    const latest = toSync
+      .map(entry => entry[1])
+      .reduce((max, command) => Math.max(max, command.updatedAt!), 0)
+
+    toSync
+      .filter(entry => entry[1].updatedAt! < latest)
+      .forEach(entry => {
+        const key = entry[0]
+        store.delete(key)
       })
   }
 
-
   // Parse modules, reset controller and register commands
-  const _register = async () => {
+  const register = async () => {
     logger.debug('Updating commands...')
 
     const commands: AppCommand[] = []
@@ -82,14 +90,11 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
       const signal = controller.signal
       const res = await registerCommands({ url, credentials, commands, signal, logger })
 
-      if (res.status === 'OK') {
-        syncCommands()
-        return
-      }
-
       if (res.status === 'RATE_LIMIT') {
         resetAfter = Date.now() + res.resetAfter * 1000
       }
+
+      return res.status === 'OK'
     } catch (error) {
       if (!isAbortError(error)) {
         // @todo: error handling?
@@ -98,33 +103,37 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
     }
   }
 
+  const registerAndSync = async () => {
+    if (await register()) syncCommands()
+  }
+
   // Clear queued registers and check rate limit
-  const register = () => {
+  const queueRegister = () => {
     clearTimeout(timeout)
     controller?.abort()
 
     // If rate limited, run after the set timeout expires, else default to 250ms
     const runAfter = Math.max(resetAfter - Date.now(), 250)
-    timeout = setTimeout(_register, runAfter)
+    timeout = setTimeout(registerAndSync, runAfter)
   }
 
   stores.module.events.on('add', (a, b) => {
     if (b === null) {
-      register()
+      queueRegister()
       return
     }
 
     if (diffCommand(a, b)) {
       logger.info(`Updating command "${a.name}"...`)
       unsyncedCommands.push(b)
-      register()
+      queueRegister()
     }
   })
 
   stores.module.events.on('delete', command => {
     logger.info(`Deleting command "${command.name}"...`)
     unsyncedCommands.push(command)
-    register()
+    queueRegister()
   })
 }
 
