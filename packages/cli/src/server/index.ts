@@ -1,11 +1,13 @@
 import { watch } from 'chokidar'
 import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
+import type { EventEmitter } from 'events'
+import { on as _on } from 'events'
 import { existsSync } from 'fs'
 import { mkdir, readFile, writeFile } from 'fs/promises'
 import { join, relative, resolve } from 'path'
-import { createClient, createLogger, onInteractionCreate } from '../internals'
-import { resolveLocal, sourceFromFile, Store, validateDevConfig } from '../lib'
+import { createClient, createLogger, onInteractionCreate, timer } from '../internals'
+import { resolveLocal, sourceFromFile, SourceMap, Store, validateDevConfig } from '../lib'
 import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
 import { target } from '../logger'
 import { createWatchCompiler } from './compiler'
@@ -59,8 +61,14 @@ async function validate<T>(mod: T, validator: (mod: T) => Promise<unknown>): Pro
   }
 }
 
+function on<T>(emitter: EventEmitter, eventName: string) {
+  return _on(emitter, eventName) as AsyncIterableIterator<T>
+}
+
 async function createServer(): Promise<void> {
+  const measure = timer()
   await mkdir(outDir, { recursive: true })
+
   logger.info(`Using chooksie v${version}`)
   logger.info('Starting bot...')
 
@@ -107,91 +115,100 @@ async function createServer(): Promise<void> {
   stores.module.events.on('add', saveState)
   stores.module.events.on('delete', saveState)
 
-  compiler.on('compile', async file => {
-    const relpath = relative(root, file.source)
-    const mod = await unrequire<unknown>(file.target)
-    logger.info(`File ${relpath} updated.`)
+  void (async () => {
+    for await (const [file] of on<[SourceMap]>(compiler, 'compile')) {
+      const relpath = relative(root, file.source)
+      const mod = await unrequire<unknown>(file.target)
 
-    if (file.type === 'command') {
-      const command = mod.default as SlashCommand
-      if (await validate(command, validateSlashCommand)) {
-        stores.module.set(relpath, command)
-        loadSlashCommand(stores.command, pino, command)
+      const isNew = stores.module.has(relpath)
+      logger.info(`File ${relpath} ${isNew ? 'added' : 'updated'}.`)
+
+      if (file.type === 'command') {
+        const command = mod.default as SlashCommand
+        if (await validate(command, validateSlashCommand)) {
+          stores.module.set(relpath, command)
+          loadSlashCommand(stores.command, pino, command)
+        }
+        return
       }
-      return
-    }
 
-    if (file.type === 'subcommand') {
-      const command = mod.default as SlashSubcommand
-      if (await validate(command, validateSlashSubcommand)) {
-        stores.module.set(relpath, command)
-        loadSlashSubcommand(stores.command, pino, command)
+      if (file.type === 'subcommand') {
+        const command = mod.default as SlashSubcommand
+        if (await validate(command, validateSlashSubcommand)) {
+          stores.module.set(relpath, command)
+          loadSlashSubcommand(stores.command, pino, command)
+        }
+        return
       }
-      return
-    }
 
-    if (file.type === 'user') {
-      const command = mod.default as UserCommand
-      if (await validate(command, validateUserCommand)) {
-        command.type ??= 'USER'
-        stores.module.set(relpath, command)
-        loadUserCommand(stores.command, pino, command)
+      if (file.type === 'user') {
+        const command = mod.default as UserCommand
+        if (await validate(command, validateUserCommand)) {
+          command.type ??= 'USER'
+          stores.module.set(relpath, command)
+          loadUserCommand(stores.command, pino, command)
+        }
+        return
       }
-      return
-    }
 
-    if (file.type === 'message') {
-      const command = mod.default as MessageCommand
-      if (await validate(command, validateMessageCommand)) {
-        command.type ??= 'MESSAGE'
-        stores.module.set(relpath, command)
-        loadMessageCommand(stores.command, pino, command)
+      if (file.type === 'message') {
+        const command = mod.default as MessageCommand
+        if (await validate(command, validateMessageCommand)) {
+          command.type ??= 'MESSAGE'
+          stores.module.set(relpath, command)
+          loadMessageCommand(stores.command, pino, command)
+        }
+        return
       }
-      return
-    }
 
-    if (file.type === 'event') {
-      const event = mod.default as Event<keyof ClientEvents>
-      if (await validate(event, validateEvent)) {
-        loadEvent(stores.event, pino, {
-          client,
-          key: relpath,
-          event,
-        })
+      if (file.type === 'event') {
+        const event = mod.default as Event<keyof ClientEvents>
+        if (await validate(event, validateEvent)) {
+          loadEvent(stores.event, pino, {
+            client,
+            key: relpath,
+            event,
+          })
+        }
+        return
       }
-      return
-    }
 
-    if (file.type === 'script') {
-      for (const key of unloadMod(file.target)) {
-        const script = fileFromTarget(key)
-        await unloadScript(stores.cleanup, logger, root, script)
-        await loadScript(stores.cleanup, client, pino, root, script)
+      if (file.type === 'script') {
+        for (const key of unloadMod(file.target)) {
+          const script = fileFromTarget(key)
+          await unloadScript(stores.cleanup, logger, root, script)
+          await loadScript(stores.cleanup, client, pino, root, script)
+        }
+        return
       }
-      return
     }
-  })
+  })()
 
-  compiler.on('delete', async file => {
-    const relpath = relative(root, file.source)
-    if (file.type === 'event') {
-      unloadEvent(stores.event, client, relpath, logger)
-    }
+  void (async () => {
+    for await (const [file] of on<[SourceMap]>(compiler, 'delete')) {
+      const relpath = relative(root, file.source)
+      if (file.type === 'event') {
+        unloadEvent(stores.event, client, relpath, logger)
+      }
 
-    if (file.type === 'script') {
-      await unloadScript(stores.cleanup, logger, root, file)
-      return
-    }
+      if (file.type === 'script') {
+        await unloadScript(stores.cleanup, logger, root, file)
+        return
+      }
 
-    // No need to handle commands since it's handled by the module register.
-    if (file.type !== 'config') {
-      stores.module.delete(relpath)
-      return
+      // No need to handle commands since it's handled by the module register.
+      if (file.type !== 'config') {
+        stores.module.delete(relpath)
+        return
+      }
     }
-  })
+  })()
 
   await login
+  const responseTime = measure()
+
   logger.info('Logged in!')
+  logger.info(`Time Took: ${responseTime}ms`)
 }
 
 export = createServer
