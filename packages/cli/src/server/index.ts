@@ -129,7 +129,7 @@ async function createServer(): Promise<void> {
           stores.module.set(relpath, command)
           loadSlashCommand(stores.command, pino, command)
         }
-        return
+        continue
       }
 
       if (file.type === 'subcommand') {
@@ -138,7 +138,7 @@ async function createServer(): Promise<void> {
           stores.module.set(relpath, command)
           loadSlashSubcommand(stores.command, pino, command)
         }
-        return
+        continue
       }
 
       if (file.type === 'user') {
@@ -148,7 +148,7 @@ async function createServer(): Promise<void> {
           stores.module.set(relpath, command)
           loadUserCommand(stores.command, pino, command)
         }
-        return
+        continue
       }
 
       if (file.type === 'message') {
@@ -158,7 +158,7 @@ async function createServer(): Promise<void> {
           stores.module.set(relpath, command)
           loadMessageCommand(stores.command, pino, command)
         }
-        return
+        continue
       }
 
       if (file.type === 'event') {
@@ -170,7 +170,7 @@ async function createServer(): Promise<void> {
             event,
           })
         }
-        return
+        continue
       }
 
       if (file.type === 'script') {
@@ -179,7 +179,7 @@ async function createServer(): Promise<void> {
           await unloadScript(stores.cleanup, logger, root, script)
           await loadScript(stores.cleanup, client, pino, root, script)
         }
-        return
+        continue
       }
     }
   })()
@@ -193,13 +193,13 @@ async function createServer(): Promise<void> {
 
       if (file.type === 'script') {
         await unloadScript(stores.cleanup, logger, root, file)
-        return
+        continue
       }
 
       // No need to handle commands since it's handled by the module register.
       if (file.type !== 'config') {
         stores.module.delete(relpath)
-        return
+        continue
       }
     }
   })()
