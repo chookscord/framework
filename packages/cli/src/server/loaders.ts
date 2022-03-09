@@ -179,6 +179,8 @@ function unloadEvent(store: EventStore, client: Client, key: string, logger?: Lo
 
   const event = store.get(key)!
   client.off(event.name, event.execute)
+  store.delete(key)
+
   logger?.info(`Unloaded "${event.name}" listener!`)
 }
 
@@ -218,6 +220,7 @@ function loadEvent(
   if (store.has(key)) {
     const oldListener = store.get(event.name)!
     client.off(key, oldListener.execute)
+    store.delete(key)
   }
 
   store.set(key, {
