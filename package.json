@@ -9,9 +9,9 @@
     "docs"
   ],
   "scripts": {
-    "test": "yarn workspaces foreach -vip run test",
-    "build": "yarn workspaces foreach -pivt run build",
-    "dev": "yarn workspaces foreach -vip run dev"
+    "test": "turbo run test --parallel",
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel"
   },
   "devDependencies": {
     "@swc/cli": "^0.1.55",
@@ -23,6 +23,7 @@
     "jest": "^27.5.1",
     "regenerator-runtime": "^0.13.9",
     "tsc-watch": "^4.6.0",
+    "turbo": "^1.1.5",
     "typescript": "^4.6.2"
   }
 }
