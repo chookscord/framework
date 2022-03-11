@@ -1,5 +1,6 @@
 import type { Output } from '@swc/core'
 import type { FSWatcher } from 'chokidar'
+import type { LoggerFactory } from 'chooksie/internals'
 import EventEmitter from 'events'
 import type { Stats } from 'fs'
 import { resolve } from 'path'
@@ -10,6 +11,7 @@ export interface WatchCompilerOptions {
   onChange?: (file: SourceMap) => Output | Promise<Output>
   onCompile?: (file: SourceMap, data: string) => void | Promise<void>
   onDelete?: (file: SourceMap) => void | Promise<void>
+  createLogger?: LoggerFactory
 }
 
 export interface CompilerEvents {
@@ -27,25 +29,35 @@ export function createWatchCompiler(
   opts: WatchCompilerOptions & FileOptions,
 ): WatchCompiler {
   const events = new EventEmitter() as WatchCompiler
+  const logger = opts.createLogger?.('app', 'compiler')
   const { onChange = compile, onCompile = write, onDelete = unlink } = opts
 
   const toFile = mapSourceFile(opts)
 
   const compileTarget = async (path: string, stats?: Stats) => {
     if (!stats?.isFile()) return
-
     const file = toFile(resolve(path))
-    const data = await onChange(file)
-    await onCompile(file, data.code)
 
-    events.emit('compile', file)
+    try {
+      const data = await onChange(file)
+      await onCompile(file, data.code)
+      events.emit('compile', file)
+    } catch (error) {
+      logger?.error('Failed to compile file!')
+      logger?.error(error)
+    }
   }
 
   const deleteTarget = async (path: string) => {
     const file = toFile(resolve(path))
-    await onDelete(file)
 
-    events.emit('delete', file)
+    try {
+      await onDelete(file)
+      events.emit('delete', file)
+    } catch (error) {
+      logger?.error('Failed to delete file!')
+      logger?.error(error)
+    }
   }
 
   watcher.on('add', compileTarget)
