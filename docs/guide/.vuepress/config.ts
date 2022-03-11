@@ -1,8 +1,18 @@
+import type { DocsearchPluginOptions } from '@vuepress/plugin-docsearch'
 import type { DefaultThemeOptions } from 'vuepress-vite'
 import { defineUserConfig } from 'vuepress-vite'
 
 // eslint-disable-next-line @typescript-eslint/no-shadow
 const link = (text: string, link: string) => ({ text, link })
+const { NODE_ENV, ALGOLIA_API_KEY, ALGOLIA_APP_ID } = process.env
+
+const algolia: [string, DocsearchPluginOptions] = [
+  '@vuepress/plugin-docsearch', {
+    indexName: 'chooksie',
+    apiKey: ALGOLIA_API_KEY,
+    appId: ALGOLIA_APP_ID,
+  },
+]
 
 export default defineUserConfig<DefaultThemeOptions>({
   lang: 'en-US',
@@ -11,6 +21,9 @@ export default defineUserConfig<DefaultThemeOptions>({
   head: [
     ['meta', { property: 'theme-color', content: '#3aa675' }],
   ],
+  plugins: NODE_ENV === 'production'
+    ? [algolia]
+    : [],
   themeConfig: {
     contributors: false,
     repo: 'chookscord/framework',
