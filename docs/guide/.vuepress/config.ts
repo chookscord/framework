@@ -8,7 +8,7 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const algolia: [string, DocsearchPluginOptions] = [
   '@vuepress/plugin-docsearch', {
-    indexName: 'chooksie',
+    indexName: 'guide-chooks',
     apiKey: process.env.ALGOLIA_API_KEY,
     appId: process.env.ALGOLIA_APP_ID,
   },
