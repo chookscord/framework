@@ -13,7 +13,6 @@ const CONFIG_FILES = [
 ]
 
 const token = Joi.string()
-  .pattern(/^[\w-]{24}\.[\w-]{6}\.[\w-]{38}$/)
   .required()
 
 const intents = Joi.array()
