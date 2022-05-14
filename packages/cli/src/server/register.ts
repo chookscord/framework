@@ -59,23 +59,44 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
   const modules = stores.module
   const commands = stores.command
 
+  /**
+   * diffs module versions and unsyncs deleted commands from live command store
+   * @example
+   * let char = command, num = version
+   * A1    A2   +A2
+   * B1 -> B1 =  B1
+   * C1    D1   -C1 (C1 will be unsynced)
+   *            +D1
+   */
   const syncModules = () => {
-    const store = stores.command
-    const toSync = unsyncedModules
-      .splice(0)
-      .flatMap(commands => Array.from(getCommandKeys(commands)))
-      .map(key => [key, store.get(key)!] as const)
+    for (let i = 0, n = unsyncedModules.length; i < n; i++) {
+      const unsyncedModule = unsyncedModules[i]
+      const keys = [...getCommandKeys(unsyncedModule)]
+      const o = keys.length
 
-    const latest = toSync
-      .map(entry => entry[1])
-      .reduce((max, command) => Math.max(max, command.updatedAt!), 0)
+      // grab latest timestamp
+      // since deleted commands won't have new timestamps,
+      // delete all commands less than the latest
+      let latest = 0
+      for (let j = 0; j < o; j++) {
+        const key = keys[j]
+        if (commands.has(key)) {
+          const updatedAt = commands.get(key)!.updatedAt
+          latest = Math.max(latest, updatedAt ?? 0)
+        }
+      }
 
-    toSync
-      .filter(entry => entry[1].updatedAt! < latest)
-      .forEach(entry => {
-        const key = entry[0]
-        store.delete(key)
-      })
+      // do deletion here
+      for (let j = 0; j < o; j++) {
+        const key = keys[j]
+        if (commands.has(key)) {
+          const command = commands.get(key)!
+          if (command.updatedAt! < latest) {
+            commands.delete(key)
+          }
+        }
+      }
+    }
   }
 
   // Parse modules, reset controller and register commands
