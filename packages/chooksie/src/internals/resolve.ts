@@ -6,8 +6,14 @@ export interface ResolvedHandler {
   command: Command | null
 }
 
-function createKey(...keys: (string | null)[]): string {
-  return keys.filter(Boolean).join(':')
+function createKey(ns: string, ...keys: (string | null)[]): string {
+  let key = ns
+  for (let i = 0, n = keys.length; i < n; i++) {
+    if (keys[i] !== null) {
+      key += `:${keys[i]}`
+    }
+  }
+  return key
 }
 
 function resolveInteraction(store: CommandStore, interaction: Interaction): ResolvedHandler | null {
