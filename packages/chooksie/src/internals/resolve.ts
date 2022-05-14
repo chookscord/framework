@@ -1,9 +1,9 @@
 import type { Interaction } from 'discord.js'
-import type { CommandModule, CommandStore } from '../types'
+import type { Command, CommandStore } from '../types'
 
 export interface ResolvedHandler {
   key: string
-  command: CommandModule | null
+  command: Command | null
 }
 
 function createKey(...keys: (string | null)[]): string {

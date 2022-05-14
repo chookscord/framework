@@ -1,5 +1,5 @@
 import { watch } from 'chokidar'
-import type { Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import type { CommandModule, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
 import type { EventEmitter } from 'events'
 import { on as _on } from 'events'
@@ -18,8 +18,6 @@ import { unloadMod, unrequire } from './require'
 import { resolveConfig } from './resolve-config'
 resolveLocal('chooksie/dotenv')
 
-type CachedCommand = [key: string, module: Command]
-
 const root = process.cwd()
 const outDir = join(root, '.chooks')
 const cacheDir = join(outDir, '.chooksinfo')
@@ -36,13 +34,12 @@ const pino = createLogger({
   },
 })
 
-const version = resolveLocal<{ version: string }>('chooksie/package.json').version
 const logger = pino('app', 'chooks')
 
 async function getCached() {
   try {
     const modules = await readFile(cacheDir, 'utf-8')
-    const cached = JSON.parse(modules) as CachedCommand[]
+    const cached = JSON.parse(modules) as [key: string, module: CommandModule][]
 
     // Filter deleted files since last startup
     return cached.filter(([path]) => existsSync(resolve(path)))
@@ -104,7 +101,7 @@ async function createServer(): Promise<void> {
   // Save state of commands to diff changes on startup
   // This saves unnecessary registers when the bot is started
   const saveState = async () => {
-    const modules = [...stores.module.entries()]
+    const modules = [...stores.command.entries()]
     await writeFile(cacheDir, JSON.stringify(
       modules,
       // Replace autocomplete functions to "true" to preserve the field
@@ -112,15 +109,15 @@ async function createServer(): Promise<void> {
     ))
   }
 
-  stores.module.events.on('add', saveState)
-  stores.module.events.on('delete', saveState)
+  stores.command.events.on('add', saveState)
+  stores.command.events.on('delete', saveState)
 
   void (async () => {
     for await (const [file] of on<[SourceMap]>(compiler, 'compile')) {
       const relpath = relative(root, file.source)
       const mod = await unrequire<unknown>(file.target)
 
-      const isNew = stores.module.has(relpath)
+      const isNew = stores.command.has(relpath)
       logger.info(`File ${relpath} ${isNew ? 'added' : 'updated'}.`)
 
       if (file.type === 'command') {
@@ -198,7 +195,7 @@ async function createServer(): Promise<void> {
 
       // No need to handle commands since it's handled by the module register.
       if (file.type !== 'config') {
-        stores.module.delete(relpath)
+        stores.command.delete(relpath)
         continue
       }
     }

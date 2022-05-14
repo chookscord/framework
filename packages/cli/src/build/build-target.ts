@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'production'
-import type { ChooksScript, CommandModule, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import type { ChooksScript, Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import 'chooksie/dotenv'
 import { createClient, createLogger, loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
 import { version } from 'chooksie/package.json'
@@ -35,8 +35,8 @@ async function main() {
   const login = client.login(config.token)
 
   const files = walk(__dirname, { ignore: file => file.path === __filename })
-  const store = new Map<string, CommandModule>()
-  const listener = onInteractionCreate(store, pino)
+  const commandStore = new Map<string, Command>()
+  const listener = onInteractionCreate(commandStore, pino)
 
   client.on('interactionCreate', listener)
 
@@ -48,28 +48,28 @@ async function main() {
 
     if (type === 'commands') {
       const command = mod.default as SlashCommand
-      await loadSlashCommand(store, command)
+      await loadSlashCommand(commandStore, command)
       logger.info(`Loaded slash command "${command.name}".`)
       continue
     }
 
     if (type === 'subcommands') {
       const command = mod.default as SlashSubcommand
-      await loadSlashSubcommand(store, command)
+      await loadSlashSubcommand(commandStore, command)
       logger.info(`Loaded slash subcommand "${command.name}".`)
       continue
     }
 
     if (type === 'users') {
       const command = mod.default as UserCommand
-      await loadUserCommand(store, command)
+      await loadUserCommand(commandStore, command)
       logger.info(`Loaded user command "${command.name}".`)
       continue
     }
 
     if (type === 'messages') {
       const command = mod.default as MessageCommand
-      await loadMessageCommand(store, command)
+      await loadMessageCommand(commandStore, command)
       logger.info(`Loaded message command "${command.name}".`)
       continue
     }

@@ -1,4 +1,20 @@
-import type { ChooksScript, Command, CommandModule, CommandStore, EmptyObject, Event, GenericHandler, Logger, MessageCommand, Option, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from 'chooksie'
+import type {
+  ChooksScript,
+  Command,
+  CommandModule,
+  CommandStore,
+  EmptyObject,
+  Event,
+  GenericHandler,
+  Logger,
+  MessageCommand,
+  Option,
+  SlashCommand,
+  SlashSubcommand,
+  Subcommand,
+  SubcommandGroup,
+  UserCommand,
+} from 'chooksie'
 import type { LoggerFactory } from 'chooksie/internals'
 import type { Awaitable, Client, ClientEvents } from 'discord.js'
 import { randomUUID } from 'node:crypto'
@@ -18,9 +34,9 @@ type ScriptStore = Map<string, () => Awaitable<void>>
 
 export interface Stores {
   /** Used for tracking loaded commands */
-  module: Store<Command>
+  module: Store<CommandModule>
   /** Used for storing handlers */
-  command: Store<CommandModule>
+  command: Store<Command>
   /** Stores event listeners for unloading */
   event: Store<EventModule>
   /** Stores cleanup script functions */

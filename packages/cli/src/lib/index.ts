@@ -7,4 +7,4 @@ export { getFileType, mapSourceFile, MODULES, sourceFromFile } from './sourcemap
 export type { FileOptions, FileType, SourceDir, SourceMap } from './sourcemap'
 export { default as Store } from './store'
 export { default as tokenToAppId } from './token-id'
-export { transformCommand, transformOption } from './transform'
+export { transformModule, transformOption } from './transform'

@@ -148,13 +148,13 @@ type DefineOption<T> =
 export type InferSetupType<Setup> = Setup extends () => Awaitable<infer U> ? U : never
 
 export type GenericHandler = (ctx: CommandContext<Interaction>) => Awaitable<void>
-export interface CommandModule {
+export interface Command {
   updatedAt?: number
   execute: GenericHandler
   logger: Logger
 }
 
-export type CommandStore = Map<string, CommandModule>
+export type CommandStore = Map<string, Command>
 // #endregion
 // #region Events
 /**
@@ -208,7 +208,7 @@ export function defineEvent<T, Name extends keyof ClientEvents>(event: DefineEve
 }
 // #endregion
 // #region Commands
-export type Command =
+export type CommandModule =
 | SlashCommand<any>
 | SlashSubcommand
 | UserCommand<any>

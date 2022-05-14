@@ -1,44 +1,44 @@
-import type { Command } from 'chooksie'
+import { CommandModule } from 'chooksie'
 import type { AppCommand, LoggerFactory } from 'chooksie/internals'
 import { createKey, getAutocompletes } from '../internals'
-import { diffCommand, registerCommands, tokenToAppId, transformCommand } from '../lib'
+import { diffCommand, registerCommands, tokenToAppId, transformModule } from '../lib'
 import type { Stores } from './loaders'
 
 function isAbortError(error: unknown): error is Error {
   return error instanceof Error && error.name === 'AbortError'
 }
 
-function* getCommandKeys(command: Command) {
-  const prefix = command.type === 'USER'
+function* getCommandKeys(mod: CommandModule) {
+  const prefix = mod.type === 'USER'
     ? 'usr'
-    : command.type === 'MESSAGE'
+    : mod.type === 'MESSAGE'
       ? 'msg'
       : 'cmd'
 
-  yield createKey(prefix, command.name)
+  yield createKey(prefix, mod.name)
 
-  if (!('options' in command)) return
-  if (!Array.isArray(command.options)) return
+  if (!('options' in mod)) return
+  if (!Array.isArray(mod.options)) return
 
-  for (const option of command.options) {
+  for (const option of mod.options) {
     if ('autocomplete' in option) {
-      yield createKey('auto', command.name, option.name)
+      yield createKey('auto', mod.name, option.name)
       continue
     }
 
     if (option.type === 'SUB_COMMAND') {
-      yield createKey('cmd', command.name, option.name)
+      yield createKey('cmd', mod.name, option.name)
       for (const autocomplete of getAutocompletes(option.options)) {
-        yield createKey('auto', command.name, option.name, autocomplete.name)
+        yield createKey('auto', mod.name, option.name, autocomplete.name)
       }
       continue
     }
 
     if (option.type === 'SUB_COMMAND_GROUP') {
       for (const subcommand of option.options) {
-        yield createKey('cmd', command.name, option.name, subcommand.name)
+        yield createKey('cmd', mod.name, option.name, subcommand.name)
         for (const autocomplete of getAutocompletes(subcommand.options)) {
-          yield createKey('auto', command.name, option.name, subcommand.name, autocomplete.name)
+          yield createKey('auto', mod.name, option.name, subcommand.name, autocomplete.name)
         }
       }
     }
@@ -51,14 +51,17 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
   const credentials = `Bot ${token}`
   const logger = pino('app', 'register')
 
-  const unsyncedCommands: Command[] = []
+  const unsyncedModules: CommandModule[] = []
   let timeout: NodeJS.Timeout
   let controller: AbortController
   let resetAfter = 0
 
-  const syncCommands = () => {
+  const modules = stores.module
+  const commands = stores.command
+
+  const syncModules = () => {
     const store = stores.command
-    const toSync = unsyncedCommands
+    const toSync = unsyncedModules
       .splice(0)
       .flatMap(commands => Array.from(getCommandKeys(commands)))
       .map(key => [key, store.get(key)!] as const)
@@ -76,19 +79,24 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
   }
 
   // Parse modules, reset controller and register commands
-  const register = async () => {
+  const registerModules = async () => {
     logger.debug('Updating commands...')
 
-    const commands: AppCommand[] = []
-    for (const cmd of stores.module.values()) {
-      commands.push(transformCommand(cmd))
+    const transformed: AppCommand[] = []
+    for (const mod of modules.values()) {
+      transformed.push(transformModule(mod))
     }
 
     try {
       // only sync commands once commands actually are updated
       controller = new AbortController()
-      const signal = controller.signal
-      const res = await registerCommands({ url, credentials, commands, signal, logger })
+      const res = await registerCommands({
+        url,
+        credentials,
+        commands: transformed,
+        signal: controller.signal,
+        logger,
+      })
 
       if (res.status === 'RATE_LIMIT') {
         resetAfter = Date.now() + res.resetAfter * 1000
@@ -104,7 +112,10 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
   }
 
   const registerAndSync = async () => {
-    if (await register()) syncCommands()
+    const ok = await registerModules()
+    if (ok) {
+      syncModules()
+    }
   }
 
   // Clear queued registers and check rate limit
@@ -117,7 +128,8 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
     timeout = setTimeout(registerAndSync, runAfter)
   }
 
-  stores.module.events.on('add', (a, b) => {
+  modules.events.on('add', (a, b) => {
+    // if b is null, a is new so always queue
     if (b === null) {
       queueRegister()
       return
@@ -125,14 +137,14 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
 
     if (diffCommand(a, b)) {
       logger.info(`Updating command "${a.name}"...`)
-      unsyncedCommands.push(b)
+      unsyncedModules.push(b)
       queueRegister()
     }
   })
 
-  stores.module.events.on('delete', command => {
+  modules.events.on('delete', command => {
     logger.info(`Deleting command "${command.name}"...`)
-    unsyncedCommands.push(command)
+    unsyncedModules.push(command)
     queueRegister()
   })
 }
