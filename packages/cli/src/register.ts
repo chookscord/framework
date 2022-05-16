@@ -5,7 +5,7 @@ import { join, relative } from 'path'
 import { setTimeout } from 'timers/promises'
 import { createLogger, walk } from './internals'
 import type { SourceMap } from './lib'
-import { registerCommands, resolveLocal, sourceFromFile, tokenToAppId, transformCommand } from './lib'
+import { registerCommands, resolveLocal, sourceFromFile, tokenToAppId, transformModule } from './lib'
 import type { RegisterOptions } from './lib/register'
 import { target } from './logger'
 resolveLocal('chooksie/dotenv')
@@ -92,7 +92,7 @@ async function register(): Promise<void> {
       process.exit(1)
     }
 
-    commands.push(transformCommand(command))
+    commands.push(transformModule(command))
     logger.info(`Loaded ${relpath}`)
   }
 
