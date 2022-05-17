@@ -56,51 +56,27 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
   let controller: AbortController
   let resetAfter = 0
 
-  const modules = stores.module
-  const commands = stores.command
+  const syncCommands = () => {
+    const store = stores.command
+    const toSync = unsyncedCommands
+      .splice(0)
+      .flatMap(commands => Array.from(getCommandKeys(commands)))
+      .map(key => [key, store.get(key)!] as const)
 
-  /**
-   * diffs module versions and unsyncs deleted commands from live command store
-   * @example
-   * let char = command, num = version
-   * A1    A2   +A2
-   * B1 -> B1 =  B1
-   * C1    D1   -C1 (C1 will be unsynced)
-   *            +D1
-   */
-  const syncModules = () => {
-    for (let i = 0, n = unsyncedModules.length; i < n; i++) {
-      const unsyncedModule = unsyncedModules[i]
-      const keys = [...getCommandKeys(unsyncedModule)]
-      const o = keys.length
+    const latest = toSync
+      .map(entry => entry[1])
+      .reduce((max, command) => Math.max(max, command.updatedAt!), 0)
 
-      // grab latest timestamp
-      // since deleted commands won't have new timestamps,
-      // delete all commands less than the latest
-      let latest = 0
-      for (let j = 0; j < o; j++) {
-        const key = keys[j]
-        if (commands.has(key)) {
-          const updatedAt = commands.get(key)!.updatedAt
-          latest = Math.max(latest, updatedAt ?? 0)
-        }
-      }
-
-      // do deletion here
-      for (let j = 0; j < o; j++) {
-        const key = keys[j]
-        if (commands.has(key)) {
-          const command = commands.get(key)!
-          if (command.updatedAt! < latest) {
-            commands.delete(key)
-          }
-        }
-      }
-    }
+    toSync
+      .filter(entry => entry[1].updatedAt! < latest)
+      .forEach(entry => {
+        const key = entry[0]
+        store.delete(key)
+      })
   }
 
   // Parse modules, reset controller and register commands
-  const registerModules = async () => {
+  const register = async () => {
     logger.debug('Updating commands...')
 
     const transformed: AppCommand[] = []
@@ -111,13 +87,8 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
     try {
       // only sync commands once commands actually are updated
       controller = new AbortController()
-      const res = await registerCommands({
-        url,
-        credentials,
-        commands: transformed,
-        signal: controller.signal,
-        logger,
-      })
+      const signal = controller.signal
+      const res = await registerCommands({ url, credentials, commands, signal, logger })
 
       if (res.status === 'RATE_LIMIT') {
         resetAfter = Date.now() + res.resetAfter * 1000
@@ -133,10 +104,7 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
   }
 
   const registerAndSync = async () => {
-    const ok = await registerModules()
-    if (ok) {
-      syncModules()
-    }
+    if (await register()) syncCommands()
   }
 
   // Clear queued registers and check rate limit
@@ -158,14 +126,14 @@ function watchCommands(stores: Stores, token: string, devServer: string, pino: L
 
     if (diffCommand(a, b)) {
       logger.info(`Updating command "${a.name}"...`)
-      unsyncedModules.push(b)
+      unsyncedCommands.push(b)
       queueRegister()
     }
   })
 
   modules.events.on('delete', command => {
     logger.info(`Deleting command "${command.name}"...`)
-    unsyncedModules.push(command)
+    unsyncedCommands.push(command)
     queueRegister()
   })
 }

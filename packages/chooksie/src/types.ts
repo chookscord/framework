@@ -148,7 +148,7 @@ type DefineOption<T> =
 export type InferSetupType<Setup> = Setup extends () => Awaitable<infer U> ? U : never
 
 export type GenericHandler = (ctx: CommandContext<Interaction>) => Awaitable<void>
-export interface Command {
+export interface CommandModule {
   updatedAt?: number
   execute: GenericHandler
   logger: Logger
