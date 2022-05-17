@@ -1,4 +1,4 @@
-import type { Command, Option } from 'chooksie'
+import type { CommandModule, Option } from 'chooksie'
 import type { AppCommand, AppCommandOption } from 'chooksie/internals'
 import { AppChannelType, AppCommandOptionType, AppCommandType } from '../internals'
 
@@ -37,28 +37,28 @@ function transformOption(option: Option): AppCommandOption {
   return opt
 }
 
-function transformCommand(command: Command): AppCommand {
+function transformModule(mod: CommandModule): AppCommand {
   const cmd = <AppCommand>{
-    name: command.name,
+    name: mod.name,
   }
 
-  if ('type' in command) {
-    cmd.type = AppCommandType[command.type!]
+  if ('type' in mod) {
+    cmd.type = AppCommandType[mod.type!]
   }
 
-  if ('description' in command) {
-    cmd.description = command.description
+  if ('description' in mod) {
+    cmd.description = mod.description
   }
 
-  if ('options' in command) {
-    cmd.options = command.options!.map(transformOption)
+  if ('options' in mod) {
+    cmd.options = mod.options!.map(transformOption)
   }
 
-  if ('defaultPermission' in command) {
-    cmd.default_permission = command.defaultPermission
+  if ('defaultPermission' in mod) {
+    cmd.default_permission = mod.defaultPermission
   }
 
   return cmd
 }
 
-export { transformCommand, transformOption }
+export { transformModule, transformOption }

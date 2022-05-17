@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import type { BoolOption, ChannelOption, ChannelType, Choice, Command, Event, MentionableOption, MessageCommand, NumberOption, RoleOption, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup, UserCommand, UserOption } from 'chooksie'
+import type { BoolOption, ChannelOption, ChannelType, Choice, CommandModule, Event, MentionableOption, MessageCommand, NumberOption, RoleOption, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup, UserCommand, UserOption } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
 import Joi from 'joi'
 import { AppChannelType } from '../internals'
@@ -165,7 +165,7 @@ const slashCommand = Joi.object<SlashCommand>({
     .max(25),
 })
 
-export function validateSlashCommand(command: Partial<Command>): Promise<SlashCommand> {
+export function validateSlashCommand(command: Partial<CommandModule>): Promise<SlashCommand> {
   return slashCommand.validateAsync(command)
 }
 
@@ -189,7 +189,7 @@ const slashSubcommand = Joi.object<SlashSubcommand>({
     .required(),
 })
 
-export function validateSlashSubcommand(command: Partial<Command>): Promise<SlashSubcommand> {
+export function validateSlashSubcommand(command: Partial<CommandModule>): Promise<SlashSubcommand> {
   return slashSubcommand.validateAsync(command)
 }
 
@@ -202,7 +202,7 @@ const userCommand = Joi.object<UserCommand>({
     .required(),
 })
 
-export function validateUserCommand(command: Partial<Command>): Promise<UserCommand> {
+export function validateUserCommand(command: Partial<CommandModule>): Promise<UserCommand> {
   return userCommand.validateAsync(command)
 }
 
@@ -215,7 +215,7 @@ const messageCommand = Joi.object<MessageCommand>({
     .required(),
 })
 
-export function validateMessageCommand(command: Partial<Command>): Promise<MessageCommand> {
+export function validateMessageCommand(command: Partial<CommandModule>): Promise<MessageCommand> {
   return messageCommand.validateAsync(command)
 }
 

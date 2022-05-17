@@ -1,5 +1,13 @@
-const { fetch: _fetch } = require(process.env.CHOOKSIE_UNDICI_PATH ?? 'undici') as typeof import('undici')
 import type { ControlledAsyncIterable, RequestInfo, RequestInit, Response } from 'undici'
+
+type Fetch = (...args: FetchParams) => Promise<Response>
+declare const fetch: Fetch
+
+let _fetch = fetch
+if (typeof _fetch === 'undefined') {
+  const undici = require(process.env.CHOOKSIE_UNDICI_PATH ?? 'undici') as typeof import('undici')
+  _fetch = undici.fetch
+}
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export type FetchParams = [url: RequestInfo, init?: RequestInit]
@@ -39,18 +47,19 @@ function wrapFetch(method: Method): WrappedFetch {
   }
 }
 
-export const fetch: FetchUtil = (() => {
-  const fetchUtil: FetchUtil = (...args) => {
+const fetchUtil: FetchUtil = (() => {
+  const util: FetchUtil = (...args) => {
     return wrapResponse(_fetch(...args))
   }
 
-  fetchUtil.get = wrapFetch('GET')
-  fetchUtil.post = wrapFetch('POST')
-  fetchUtil.put = wrapFetch('PUT')
-  fetchUtil.patch = wrapFetch('PATCH')
-  fetchUtil.delete = wrapFetch('DELETE')
+  util.get = wrapFetch('GET')
+  util.post = wrapFetch('POST')
+  util.put = wrapFetch('PUT')
+  util.patch = wrapFetch('PATCH')
+  util.delete = wrapFetch('DELETE')
 
-  return fetchUtil
+  return util
 })()
 
-export default fetch
+export { fetchUtil as fetch }
+export default fetchUtil

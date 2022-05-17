@@ -154,7 +154,7 @@ export interface CommandModule {
   logger: Logger
 }
 
-export type CommandStore = Map<string, CommandModule>
+export type CommandStore = Map<string, Command>
 // #endregion
 // #region Events
 /**
@@ -208,7 +208,7 @@ export function defineEvent<T, Name extends keyof ClientEvents>(event: DefineEve
 }
 // #endregion
 // #region Commands
-export type Command =
+export type CommandModule =
 | SlashCommand<any>
 | SlashSubcommand
 | UserCommand<any>

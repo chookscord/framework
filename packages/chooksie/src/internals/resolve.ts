@@ -1,13 +1,19 @@
 import type { Interaction } from 'discord.js'
-import type { CommandModule, CommandStore } from '../types'
+import type { Command, CommandStore } from '../types'
 
 export interface ResolvedHandler {
   key: string
-  command: CommandModule | null
+  command: Command | null
 }
 
-function createKey(...keys: (string | null)[]): string {
-  return keys.filter(Boolean).join(':')
+function createKey(ns: string, ...keys: (string | null)[]): string {
+  let key = ns
+  for (let i = 0, n = keys.length; i < n; i++) {
+    if (keys[i] !== null) {
+      key += `:${keys[i]}`
+    }
+  }
+  return key
 }
 
 function resolveInteraction(store: CommandStore, interaction: Interaction): ResolvedHandler | null {

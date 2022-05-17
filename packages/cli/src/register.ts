@@ -1,11 +1,11 @@
-import type { ChooksConfig, Command, MessageCommand, UserCommand } from 'chooksie'
+import type { ChooksConfig, CommandModule, MessageCommand, UserCommand } from 'chooksie'
 import type { AppCommand } from 'chooksie/internals'
 import { access } from 'fs/promises'
 import { join, relative } from 'path'
 import { setTimeout } from 'timers/promises'
 import { createLogger, walk } from './internals'
 import type { SourceMap } from './lib'
-import { registerCommands, resolveLocal, sourceFromFile, tokenToAppId, transformCommand } from './lib'
+import { registerCommands, resolveLocal, sourceFromFile, tokenToAppId, transformModule } from './lib'
 import type { RegisterOptions } from './lib/register'
 import { target } from './logger'
 resolveLocal('chooksie/dotenv')
@@ -23,7 +23,7 @@ const logger = pino('app', 'chooks')
 
 type ExitCode = number
 
-async function resolveMod(file: SourceMap): Promise<Command | null> {
+async function resolveMod(file: SourceMap): Promise<CommandModule | null> {
   if (file.type === 'user') {
     const mod = await import(file.target) as { default: UserCommand }
     return { type: 'USER', ...mod.default }
@@ -35,7 +35,7 @@ async function resolveMod(file: SourceMap): Promise<Command | null> {
   }
 
   if (file.type === 'command' || file.type === 'subcommand') {
-    const mod = await import(file.target) as { default: Command }
+    const mod = await import(file.target) as { default: CommandModule }
     return mod.default
   }
 
@@ -80,7 +80,7 @@ async function register(): Promise<void> {
   for await (const file of walk(outDir)) {
     const relpath = relative(outDir, file.path)
     const source = toSource(file.path)
-    let command: Command | null
+    let command: CommandModule | null
 
     try {
       logger.debug(`Loading ${relpath}...`)
@@ -92,7 +92,7 @@ async function register(): Promise<void> {
       process.exit(1)
     }
 
-    commands.push(transformCommand(command))
+    commands.push(transformModule(command))
     logger.info(`Loaded ${relpath}`)
   }
 

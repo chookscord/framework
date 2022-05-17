@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import type { ChannelOption, Choice, Command, NumberOption, Option, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup } from 'chooksie'
+import type { ChannelOption, Choice, CommandModule, NumberOption, Option, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup } from 'chooksie'
 
 // true = values are different
 
@@ -107,7 +107,7 @@ function diffSlashCommand<T extends SlashCommand | SlashSubcommand>(a: T, b: T):
   return false
 }
 
-function diffCommand(a: Command, b: Command): boolean {
+function diffCommand(a: CommandModule, b: CommandModule): boolean {
   if (a.name !== b.name) return true
   if ((a.type ?? 'CHAT_INPUT') !== (b.type ?? 'CHAT_INPUT')) return true
   if (Boolean(a.defaultPermission) !== Boolean(b.defaultPermission)) return true
