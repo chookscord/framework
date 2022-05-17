@@ -7,6 +7,11 @@ wrapper based on the [Undici](https://npmjs.com/package/undici) HTTP client.
 
 To get started, install the [`undici`](https://npmjs.com/package/undici) package.
 
+::: tip
+For bots using NodeJS >= 18.0.0, `fetch` is now part of NodeJS itself, which means
+you don't need to install the package to use the wrapper.
+:::
+
 :::: code-group
 ::: code-group-item NPM
 @[code](./install-npm.sh)
