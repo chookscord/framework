@@ -237,8 +237,8 @@ function loadEvent(
   }
 
   if (store.has(key)) {
-    const oldListener = store.get(key)!
-    client.off(key, oldListener.execute)
+    const old = store.get(key)!
+    client.off(old.name, old.execute)
     store.delete(key)
   }
 
