@@ -259,11 +259,6 @@ function loadEvent(
 
   client[event.once ? 'once' : 'on'](event.name, execute)
   appLogger.info(`Registered "${event.name}" listener.`)
-
-  if (event.name === 'ready' && client.isReady()) {
-    appLogger.info('Client already logged in. Rerunning "ready" event...')
-    client.emit('ready', client)
-  }
 }
 
 async function unloadScript(store: ScriptStore, logger: Logger, root: string, file: SourceMap): Promise<void> {
