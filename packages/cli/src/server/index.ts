@@ -144,7 +144,7 @@ function newFileManager(client: Client, stores: Stores) {
     if (stores.module.has(path)) {
       logger.info(`File ${path} updated.`)
     } else {
-      logger.info(`File ${path} added,`)
+      logger.info(`File ${path} added.`)
     }
   })
 

@@ -68,6 +68,7 @@ function loadAutocompletes(
     }
 
     store.set(key, { execute, logger, updatedAt })
+    logger.info(`Autocomplete handler for "${option.name}" at "${parentKey}" loaded.`)
   }
 }
 
@@ -109,6 +110,8 @@ function loadSubcommand(
   }
 
   store.set(key, { execute, logger, updatedAt })
+  logger.info(`Subcommand "${subcommand.name}" loaded.`)
+
   loadAutocompletes(store, pino, {
     updatedAt,
     parentKey,
@@ -135,6 +138,8 @@ function loadSubcommandGroup(
     }
 
     store.set(key, { execute, logger, updatedAt })
+    logger.info(`Subcommand "${subcommand.name}" at group "${group.name}" loaded.`)
+
     loadAutocompletes(store, pino, {
       parentKey,
       updatedAt,
@@ -174,6 +179,7 @@ function loadUserCommand(store: CommandStore, pino: LoggerFactory, command: User
 
   const updatedAt = Date.now()
   store.set(key, { execute, logger, updatedAt })
+  logger.info(`User command "${command.name}" loaded.`)
 }
 
 function loadMessageCommand(store: CommandStore, pino: LoggerFactory, command: MessageCommand): void {
@@ -188,6 +194,7 @@ function loadMessageCommand(store: CommandStore, pino: LoggerFactory, command: M
 
   const updatedAt = Date.now()
   store.set(key, { execute, logger, updatedAt })
+  logger.info(`Message command "${command.name}" loaded.`)
 }
 
 function unloadEvent(store: EventStore, client: Client, key: string, logger?: Logger): void {
@@ -240,6 +247,7 @@ function loadEvent(
     const old = store.get(key)!
     client.off(old.name, old.execute)
     store.delete(key)
+    appLogger.debug(`Deleted old "${old.name}" listener.`)
   }
 
   store.set(key, {
@@ -253,6 +261,7 @@ function loadEvent(
   appLogger.info(`Registered "${event.name}" listener.`)
 
   if (event.name === 'ready' && client.isReady()) {
+    appLogger.info('Client already logged in. Rerunning "ready" event...')
     client.emit('ready', client)
   }
 }
@@ -261,9 +270,11 @@ async function unloadScript(store: ScriptStore, logger: Logger, root: string, fi
   const relpath = relative(root, file.source)
   if (!store.has(relpath)) return
 
+  logger.info(`Starting cleanup at ${relpath}...`)
   try {
     const cleanup = store.get(relpath)!
     await cleanup()
+    logger.info(`Finished cleanup at ${relpath}.`)
   } catch (error) {
     logger.error(`Cleanup function at ${relpath} threw an error!`)
     logger.error(error)
@@ -279,14 +290,22 @@ async function loadScript(store: ScriptStore, client: Client, pino: LoggerFactor
   if (!hasOnLoad(mod)) return
 
   const logger = pino('script', relpath)
+  logger.info(`Starting lifecycle scripts at ${relpath}...`)
+
   try {
+    // @Choooks22: Long-lived awaited promises (like async generators) are prone to getting stuck.
+    // @todo: Add signal for cleanup
+    logger.info(`Starting setup at ${relpath}...`)
     const cleanup = await mod.chooksOnLoad({ client, logger })
+    logger.info(`Finished running setup function at ${relpath}.`)
+
     if (cleanup) {
       store.set(relpath, cleanup)
+      logger.info('Cleanup function saved.')
     }
   } catch (error) {
     logger.error(error)
-    logger.error('Failed to run setup script!')
+    logger.error(`Setup function at ${relpath} threw an error!`)
   }
 }
 
