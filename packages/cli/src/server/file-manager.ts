@@ -1,7 +1,7 @@
 import { Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import { Awaitable, ClientEvents } from 'discord.js'
+import { EventEmitter } from 'node:events'
 import { relative } from 'path'
-import { EventEmitter } from 'undici/types/dispatcher'
 import { FileOptions, FileType, SourceMap } from '../lib'
 import { WatchCompiler } from './compiler'
 import { unrequire } from './require'
@@ -51,8 +51,8 @@ export function createFileManager(
     }
 
     const eventName = `${file.type}Create` as const
-    const mod: never = await unrequire(relpath)
-    ee.emit(eventName, mod, relpath, file)
+    const mod: { default: never } = await unrequire(file.target)
+    ee.emit(eventName, mod.default, relpath, file)
   }
 
   const onDelete = (file: SourceMap) => {
