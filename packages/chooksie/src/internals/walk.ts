@@ -24,11 +24,9 @@ async function* walk(path: string, opts: WalkOptions = {}): AsyncGenerator<File,
       path: join(path, dirent.name),
     }
 
-    if (ignore(file)) continue
-
     if (dirent.isDirectory()) {
       yield* walk(file.path, opts)
-    } else {
+    } else if (!ignore(file)) {
       yield file
     }
   }
