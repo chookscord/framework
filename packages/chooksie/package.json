@@ -20,12 +20,17 @@
     "uid": "^2.0.0"
   },
   "devDependencies": {
-    "discord.js": "^13.6.0",
-    "undici": "^4.14.1"
+    "discord.js": "^13.7.0",
+    "undici": "^5.2.0"
   },
   "peerDependencies": {
-    "discord.js": "^13.6.0",
-    "undici": "^4.13.0"
+    "discord.js": "^13.7.0",
+    "undici": "^5.2.0"
+  },
+  "peerDependenciesMeta": {
+    "undici": {
+      "optional": true
+    }
   },
   "main": "./dist/types.js",
   "exports": {
