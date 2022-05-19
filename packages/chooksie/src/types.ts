@@ -632,7 +632,7 @@ export interface ModalHandler<T = EmptyObject> {
  * <caption>### Modals</caption>
  * import { defineModalHandler } from 'chooksie'
  *
- * export default defineModal({
+ * export default defineModalHandler({
  *   customId: 'tag-image',
  *   setup: () => import('../db'),
  *   async execute(ctx) {
@@ -652,7 +652,7 @@ export interface ModalHandler<T = EmptyObject> {
  *   },
  * })
  */
-export function defineModalHandler<T>(handler: Define<ModalHandler, T>): ModalHandler {
+export function defineModalHandler<T>(handler: Define<ModalHandler<T>, T>) {
   return handler
 }
 // #endregion
