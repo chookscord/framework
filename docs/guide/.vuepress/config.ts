@@ -45,6 +45,7 @@ export default defineUserConfig<DefaultThemeOptions>({
           link('Message Commands', '/features/message-commands/'),
           link('Event Listeners', '/features/event-listeners/'),
           link('Autocompletes', '/features/autocompletes/'),
+          link('Modals', '/features/modals/'),
         ],
       },
       {
