@@ -8,6 +8,7 @@ import type {
   GenericHandler,
   Logger,
   MessageCommand,
+  ModalHandler,
   Option,
   SlashCommand,
   SlashSubcommand,
@@ -17,9 +18,8 @@ import type {
 } from 'chooksie'
 import type { LoggerFactory } from 'chooksie/internals'
 import type { Awaitable, Client, ClientEvents } from 'discord.js'
-import { randomUUID } from 'node:crypto'
 import { relative } from 'node:path'
-import { createKey, getAutocompletes, timer } from '../internals'
+import { createKey, genId, getAutocompletes, timer } from '../internals'
 import type { SourceMap, Store } from '../lib'
 
 export type VoidFn = () => Awaitable<void>
@@ -44,6 +44,8 @@ export interface Stores {
   event: Store<EventModule>
   /** Stores cleanup script functions */
   cleanup: Store<VoidFn>
+  /* Used for tracking loaded modal ids */
+  modal: Map<string, string>
 }
 
 function hasOnLoad(mod: Record<string, unknown>): mod is Required<ChooksScript> {
@@ -220,8 +222,8 @@ function loadEvent(
 
   const setup = event.setup ?? (() => ({}))
   const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
-    const reqId = randomUUID()
-    const logger = appLogger.child({ reqId })
+    const id = genId()
+    const logger = appLogger.child({ reqId: id })
 
     try {
       const deps = await setup()
@@ -229,7 +231,7 @@ function loadEvent(
 
       const endTimer = timer()
       // @ts-ignore: 'this' context blah blah complex type
-      await event.execute.call(deps, { client, logger }, ...args)
+      await event.execute.call(deps, { id, client, logger }, ...args)
 
       logger.info({
         responseTime: endTimer(),
@@ -296,7 +298,8 @@ async function loadScript(store: ScriptStore, client: Client, pino: LoggerFactor
     // @Choooks22: Long-lived awaited promises (like async generators) are prone to getting stuck.
     // @todo: Add signal for cleanup
     logger.info(`Starting setup at ${relpath}...`)
-    const cleanup = await mod.chooksOnLoad({ client, logger })
+    const id = genId()
+    const cleanup = await mod.chooksOnLoad({ id, client, logger })
     logger.info(`Finished running setup function at ${relpath}.`)
 
     if (cleanup) {
@@ -309,5 +312,41 @@ async function loadScript(store: ScriptStore, client: Client, pino: LoggerFactor
   }
 }
 
-export { loadEvent, loadSlashCommand, loadSlashSubcommand, loadUserCommand, loadMessageCommand, loadScript }
+function loadModal(stores: Stores, path: string, pino: LoggerFactory, modal: ModalHandler): void {
+  const key = createKey('mod', modal.customId)
+  const logger = pino('modal', key)
+
+  const setup = modal.setup ?? (() => ({}))
+  const execute: GenericHandler = async ctx => {
+    const deps = await setup()
+    await (<GenericHandler>modal.execute).call(deps, ctx)
+  }
+
+  stores.modal.set(path, key)
+  const updatedAt = Date.now()
+  stores.command.set(key, { execute, logger, updatedAt })
+  logger.info(`Modal "${modal.customId}" loaded.`)
+}
+
+function unloadModal(stores: Stores, path: string, logger: Logger): void {
+  if (!stores.modal.has(path)) {
+    logger.warn('Tried to unload a modal that wasn\'t saved!')
+    return
+  }
+
+  const key = stores.modal.get(path)!
+  stores.command.delete(key)
+  logger.info(`Modal "${key}" unloaded.`)
+}
+
+export {
+  loadEvent,
+  loadSlashCommand,
+  loadSlashSubcommand,
+  loadUserCommand,
+  loadMessageCommand,
+  loadScript,
+  loadModal,
+  unloadModal,
+}
 export { unloadEvent, unloadScript }

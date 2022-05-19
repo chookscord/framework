@@ -75,6 +75,7 @@ const TYPES: Record<LoggerType | 'fastify', string> = {
   script: pc.blue('script'),
   autocomplete: pc.cyan('autocomplete'),
   event: pc.cyan('event'),
+  modal: pc.cyan('modal'),
   command: pc.green('command'),
   subcommand: pc.green('subcommand'),
   message: pc.yellow('message'),

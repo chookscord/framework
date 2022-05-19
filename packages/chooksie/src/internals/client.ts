@@ -1,8 +1,8 @@
-import { randomUUID } from 'crypto'
 import type { CommandInteraction, ContextMenuInteraction, Interaction } from 'discord.js'
 import { Client, MessageEmbed } from 'discord.js'
 import type { ChooksConfig, CommandStore } from '../types'
 import timer from './chrono'
+import genId from './id'
 import pino from './logger'
 import { resolveInteraction } from './resolve'
 
@@ -37,8 +37,8 @@ function onInteractionCreate(store: CommandStore, createLogger = pino()): (inter
     const handler = resolveInteraction(store, interaction)
     if (!handler) return
 
-    const reqId = randomUUID()
-    const appLogger = _logger.child({ reqId })
+    const id = genId()
+    const appLogger = _logger.child({ reqId: id })
 
     if (!handler.command) {
       appLogger.warn(`Handler for "${handler.key}" is missing.`)
@@ -46,13 +46,13 @@ function onInteractionCreate(store: CommandStore, createLogger = pino()): (inter
     }
 
     const client = interaction.client
-    const logger = handler.command.logger.child({ reqId })
+    const logger = handler.command.logger.child({ reqId: id })
 
     try {
       appLogger.info(`Running handler for "${handler.key}"...`)
 
       const endTimer = timer()
-      await handler.command.execute({ client, interaction, logger })
+      await handler.command.execute({ id, client, interaction, logger })
 
       appLogger.info({
         responseTime: endTimer(),
@@ -69,7 +69,7 @@ function onInteractionCreate(store: CommandStore, createLogger = pino()): (inter
         if (interaction.replied) return
 
         try {
-          await sendGenericError(interaction, reqId)
+          await sendGenericError(interaction, id)
         } catch {
           appLogger.error('Failed to notify user of unhandled error!')
         }

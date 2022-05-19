@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import type { BoolOption, ChannelOption, ChannelType, Choice, CommandModule, Event, MentionableOption, MessageCommand, NumberOption, RoleOption, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup, UserCommand, UserOption } from 'chooksie'
+import { BoolOption, ChannelOption, ChannelType, Choice, ModalHandler, CommandModule, Event, MentionableOption, MessageCommand, NumberOption, RoleOption, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup, UserCommand, UserOption } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
 import Joi from 'joi'
 import { AppChannelType } from '../internals'
@@ -230,4 +230,17 @@ const eventModule = Joi.object<Event<keyof ClientEvents>>({
 
 export function validateEvent<T extends keyof ClientEvents>(event: Partial<Event<T>>): Promise<Event<T>> {
   return eventModule.validateAsync(event)
+}
+
+const chooksModal = Joi.object<ModalHandler>({
+  customId: Joi.string()
+    .max(100)
+    .required(),
+  setup: Joi.func(),
+  execute: Joi.func()
+    .required(),
+})
+
+export function validateModal(modal: Partial<ModalHandler>): Promise<ModalHandler> {
+  return chooksModal.validateAsync(modal)
 }
