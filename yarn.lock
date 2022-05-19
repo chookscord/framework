@@ -569,7 +569,7 @@ __metadata:
     chokidar: ^3.5.3
     chooksie: "workspace:^2.0.0"
     create-chooks-bot: "workspace:^2.0.0"
-    discord.js: ^13.6.0
+    discord.js: ^13.7.0
     joi: ^17.6.0
     picocolors: ^1.0.0
     pino-abstract-transport: ^0.5.0
