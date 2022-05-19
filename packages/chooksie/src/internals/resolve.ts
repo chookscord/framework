@@ -46,6 +46,13 @@ function resolveInteraction(store: CommandStore, interaction: Interaction): Reso
     return { key, command }
   }
 
+  if (interaction.isModalSubmit()) {
+    const key = createKey('mod', interaction.customId)
+    const command = store.get(key) ?? null
+
+    return { key, command }
+  }
+
   return null
 }
 

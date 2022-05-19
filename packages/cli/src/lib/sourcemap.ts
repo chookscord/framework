@@ -1,7 +1,7 @@
 import { join, relative, sep } from 'path'
 
-export type FileType = 'command' | 'subcommand' | 'user' | 'message' | 'event' | 'script' | 'config'
-export type SourceDir = 'commands' | 'subcommands' | 'users' | 'messages' | 'events'
+export type FileType = 'command' | 'subcommand' | 'user' | 'message' | 'event' | 'script' | 'config' | 'modal'
+export type SourceDir = 'commands' | 'subcommands' | 'users' | 'messages' | 'events' | 'modals'
 
 export interface SourceMap {
   source: string
@@ -20,6 +20,7 @@ export const MODULES: Record<SourceDir, FileType> = {
   users: 'user',
   messages: 'message',
   events: 'event',
+  modals: 'modal',
 }
 
 export function getFileType(relpath: string): FileType {

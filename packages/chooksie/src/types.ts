@@ -9,6 +9,7 @@ import type {
   IntentsString,
   Interaction,
   MessageContextMenuInteraction,
+  ModalSubmitInteraction,
   UserContextMenuInteraction,
 } from 'discord.js'
 import type { Logger as PinoLogger } from 'pino'
@@ -606,6 +607,53 @@ export interface SubcommandGroup {
  */
 export function defineSubcommandGroup(command: SubcommandGroup) {
   return command
+}
+// #endregion
+// #region Modals
+/**
+ * A handler for submitted modals.
+ */
+export interface ModalHandler<T = EmptyObject> {
+  customId: string
+  setup?: () => Awaitable<T>
+  execute: Execute<ModalSubmitInteraction, T>
+}
+
+/**
+ * **Definition Function**: define a modal submit handler.
+ *
+ * ## See Also
+ * - {@link ModalHandler Modal Handler} Defintion
+ * - [Modals](https://guide.chooks.app/features/modals/) Web Docs
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
+ * - [Building and responding with modals](https://discordjs.guide/interactions/modals.html#building-and-responding-with-modals) Web Guide
+ *
+ * @example
+ * <caption>### Modals</caption>
+ * import { defineModalHandler } from 'chooksie'
+ *
+ * export default defineModalHandler({
+ *   customId: 'tag-image',
+ *   setup: () => import('../db'),
+ *   async execute(ctx) {
+ *     const messageId = ctx.interaction.message.id
+ *     const tags = ctx.interaction.fields.getTextInputValue('tags')
+ *
+ *     await ctx.interaction.deferReply({
+ *       ephemeral: true,
+ *     })
+ *
+ *     await this.db.tags.save({
+ *       id: messageId,
+ *       tags: tags.split(','),
+ *     })
+ *
+ *     await ctx.interaction.editReply('Image tagged!')
+ *   },
+ * })
+ */
+export function defineModalHandler<T>(handler: Define<ModalHandler<T>, T>) {
+  return handler
 }
 // #endregion
 // #region Options
