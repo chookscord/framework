@@ -12,7 +12,7 @@ import { target } from '../logger'
 import { createWatchCompiler } from './compiler'
 import { createFileManager } from './file-manager'
 import type { Stores } from './loaders'
-import { loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadScript } from './loaders'
+import { loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadModal, unloadScript } from './loaders'
 import watchCommands from './register'
 import { unloadMod } from './require'
 import { resolveConfig } from './resolve-config'
@@ -106,6 +106,7 @@ async function newStores() {
     command: new Store(),
     event: new Store(),
     cleanup: new Store(),
+    modal: new Map(),
   }
 
   syncModulesToCache(stores.module)
@@ -184,9 +185,9 @@ function newFileManager(client: Client, stores: Stores) {
     }
   })
 
-  fm.on('modalCreate', async modal => {
+  fm.on('modalCreate', async (modal, path) => {
     if (await validate(modal, validateModal)) {
-      loadModal(stores.command, pino, modal)
+      loadModal(stores, path, pino, modal)
     }
   })
 
@@ -216,6 +217,9 @@ function newFileManager(client: Client, stores: Stores) {
       case 'config':
         // @todo: live reload server
         logger.info('Config file has been updated. Please restart for changes to take effect.')
+        break
+      case 'modal':
+        unloadModal(stores, path, logger)
         break
       default:
         stores.module.delete(path)

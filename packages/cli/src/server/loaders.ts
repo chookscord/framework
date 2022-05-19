@@ -1,5 +1,4 @@
 import type {
-  ModalHandler,
   ChooksScript,
   Command,
   CommandModule,
@@ -9,6 +8,7 @@ import type {
   GenericHandler,
   Logger,
   MessageCommand,
+  ModalHandler,
   Option,
   SlashCommand,
   SlashSubcommand,
@@ -44,6 +44,8 @@ export interface Stores {
   event: Store<EventModule>
   /** Stores cleanup script functions */
   cleanup: Store<VoidFn>
+  /* Used for tracking loaded modal ids */
+  modal: Map<string, string>
 }
 
 function hasOnLoad(mod: Record<string, unknown>): mod is Required<ChooksScript> {
@@ -310,7 +312,7 @@ async function loadScript(store: ScriptStore, client: Client, pino: LoggerFactor
   }
 }
 
-function loadModal(store: CommandStore, pino: LoggerFactory, modal: ModalHandler): void {
+function loadModal(stores: Stores, path: string, pino: LoggerFactory, modal: ModalHandler): void {
   const key = createKey('mod', modal.customId)
   const logger = pino('modal', key)
 
@@ -320,10 +322,31 @@ function loadModal(store: CommandStore, pino: LoggerFactory, modal: ModalHandler
     await (<GenericHandler>modal.execute).call(deps, ctx)
   }
 
+  stores.modal.set(path, key)
   const updatedAt = Date.now()
-  store.set(key, { execute, logger, updatedAt })
+  stores.command.set(key, { execute, logger, updatedAt })
   logger.info(`Modal "${modal.customId}" loaded.`)
 }
 
-export { loadEvent, loadSlashCommand, loadSlashSubcommand, loadUserCommand, loadMessageCommand, loadScript, loadModal }
+function unloadModal(stores: Stores, path: string, logger: Logger): void {
+  if (!stores.modal.has(path)) {
+    logger.warn('Tried to unload a modal that wasn\'t saved!')
+    return
+  }
+
+  const key = stores.modal.get(path)!
+  stores.command.delete(key)
+  logger.info(`Modal "${key}" unloaded.`)
+}
+
+export {
+  loadEvent,
+  loadSlashCommand,
+  loadSlashSubcommand,
+  loadUserCommand,
+  loadMessageCommand,
+  loadScript,
+  loadModal,
+  unloadModal,
+}
 export { unloadEvent, unloadScript }
