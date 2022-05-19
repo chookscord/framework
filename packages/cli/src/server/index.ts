@@ -7,12 +7,12 @@ import { once } from 'node:events'
 import { join, resolve } from 'node:path'
 import { createClient, createLogger, onInteractionCreate, timer } from '../internals'
 import { resolveLocal, sourceFromFile, Store, validateDevConfig } from '../lib'
-import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
+import { validateEvent, validateMessageCommand, validateModal, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
 import { target } from '../logger'
 import { createWatchCompiler } from './compiler'
 import { createFileManager } from './file-manager'
 import type { Stores } from './loaders'
-import { loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadScript } from './loaders'
+import { loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadScript } from './loaders'
 import watchCommands from './register'
 import { unloadMod } from './require'
 import { resolveConfig } from './resolve-config'
@@ -181,6 +181,12 @@ function newFileManager(client: Client, stores: Stores) {
   fm.on('eventCreate', async (event, relpath) => {
     if (await validate(event, validateEvent)) {
       loadEvent(stores.event, pino, { client, key: relpath, event })
+    }
+  })
+
+  fm.on('modalCreate', async modal => {
+    if (await validate(modal, validateModal)) {
+      loadModal(stores.command, pino, modal)
     }
   })
 

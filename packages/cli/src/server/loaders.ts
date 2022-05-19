@@ -1,4 +1,5 @@
 import type {
+  ModalHandler,
   ChooksScript,
   Command,
   CommandModule,
@@ -309,5 +310,20 @@ async function loadScript(store: ScriptStore, client: Client, pino: LoggerFactor
   }
 }
 
-export { loadEvent, loadSlashCommand, loadSlashSubcommand, loadUserCommand, loadMessageCommand, loadScript }
+function loadModal(store: CommandStore, pino: LoggerFactory, modal: ModalHandler): void {
+  const key = createKey('mod', modal.customId)
+  const logger = pino('modal', key)
+
+  const setup = modal.setup ?? (() => ({}))
+  const execute: GenericHandler = async ctx => {
+    const deps = await setup()
+    await (<GenericHandler>modal.execute).call(deps, ctx)
+  }
+
+  const updatedAt = Date.now()
+  store.set(key, { execute, logger, updatedAt })
+  logger.info(`Modal "${modal.customId}" loaded.`)
+}
+
+export { loadEvent, loadSlashCommand, loadSlashSubcommand, loadUserCommand, loadMessageCommand, loadScript, loadModal }
 export { unloadEvent, unloadScript }
