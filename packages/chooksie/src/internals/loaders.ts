@@ -1,7 +1,7 @@
-import { randomUUID } from 'crypto'
 import type { Client, ClientEvents } from 'discord.js'
 import type { ChooksScript, CommandStore, EmptyObject, Event, GenericHandler, MessageCommand, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types'
 import timer from './chrono'
+import genId from './id'
 import createLogger from './logger'
 import { createKey } from './resolve'
 
@@ -26,15 +26,15 @@ async function loadEvent(client: Client, event: Event<keyof ClientEvents>): Prom
   const _execute = event.execute.bind(deps)
 
   const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
-    const reqId = randomUUID()
-    const logger = _logger.child({ reqId })
+    const id = genId()
+    const logger = _logger.child({ reqId: id })
 
     try {
       logger.info(`Running handler for "${event.name}"...`)
 
       const endTimer = timer()
       // @ts-ignore: 'this' context blah blah complex type
-      await _execute({ client, logger }, ...args)
+      await _execute({ id, client, logger }, ...args)
 
       logger.info({
         responseTime: endTimer(),
@@ -158,8 +158,9 @@ async function loadMessageCommand(store: CommandStore, command: MessageCommand):
  */
 async function loadScript(client: Client, relpath: string, script: ChooksScript): Promise<void> {
   if (typeof script.chooksOnLoad === 'function') {
+    const id = genId()
     const logger = pino('script', relpath)
-    await script.chooksOnLoad({ client, logger })
+    await script.chooksOnLoad({ id, client, logger })
   }
 }
 

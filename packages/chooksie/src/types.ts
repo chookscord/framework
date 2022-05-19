@@ -86,6 +86,7 @@ export type Logger = Pick<PinoLogger, 'fatal' | 'error' | 'warn' | 'info' | 'deb
  * The base context.
  */
 export interface Context {
+  id: string
   client: Client<true>
   logger: Logger
 }

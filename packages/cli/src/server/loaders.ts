@@ -17,9 +17,8 @@ import type {
 } from 'chooksie'
 import type { LoggerFactory } from 'chooksie/internals'
 import type { Awaitable, Client, ClientEvents } from 'discord.js'
-import { randomUUID } from 'node:crypto'
 import { relative } from 'node:path'
-import { createKey, getAutocompletes, timer } from '../internals'
+import internals, { createKey, getAutocompletes, timer } from '../internals'
 import type { SourceMap, Store } from '../lib'
 
 export type VoidFn = () => Awaitable<void>
@@ -220,8 +219,8 @@ function loadEvent(
 
   const setup = event.setup ?? (() => ({}))
   const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
-    const reqId = randomUUID()
-    const logger = appLogger.child({ reqId })
+    const id = internals.genId()
+    const logger = appLogger.child({ reqId: id })
 
     try {
       const deps = await setup()
@@ -229,7 +228,7 @@ function loadEvent(
 
       const endTimer = timer()
       // @ts-ignore: 'this' context blah blah complex type
-      await event.execute.call(deps, { client, logger }, ...args)
+      await event.execute.call(deps, { id, client, logger }, ...args)
 
       logger.info({
         responseTime: endTimer(),
@@ -296,7 +295,8 @@ async function loadScript(store: ScriptStore, client: Client, pino: LoggerFactor
     // @Choooks22: Long-lived awaited promises (like async generators) are prone to getting stuck.
     // @todo: Add signal for cleanup
     logger.info(`Starting setup at ${relpath}...`)
-    const cleanup = await mod.chooksOnLoad({ client, logger })
+    const id = internals.genId()
+    const cleanup = await mod.chooksOnLoad({ id, client, logger })
     logger.info(`Finished running setup function at ${relpath}.`)
 
     if (cleanup) {
