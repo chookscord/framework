@@ -212,7 +212,7 @@ function newFileManager(client: Client, stores: Stores) {
         logger.info('Config file has been updated. Please restart for changes to take effect.')
         break
       default:
-        stores.command.delete(path)
+        stores.module.delete(path)
     }
   })
 
