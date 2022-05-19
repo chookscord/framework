@@ -1,4 +1,5 @@
-import type { ControlledAsyncIterable, RequestInfo, RequestInit, Response } from 'undici'
+import { ReadableStream } from 'node:stream/web'
+import type { RequestInfo, RequestInit, Response } from 'undici'
 
 type Fetch = (...args: FetchParams) => Promise<Response>
 declare const fetch: Fetch
@@ -16,7 +17,7 @@ export type WrappedRequest<T = unknown> =
 Pick<Response, 'text' | 'blob' | 'arrayBuffer'> &
 PromiseLike<Response> & {
   json: () => Promise<T>
-  body: Promise<ControlledAsyncIterable | null>
+  body: Promise<ReadableStream | null>
 }
 
 export type WrappedFetch = <T = unknown>(...args: FetchParams) => WrappedRequest<T>
