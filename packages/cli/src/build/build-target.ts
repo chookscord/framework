@@ -1,7 +1,7 @@
 process.env.NODE_ENV = 'production'
-import type { ChooksScript, Command, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import type { ChooksScript, Command, Event, MessageCommand, ModalHandler, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import 'chooksie/dotenv'
-import { createClient, createLogger, loadEvent, loadMessageCommand, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
+import { createClient, createLogger, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
 import { version } from 'chooksie/package.json'
 import type { ClientEvents } from 'discord.js'
 import { relative } from 'path'
@@ -71,6 +71,13 @@ async function main() {
       const command = mod.default as MessageCommand
       await loadMessageCommand(commandStore, command)
       logger.info(`Loaded message command "${command.name}".`)
+      continue
+    }
+
+    if (type === 'modals') {
+      const modal = mod.default as ModalHandler
+      await loadModal(commandStore, modal)
+      logger.info(`Loaded modal "${modal.customId}".`)
       continue
     }
 
