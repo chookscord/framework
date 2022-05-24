@@ -46,6 +46,7 @@ export default defineUserConfig<DefaultThemeOptions>({
           link('Event Listeners', '/features/event-listeners/'),
           link('Autocompletes', '/features/autocompletes/'),
           link('Modals', '/features/modals/'),
+          link('Buttons', '/features/buttons/'),
         ],
       },
       {

@@ -671,11 +671,30 @@ export interface ButtonHandler<T = EmptyObject> {
  *
  * ## See Also
  * - {@link ButtonHandler Button Handler} Definition
+ * - [Buttons](https://guide.chooks.app/features/buttons/) Web Docs
  * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
  * - [Building and sending buttons](https://discordjs.guide/interactions/buttons.html#building-and-sending-buttons) Web Guide
  *
- * @todo buttons web docs
- * @todo example snippet
+ * @example
+ * <caption>### Buttons</caption>
+ * import { defineButtonHandler } from 'chooksie'
+ *
+ * export default defineButtonHandler({
+ *   customId: 'delete-msg',
+ *   async execute(ctx) {
+ *     await ctx.interaction.deferReply({
+ *       ephemeral: true,
+ *     })
+ *
+ *     const message = ctx.interaction.message
+ *     await message.delete()
+ *
+ *     await ctx.interaction.editReply({
+ *       content: 'Message deleted!',
+ *     })
+ *   },
+ * })
+ *
  */
 export function defineButtonHandler<T>(handler: Define<ButtonHandler<T>, T>) {
   return handler
