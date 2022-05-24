@@ -2,6 +2,7 @@
 import type {
   AutocompleteInteraction,
   Awaitable,
+  ButtonInteraction,
   Client,
   ClientEvents,
   ClientOptions,
@@ -653,6 +654,49 @@ export interface ModalHandler<T = EmptyObject> {
  * })
  */
 export function defineModalHandler<T>(handler: Define<ModalHandler<T>, T>) {
+  return handler
+}
+
+/**
+ * A handler for submitted buttons.
+ */
+export interface ButtonHandler<T = EmptyObject> {
+  customId: string
+  setup?: () => Awaitable<T>
+  execute: Execute<ButtonInteraction, T>
+}
+
+/**
+ * **Definition Function**: define a button submit handler.
+ *
+ * ## See Also
+ * - {@link ButtonHandler Button Handler} Definition
+ * - [Buttons](https://guide.chooks.app/features/buttons/) Web Docs
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
+ * - [Building and sending buttons](https://discordjs.guide/interactions/buttons.html#building-and-sending-buttons) Web Guide
+ *
+ * @example
+ * <caption>### Buttons</caption>
+ * import { defineButtonHandler } from 'chooksie'
+ *
+ * export default defineButtonHandler({
+ *   customId: 'delete-msg',
+ *   async execute(ctx) {
+ *     await ctx.interaction.deferReply({
+ *       ephemeral: true,
+ *     })
+ *
+ *     const message = ctx.interaction.message
+ *     await message.delete()
+ *
+ *     await ctx.interaction.editReply({
+ *       content: 'Message deleted!',
+ *     })
+ *   },
+ * })
+ *
+ */
+export function defineButtonHandler<T>(handler: Define<ButtonHandler<T>, T>) {
   return handler
 }
 // #endregion

@@ -1,4 +1,4 @@
-import { ModalHandler, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import { ModalHandler, Event, MessageCommand, SlashCommand, SlashSubcommand, UserCommand, ButtonHandler } from 'chooksie'
 import { Awaitable, ClientEvents } from 'discord.js'
 import { EventEmitter } from 'node:events'
 import { relative } from 'path'
@@ -16,6 +16,7 @@ export interface FileCreateEvents {
   messageCreate: [mod: MessageCommand, path: string, file: SourceMap]
   eventCreate: [mod: Event<keyof ClientEvents>, path: string, file: SourceMap]
   modalCreate: [modal: ModalHandler, path: string, file: SourceMap]
+  buttonCreate: [button: ButtonHandler, path: string, file: SourceMap],
   configCreate: [path: string, file: SourceMap]
   scriptCreate: [path: string, file: SourceMap]
 }
@@ -28,6 +29,7 @@ export interface FileDeleteEvents {
   messageDelete: [path: string, file: SourceMap]
   eventDelete: [path: string, file: SourceMap]
   modalDelete: [path: string, file: SourceMap]
+  buttonDelete: [path: string, file: SourceMap]
   configDelete: [path: string, file: string]
   scriptDelete: [path: string, file: SourceMap]
 }

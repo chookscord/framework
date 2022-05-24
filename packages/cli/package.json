@@ -1,6 +1,6 @@
 {
   "name": "@chookscord/cli",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "CLI package for the Chooksie Framework",
   "license": "MIT",
   "preferGlobal": true,
