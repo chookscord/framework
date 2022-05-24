@@ -329,17 +329,6 @@ function loadModal(stores: Stores, path: string, pino: LoggerFactory, modal: Mod
   logger.info(`Modal "${modal.customId}" loaded.`)
 }
 
-function unloadModal(stores: Stores, path: string, logger: Logger): void {
-  if (!stores.handler.has(path)) {
-    logger.warn('Tried to unload a modal that wasn\'t saved!')
-    return
-  }
-
-  const key = stores.handler.get(path)!
-  stores.command.delete(key)
-  logger.info(`Modal "${key}" unloaded.`)
-}
-
 function loadButton(stores: Stores, path: string, pino: LoggerFactory, button: ButtonHandler): void {
   const key = createKey('btn', button.customId)
   const logger = pino('button', key)
@@ -356,15 +345,15 @@ function loadButton(stores: Stores, path: string, pino: LoggerFactory, button: B
   logger.info(`Button "${button.customId}" loaded.`)
 }
 
-function unloadButton(stores: Stores, path: string, logger: Logger): void {
+function unloadHandler(stores: Stores, path: string, logger: Logger): void {
   if (!stores.handler.has(path)) {
-    logger.warn('Tried to unload a button that wasn\'t saved!')
+    logger.warn('Tried to unload a handler that wasn\'t saved!')
     return
   }
 
   const key = stores.handler.get(path)!
   stores.command.delete(key)
-  logger.info(`Button "${key}" unloaded.`)
+  logger.info(`Handler  "${key}" unloaded.`)
 }
 
 export {
@@ -375,8 +364,7 @@ export {
   loadMessageCommand,
   loadScript,
   loadModal,
-  unloadModal,
   loadButton,
-  unloadButton,
+  unloadHandler,
 }
 export { unloadEvent, unloadScript }

@@ -12,7 +12,7 @@ import { target } from '../logger'
 import { createWatchCompiler } from './compiler'
 import { createFileManager } from './file-manager'
 import type { Stores } from './loaders'
-import { loadButton, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadButton, unloadEvent, unloadModal, unloadScript } from './loaders'
+import { loadButton, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadHandler, unloadScript } from './loaders'
 import watchCommands from './register'
 import { unloadMod } from './require'
 import { resolveConfig } from './resolve-config'
@@ -225,10 +225,8 @@ function newFileManager(client: Client, stores: Stores) {
         logger.info('Config file has been updated. Please restart for changes to take effect.')
         break
       case 'modal':
-        unloadModal(stores, path, logger)
-        break
       case 'button':
-        unloadButton(stores, path, logger)
+        unloadHandler(stores, path, logger)
         break
       default:
         stores.module.delete(path)
