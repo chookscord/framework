@@ -1,7 +1,7 @@
 process.env.NODE_ENV = 'production'
-import type { ChooksScript, Command, Event, MessageCommand, ModalHandler, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import type { ButtonHandler, ChooksScript, Command, Event, MessageCommand, ModalHandler, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import 'chooksie/dotenv'
-import { createClient, createLogger, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
+import { createClient, createLogger, loadEvent, loadButton, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
 import { version } from 'chooksie/package.json'
 import type { ClientEvents } from 'discord.js'
 import { relative } from 'path'
@@ -11,7 +11,7 @@ import config from './chooks.config.js'
 const pino = createLogger()
 const logger = pino('app', 'chooks')
 
-const MODULE_NAMES: SourceDir[] = ['commands', 'subcommands', 'messages', 'users', 'events']
+const MODULE_NAMES: SourceDir[] = ['commands', 'subcommands', 'messages', 'users', 'events', 'modals', 'buttons']
 
 function hasScript(mod: Record<string, unknown>): mod is ChooksScript {
   return typeof mod.chooksOnLoad === 'function'
@@ -78,6 +78,13 @@ async function main() {
       const modal = mod.default as ModalHandler
       await loadModal(commandStore, modal)
       logger.info(`Loaded modal "${modal.customId}".`)
+      continue
+    }
+
+    if (type === 'buttons') {
+      const button = mod.default as ButtonHandler
+      await loadButton(commandStore, button)
+      logger.info(`Loaded button "${button.customId}".`)
       continue
     }
 
