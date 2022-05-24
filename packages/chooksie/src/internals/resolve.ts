@@ -16,6 +16,13 @@ function createKey(ns: string, ...keys: (string | null)[]): string {
   return key
 }
 
+function resolveCustomId(customId: string): string {
+  const sep = customId.indexOf('|')
+  return sep === -1
+    ? customId
+    : customId.slice(0, sep)
+}
+
 function resolveInteraction(store: CommandStore, interaction: Interaction): ResolvedHandler | null {
   if (interaction.isCommand()) {
     const group = interaction.options.getSubcommandGroup(false)
@@ -47,14 +54,16 @@ function resolveInteraction(store: CommandStore, interaction: Interaction): Reso
   }
 
   if (interaction.isModalSubmit()) {
-    const key = createKey('mod', interaction.customId)
+    const id = resolveCustomId(interaction.customId)
+    const key = createKey('mod', id)
     const command = store.get(key) ?? null
 
     return { key, command }
   }
 
   if (interaction.isButton()) {
-    const key = createKey('btn', interaction.customId)
+    const id = resolveCustomId(interaction.customId)
+    const key = createKey('btn', id)
     const command = store.get(key) ?? null
 
     return { key, command }
