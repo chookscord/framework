@@ -1,13 +1,10 @@
 # Buttons
 
-**Buttons** allows your users to use an interface to easily fill out forms, useful for filling out complex
-inputs or very large texts.
+**Buttons** allows you to create reusable actions that are easily available to your users.
 
-Buttons are handled in two parts: <u>Creating the form</u> and <u>Handling submissions</u>. The first part
-is provided by [Discord.JS](https://discordjs.guide/interactions/modals.html#building-and-responding-with-modals)
-and only the latter is handled by the framework, reason being much like [Embeds](https://discordjs.guide/popular-topics/embeds.html),
-forms can be dynamically created, allowing you to freely handle and create modals while easily handling
-submissions in a single location.
+Like [Modals](../modals/), Buttons are handled in two parts: <u>Creating buttons</u> and <u>Handling
+button clicks</u>. The first part is also provided by [Discord.JS](https://discordjs.guide/interactions/buttons.html),
+and only the latter is handled by the framework.
 
 ## Creating Buttons
 
