@@ -53,6 +53,13 @@ function resolveInteraction(store: CommandStore, interaction: Interaction): Reso
     return { key, command }
   }
 
+  if (interaction.isButton()) {
+    const key = createKey('btn', interaction.customId)
+    const command = store.get(key) ?? null
+
+    return { key, command }
+  }
+
   return null
 }
 

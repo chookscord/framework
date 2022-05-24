@@ -1,5 +1,5 @@
 import type { Client, ClientEvents } from 'discord.js'
-import type { ChooksScript, CommandStore, EmptyObject, Event, GenericHandler, MessageCommand, ModalHandler, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types'
+import type { ButtonHandler, ChooksScript, CommandStore, EmptyObject, Event, GenericHandler, MessageCommand, ModalHandler, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types'
 import timer from './chrono'
 import genId from './id'
 import createLogger from './logger'
@@ -167,6 +167,19 @@ async function loadModal(store: CommandStore, modal: ModalHandler): Promise<void
 }
 
 /**
+ * @internal **FOR PRODUCTION USE ONLY**
+ */
+async function loadButton(store: CommandStore, button: ButtonHandler): Promise<void> {
+  const deps = await button.setup?.() ?? {}
+  const execute = <GenericHandler>button.execute.bind(deps)
+
+  const key = createKey('btn', button.customId)
+  const logger = pino('button', key)
+
+  store.set(key, { execute, logger })
+}
+
+/**
  * @internal **FOR PRODUCTION USE ONLY**.
  */
 async function loadScript(client: Client, relpath: string, script: ChooksScript): Promise<void> {
@@ -177,5 +190,14 @@ async function loadScript(client: Client, relpath: string, script: ChooksScript)
   }
 }
 
-export { loadEvent, loadSlashCommand, loadSlashSubcommand, loadUserCommand, loadMessageCommand, loadModal, loadScript }
+export {
+  loadEvent,
+  loadSlashCommand,
+  loadSlashSubcommand,
+  loadUserCommand,
+  loadMessageCommand,
+  loadModal,
+  loadButton,
+  loadScript,
+}
 export { getAutocompletes }
