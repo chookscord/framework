@@ -1,4 +1,5 @@
 import type {
+  ButtonHandler,
   ChooksScript,
   Command,
   CommandModule,
@@ -17,7 +18,7 @@ import type {
   UserCommand,
 } from 'chooksie'
 import type { LoggerFactory } from 'chooksie/internals'
-import type { Awaitable, Client, ClientEvents } from 'discord.js'
+import { Awaitable, Client, ClientEvents, Modal } from 'discord.js'
 import { relative } from 'node:path'
 import { createKey, genId, getAutocompletes, timer } from '../internals'
 import type { SourceMap, Store } from '../lib'
@@ -44,8 +45,8 @@ export interface Stores {
   event: Store<EventModule>
   /** Stores cleanup script functions */
   cleanup: Store<VoidFn>
-  /* Used for tracking loaded modal ids */
-  modal: Map<string, string>
+  /* Used for tracking loaded handlers' custom ids */
+  handler: Map<string, string>
 }
 
 function hasOnLoad(mod: Record<string, unknown>): mod is Required<ChooksScript> {
@@ -322,21 +323,48 @@ function loadModal(stores: Stores, path: string, pino: LoggerFactory, modal: Mod
     await (<GenericHandler>modal.execute).call(deps, ctx)
   }
 
-  stores.modal.set(path, key)
+  stores.handler.set(path, key)
   const updatedAt = Date.now()
   stores.command.set(key, { execute, logger, updatedAt })
   logger.info(`Modal "${modal.customId}" loaded.`)
 }
 
 function unloadModal(stores: Stores, path: string, logger: Logger): void {
-  if (!stores.modal.has(path)) {
+  if (!stores.handler.has(path)) {
     logger.warn('Tried to unload a modal that wasn\'t saved!')
     return
   }
 
-  const key = stores.modal.get(path)!
+  const key = stores.handler.get(path)!
   stores.command.delete(key)
   logger.info(`Modal "${key}" unloaded.`)
+}
+
+function loadButton(stores: Stores, path: string, pino: LoggerFactory, button: ButtonHandler): void {
+  const key = createKey('btn', button.customId)
+  const logger = pino('button', key)
+
+  const setup = button.setup ?? (() => ({}))
+  const execute: GenericHandler = async ctx => {
+    const deps = await setup()
+    await (<GenericHandler>button.execute).call(deps, ctx)
+  }
+
+  stores.handler.set(path, key)
+  const updatedAt = Date.now()
+  stores.command.set(key, { execute, logger, updatedAt })
+  logger.info(`Button "${button.customId}" loaded.`)
+}
+
+function unloadButton(stores: Stores, path: string, logger: Logger): void {
+  if (!stores.handler.has(path)) {
+    logger.warn('Tried to unload a button that wasn\'t saved!')
+    return
+  }
+
+  const key = stores.handler.get(path)!
+  stores.command.delete(key)
+  logger.info(`Button "${key}" unloaded.`)
 }
 
 export {
@@ -348,5 +376,7 @@ export {
   loadScript,
   loadModal,
   unloadModal,
+  loadButton,
+  unloadButton,
 }
 export { unloadEvent, unloadScript }

@@ -7,12 +7,12 @@ import { once } from 'node:events'
 import { join, resolve } from 'node:path'
 import { createClient, createLogger, onInteractionCreate, timer } from '../internals'
 import { resolveLocal, sourceFromFile, Store, validateDevConfig } from '../lib'
-import { validateEvent, validateMessageCommand, validateModal, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
+import { validateButton, validateEvent, validateMessageCommand, validateModal, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
 import { target } from '../logger'
 import { createWatchCompiler } from './compiler'
 import { createFileManager } from './file-manager'
 import type { Stores } from './loaders'
-import { loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadModal, unloadScript } from './loaders'
+import { loadButton, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadButton, unloadEvent, unloadModal, unloadScript } from './loaders'
 import watchCommands from './register'
 import { unloadMod } from './require'
 import { resolveConfig } from './resolve-config'
@@ -106,7 +106,7 @@ async function newStores() {
     command: new Store(),
     event: new Store(),
     cleanup: new Store(),
-    modal: new Map(),
+    handler: new Map(),
   }
 
   syncModulesToCache(stores.module)
@@ -191,6 +191,12 @@ function newFileManager(client: Client, stores: Stores) {
     }
   })
 
+  fm.on('buttonCreate', async (button, path) => {
+    if (await validate(button, validateButton)) {
+      loadButton(stores, path, pino, button)
+    }
+  })
+
   fm.on('scriptCreate', async (path, file) => {
     // @Choooks22: we're taking chances here that ALL scripts have been read
     // before client has logged in, could do something funky on slow(?) drives
@@ -220,6 +226,9 @@ function newFileManager(client: Client, stores: Stores) {
         break
       case 'modal':
         unloadModal(stores, path, logger)
+        break
+      case 'button':
+        unloadButton(stores, path, logger)
         break
       default:
         stores.module.delete(path)
