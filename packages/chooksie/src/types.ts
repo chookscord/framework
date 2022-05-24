@@ -2,6 +2,7 @@
 import type {
   AutocompleteInteraction,
   Awaitable,
+  ButtonInteraction,
   Client,
   ClientEvents,
   ClientOptions,
@@ -653,6 +654,30 @@ export interface ModalHandler<T = EmptyObject> {
  * })
  */
 export function defineModalHandler<T>(handler: Define<ModalHandler<T>, T>) {
+  return handler
+}
+
+/**
+ * A handler for submitted buttons.
+ */
+export interface ButtonHandler<T = EmptyObject> {
+  customId: string
+  setup?: () => Awaitable<T>
+  execute: Execute<ButtonInteraction, T>
+}
+
+/**
+ * **Definition Function**: define a button submit handler.
+ *
+ * ## See Also
+ * - {@link ButtonHandler Button Handler} Definition
+ * - [Setup API](https://guide.chooks.app/advanced/setup/) Web Guide
+ * - [Building and sending buttons](https://discordjs.guide/interactions/buttons.html#building-and-sending-buttons) Web Guide
+ *
+ * @todo buttons web docs
+ * @todo example snippet
+ */
+export function defineButtonHandler<T>(handler: Define<ButtonHandler<T>, T>) {
   return handler
 }
 // #endregion
