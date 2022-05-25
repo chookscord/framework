@@ -9,6 +9,7 @@ import type {
   CommandInteraction,
   IntentsString,
   Interaction,
+  MessageComponentInteraction,
   MessageContextMenuInteraction,
   ModalSubmitInteraction,
   UserContextMenuInteraction,
@@ -106,7 +107,22 @@ export interface CommandContext<T> extends Context {
   interaction: T
 }
 
-export type Execute<InteractionType, ThisArg> = (this: ThisArg, ctx: CommandContext<InteractionType>) => Awaitable<void>
+/**
+ * Context for handlers.
+ */
+export interface HandlerContext<T> extends CommandContext<T> {
+  payload: string | null
+}
+
+export type Execute<InteractionType, ThisArg> = (
+  this: ThisArg,
+  ctx: CommandContext<InteractionType>
+) => Awaitable<void>
+
+export type HandlerExecute<InteractionType, ThisArg> = (
+  this: ThisArg,
+  ctx: HandlerContext<InteractionType>
+) => Awaitable<void>
 // #endregion
 // #region Utilities
 /**
@@ -151,6 +167,8 @@ type DefineOption<T> =
 export type InferSetupType<Setup> = Setup extends () => Awaitable<infer U> ? U : never
 
 export type GenericHandler = (ctx: CommandContext<Interaction>) => Awaitable<void>
+export type GenericHandlerExecute = (ctx: HandlerContext<Interaction>) => Awaitable<void>
+
 export interface Command {
   updatedAt?: number
   execute: GenericHandler
@@ -617,7 +635,7 @@ export function defineSubcommandGroup(command: SubcommandGroup) {
 export interface ModalHandler<T = EmptyObject> {
   customId: string
   setup?: () => Awaitable<T>
-  execute: Execute<ModalSubmitInteraction, T>
+  execute: HandlerExecute<ModalSubmitInteraction, T>
 }
 
 /**
@@ -663,7 +681,7 @@ export function defineModalHandler<T>(handler: Define<ModalHandler<T>, T>) {
 export interface ButtonHandler<T = EmptyObject> {
   customId: string
   setup?: () => Awaitable<T>
-  execute: Execute<ButtonInteraction, T>
+  execute: HandlerExecute<ButtonInteraction, T>
 }
 
 /**
