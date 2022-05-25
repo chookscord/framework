@@ -53,6 +53,7 @@ export default defineUserConfig<DefaultThemeOptions>({
         text: 'Advanced',
         children: [
           link('Setup Method', '/advanced/setup/'),
+          link('Payloads in Custom IDs', '/advanced/custom-id-payloads'),
           link('External Scripts', '/advanced/scripts/'),
           link('Database and Servers', '/advanced/database-servers/'),
           link('Usage with TypeScript', '/advanced/typescript/'),

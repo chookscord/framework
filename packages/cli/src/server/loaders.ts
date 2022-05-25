@@ -2,11 +2,13 @@ import type {
   ButtonHandler,
   ChooksScript,
   Command,
+  CommandContext,
   CommandModule,
   CommandStore,
   EmptyObject,
   Event,
   GenericHandler,
+  GenericHandlerExecute,
   Logger,
   MessageCommand,
   ModalHandler,
@@ -18,7 +20,7 @@ import type {
   UserCommand,
 } from 'chooksie'
 import type { LoggerFactory } from 'chooksie/internals'
-import { Awaitable, Client, ClientEvents, Modal } from 'discord.js'
+import { Awaitable, Client, ClientEvents, MessageComponentInteraction, Modal } from 'discord.js'
 import { relative } from 'node:path'
 import { createKey, genId, getAutocompletes, timer } from '../internals'
 import type { SourceMap, Store } from '../lib'
@@ -313,15 +315,25 @@ async function loadScript(store: ScriptStore, client: Client, pino: LoggerFactor
   }
 }
 
+function withPayload(setup: () => Awaitable<EmptyObject>, execute: GenericHandlerExecute) {
+  return (async (ctx: CommandContext<MessageComponentInteraction>) => {
+    const deps = await setup()
+    const sep = ctx.interaction.customId.indexOf('|') + 1
+
+    if (sep > 0) {
+      await execute.call(deps, { ...ctx, payload: ctx.interaction.customId.slice(sep) })
+    } else {
+      await execute.call(deps, { ...ctx, payload: null })
+    }
+  }) as unknown as GenericHandler
+}
+
 function loadModal(stores: Stores, path: string, pino: LoggerFactory, modal: ModalHandler): void {
   const key = createKey('mod', modal.customId)
   const logger = pino('modal', key)
 
   const setup = modal.setup ?? (() => ({}))
-  const execute: GenericHandler = async ctx => {
-    const deps = await setup()
-    await (<GenericHandler>modal.execute).call(deps, ctx)
-  }
+  const execute = withPayload(setup, modal.execute as GenericHandlerExecute)
 
   stores.handler.set(path, key)
   const updatedAt = Date.now()
@@ -334,10 +346,7 @@ function loadButton(stores: Stores, path: string, pino: LoggerFactory, button: B
   const logger = pino('button', key)
 
   const setup = button.setup ?? (() => ({}))
-  const execute: GenericHandler = async ctx => {
-    const deps = await setup()
-    await (<GenericHandler>button.execute).call(deps, ctx)
-  }
+  const execute = withPayload(setup, button.execute as GenericHandlerExecute)
 
   stores.handler.set(path, key)
   const updatedAt = Date.now()
