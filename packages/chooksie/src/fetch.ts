@@ -1,10 +1,14 @@
 import { ReadableStream } from 'node:stream/web'
 import type { RequestInfo, RequestInit, Response } from 'undici'
 
-type Fetch = (...args: FetchParams) => Promise<Response>
-declare const fetch: Fetch
+declare global {
+  // eslint-disable-next-line no-var
+  var fetch: Fetch
+}
 
-let _fetch = fetch
+type Fetch = (...args: FetchParams) => Promise<Response>
+
+let _fetch = global.fetch
 if (typeof _fetch === 'undefined') {
   const undici = require(process.env.CHOOKSIE_UNDICI_PATH ?? 'undici') as typeof import('undici')
   _fetch = undici.fetch
