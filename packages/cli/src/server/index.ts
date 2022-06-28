@@ -202,7 +202,10 @@ function newFileManager(client: Client, stores: Stores) {
     // before client has logged in, could do something funky on slow(?) drives
     if (!client.isReady()) {
       await ready
-      await loadScript(stores.cleanup, client, pino, root, file)
+      // @Choooks22: temp fix, use same broken `sourceFromFile` to get same behavior.
+      // v3 would completely negate this since we're moving to node:vm
+      const script = fileFromTarget(file.target)
+      await loadScript(stores.cleanup, client, pino, root, script)
     } else {
       for (const unloadedKey of unloadMod(file.target)) {
         const script = fileFromTarget(unloadedKey)

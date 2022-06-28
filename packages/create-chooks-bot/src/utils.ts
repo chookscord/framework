@@ -34,7 +34,7 @@ export async function run(opts: RunOptions): Promise<void> {
 
 export async function mv(oldPath: string, newPath: string): Promise<void> {
   await cp(oldPath, newPath, { recursive: true })
-  await rm(oldPath, { recursive: true })
+  await rm(oldPath, { recursive: true, force: true })
 }
 
 export async function toTmp(): Promise<() => void> {
