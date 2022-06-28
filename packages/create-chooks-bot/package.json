@@ -1,6 +1,6 @@
 {
   "name": "create-chooks-bot",
-  "version": "2.0.0",
+  "version": "2.4.1",
   "description": "Scaffold for the Chooksie Framework",
   "license": "MIT",
   "type": "module",
@@ -23,7 +23,9 @@
   },
   "devDependencies": {
     "@types/package-name-regex": "^2.0.0",
-    "@types/prompts": "^2.0.14"
+    "@types/prompts": "^2.0.14",
+    "chooksie": "workspace:*",
+    "discord.js": "^13.7.0"
   },
   "repository": {
     "type": "git",
