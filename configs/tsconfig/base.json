@@ -1,17 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "lib": ["ESNext"],
-    "strict": true,
-    "target": "ESNext",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "declarationMap": true,
-    "declaration": true,
+    "lib": [
+      "ESNext"
+    ],
+    "target": "ES2021",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
-    "emitDeclarationOnly": true,
     "preserveWatchOutput": true
   }
 }

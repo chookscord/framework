@@ -1,6 +1,6 @@
 {
   "name": "create-chooks-bot",
-  "version": "2.4.1",
+  "version": "3.0.0-dev.0",
   "description": "Scaffold for the Chooksie Framework",
   "license": "MIT",
   "type": "module",

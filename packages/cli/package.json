@@ -1,9 +1,9 @@
 {
   "name": "@chookscord/cli",
-  "version": "2.4.1",
+  "version": "3.0.0-dev.0",
   "description": "CLI package for the Chooksie Framework",
   "license": "MIT",
-  "preferGlobal": true,
+  "type": "module",
   "bin": {
     "chooks": "./dist/bin/index.js"
   },

@@ -1,9 +1,5 @@
 {
-  "extends": "tsconfig/base",
-  "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "noEmit": true
-  },
+  "extends": "tsconfig/base.json",
   "include": [
     "guide"
   ]

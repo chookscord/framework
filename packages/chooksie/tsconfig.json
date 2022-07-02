@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/base",
+  "extends": "tsconfig/emit-types.json",
   "compilerOptions": {
     "outDir": "dist",
     "declarationDir": "dist"

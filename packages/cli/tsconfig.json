@@ -1,11 +1,6 @@
 {
-  "extends": "tsconfig/base",
+  "extends": "tsconfig/base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "noEmit": true,
-    "declaration": false,
-    "declarationMap": false,
-    "emitDeclarationOnly": false,
     "paths": {
       "chooksie/internals": [
         "../chooksie/dist/internals/index.d.ts"
