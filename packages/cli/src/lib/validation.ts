@@ -2,7 +2,7 @@
 import { BoolOption, ChannelOption, ChannelType, Choice, ModalHandler, CommandModule, Event, MentionableOption, MessageCommand, NumberOption, RoleOption, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup, UserCommand, UserOption, ButtonHandler } from 'chooksie'
 import type { ClientEvents } from 'discord.js'
 import Joi from 'joi'
-import { AppChannelType } from '../internals'
+import { AppChannelType } from 'chooksie/internals'
 
 const appName = Joi.string()
   .lowercase()

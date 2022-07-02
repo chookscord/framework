@@ -1,13 +1,13 @@
 import type { ChooksConfig, CommandModule, MessageCommand, UserCommand } from 'chooksie'
 import type { AppCommand } from 'chooksie/internals'
+import { createLogger, walk } from 'chooksie/internals'
 import { access } from 'fs/promises'
 import { join, relative } from 'path'
 import { setTimeout } from 'timers/promises'
-import { createLogger, walk } from './internals'
-import type { SourceMap } from './lib'
-import { registerCommands, resolveLocal, sourceFromFile, tokenToAppId, transformModule } from './lib'
-import type { RegisterOptions } from './lib/register'
-import { target } from './logger'
+import type { SourceMap } from './lib/index.js'
+import { registerCommands, resolveLocal, sourceFromFile, tokenToAppId, transformModule } from './lib/index.js'
+import type { RegisterOptions } from './lib/register.js'
+import { target } from './logger.js'
 resolveLocal('chooksie/dotenv')
 
 const root = process.cwd()
@@ -109,4 +109,4 @@ async function register(): Promise<void> {
   process.exit(status)
 }
 
-export = register
+export default register

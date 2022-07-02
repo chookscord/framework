@@ -2,7 +2,7 @@ import type { Options, Output } from '@swc/core'
 import { transformFile } from '@swc/core'
 import fs from 'fs/promises'
 import { dirname } from 'path'
-import type { SourceMap } from './sourcemap'
+import type { SourceMap } from './sourcemap.js'
 
 const SWC_OPTIONS: Readonly<Options> = {
   module: { type: 'commonjs' },

@@ -1,5 +1,5 @@
 import type { ChannelOption, Choice, MessageCommand, NumberOption, Option, SlashCommand, SlashSubcommand, StringOption, Subcommand, UserCommand } from 'chooksie'
-import { diffCommand, diffOption } from '../src/lib/diff'
+import { diffCommand, diffOption } from '../src/lib/diff.js'
 
 const noop = () => { /*  */ }
 

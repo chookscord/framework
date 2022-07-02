@@ -2,7 +2,12 @@
   "extends": "tsconfig/emit-types.json",
   "compilerOptions": {
     "outDir": "dist",
-    "declarationDir": "dist"
+    "declarationDir": "dist",
+    "paths": {
+      "uid": [
+        "../../node_modules/uid/index.d.ts"
+      ]
+    }
   },
   "include": [
     "src"

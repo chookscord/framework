@@ -4,8 +4,8 @@ import type { LoggerFactory } from 'chooksie/internals'
 import EventEmitter from 'events'
 import type { Stats } from 'fs'
 import { resolve } from 'path'
-import type { FileOptions, SourceMap } from '../lib'
-import { compile, mapSourceFile, unlink, write } from '../lib'
+import type { FileOptions, SourceMap } from '../lib/index.js'
+import { compile, mapSourceFile, unlink, write } from '../lib/index.js'
 
 export interface WatchCompilerOptions {
   onChange?: (file: SourceMap) => Output | Promise<Output>

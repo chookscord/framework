@@ -1,9 +1,9 @@
 import type { Client, ClientEvents, MessageComponentInteraction } from 'discord.js'
-import type { ButtonHandler, ChooksScript, CommandContext, CommandStore, EmptyObject, Event, GenericHandler, GenericHandlerExecute, MessageCommand, ModalHandler, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types'
-import timer from './chrono'
-import genId from './id'
-import createLogger from './logger'
-import { createKey } from './resolve'
+import type { ButtonHandler, ChooksScript, CommandContext, CommandStore, EmptyObject, Event, GenericHandler, GenericHandlerExecute, MessageCommand, ModalHandler, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types.js'
+import timer from './chrono.js'
+import genId from './id.js'
+import createLogger from './logger.js'
+import { createKey } from './resolve.js'
 
 const pino = createLogger()
 

@@ -3,7 +3,7 @@ import type { Dirent } from 'fs'
 import { readdir } from 'fs/promises'
 import Joi from 'joi'
 import { join } from 'path'
-import type { FileOptions, SourceMap } from './sourcemap'
+import type { FileOptions, SourceMap } from './sourcemap.js'
 
 const CONFIG_FILES = [
   'chooks.config.js',

@@ -1,4 +1,4 @@
-import { validateConfig, validateDevConfig } from '../src/lib/config'
+import { validateConfig, validateDevConfig } from '../src/lib/config.js'
 
 const token = 'ODUwMzgwOTg2NTY2ODM2MjM0.YLo5Ag.v5Mgj4RykD9Y7c4lONOo9Fl1Syg'
 

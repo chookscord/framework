@@ -3,11 +3,11 @@ import type { ClientEvents } from 'discord.js'
 import type { Dirent } from 'fs'
 import { cp, readdir } from 'fs/promises'
 import { join } from 'path'
-import { createLogger, timer, walk } from '../internals'
-import type { SourceMap } from '../lib'
-import { compile, mapSourceFile, resolveConfigFile, resolveLocal, write } from '../lib'
-import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
-import { target } from '../logger'
+import { createLogger, timer, walk } from 'chooksie/internals'
+import type { SourceMap } from '../lib/index.js'
+import { compile, mapSourceFile, resolveConfigFile, resolveLocal, write } from '../lib/index.js'
+import { validateEvent, validateMessageCommand, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation.js'
+import { target } from '../logger.js'
 
 const root = process.cwd()
 const outDir = join(root, 'dist')
@@ -112,4 +112,4 @@ async function build(): Promise<void> {
   process.exit(0)
 }
 
-export = build
+export default build

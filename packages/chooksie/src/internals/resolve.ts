@@ -1,5 +1,5 @@
 import type { Interaction } from 'discord.js'
-import type { Command, CommandStore } from '../types'
+import type { Command, CommandStore } from '../types.js'
 
 export interface ResolvedHandler {
   key: string

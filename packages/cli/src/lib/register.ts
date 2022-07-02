@@ -1,6 +1,6 @@
 import type { Logger } from 'chooksie'
 import type { AppCommand } from 'chooksie/internals'
-import resolveLocal from './resolve'
+import resolveLocal from './resolve.js'
 
 const { fetch } = resolveLocal<typeof import('chooksie/fetch')>('chooksie/fetch')
 

@@ -2,9 +2,9 @@ import { ModalHandler, Event, MessageCommand, SlashCommand, SlashSubcommand, Use
 import { Awaitable, ClientEvents } from 'discord.js'
 import { EventEmitter } from 'node:events'
 import { relative } from 'path'
-import { FileOptions, FileType, SourceMap } from '../lib'
-import { WatchCompiler } from './compiler'
-import { unrequire } from './require'
+import { FileOptions, FileType, SourceMap } from '../lib/index.js'
+import { WatchCompiler } from './compiler.js'
+import { unrequire } from './require.js'
 
 export type FileEvents = FileCreateEvents & FileDeleteEvents
 

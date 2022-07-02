@@ -1,4 +1,4 @@
-import Store from '../src/lib/store'
+import Store from '../src/lib/store.js'
 
 describe('store', () => {
   const store = new Store<number>()

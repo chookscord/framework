@@ -1,22 +1,22 @@
 import { watch } from 'chokidar'
 import type { ChooksConfig, CommandModule, CommandStore } from 'chooksie'
+import { createClient, createLogger, onInteractionCreate, timer } from 'chooksie/internals'
 import type { Client } from 'discord.js'
 import { existsSync } from 'fs'
 import { mkdir, readFile, writeFile } from 'fs/promises'
 import { once } from 'node:events'
 import { join, resolve } from 'node:path'
-import { createClient, createLogger, onInteractionCreate, timer } from '../internals'
-import { resolveLocal, sourceFromFile, Store, validateDevConfig } from '../lib'
-import { validateButton, validateEvent, validateMessageCommand, validateModal, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation'
-import { target } from '../logger'
-import { createWatchCompiler } from './compiler'
-import { createFileManager } from './file-manager'
-import type { Stores } from './loaders'
-import { loadButton, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadHandler, unloadScript } from './loaders'
-import watchCommands from './register'
-import { unloadMod } from './require'
-import { resolveConfig } from './resolve-config'
-resolveLocal('chooksie/dotenv')
+import { resolveLocal, sourceFromFile, Store, validateDevConfig } from '../lib/index.js'
+import { validateButton, validateEvent, validateMessageCommand, validateModal, validateSlashCommand, validateSlashSubcommand, validateUserCommand } from '../lib/validation.js'
+import { target } from '../logger.js'
+import { createWatchCompiler } from './compiler.js'
+import { createFileManager } from './file-manager.js'
+import type { Stores } from './loaders.js'
+import { loadButton, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, unloadEvent, unloadHandler, unloadScript } from './loaders.js'
+import watchCommands from './register.js'
+import { unloadMod } from './require.js'
+import { resolveConfig } from './resolve-config.js'
+import 'chooksie/dotenv'
 
 const root = process.cwd()
 const outDir = join(root, '.chooks')
@@ -258,7 +258,7 @@ async function main(): Promise<void> {
   end()
 }
 
-export = main
+export default main
 
 if ('CHOOKSIE_CLI_VERSION' in process.env) {
   // bootstrap self when forked from CLI

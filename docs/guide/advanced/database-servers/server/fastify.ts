@@ -1,6 +1,6 @@
 import { defineOnLoad } from 'chooksie'
 import { fastify } from 'fastify'
-import register from './routes'
+import register from './routes.js'
 
 // Set our port as an env variable, and fallback to port 3000 if none was set.
 const PORT = process.env.PORT ?? 3000

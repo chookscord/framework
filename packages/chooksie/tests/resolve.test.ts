@@ -1,5 +1,5 @@
 import type { AutocompleteInteraction, CommandInteraction } from 'discord.js'
-import { createKey, resolveInteraction } from '../src/internals/resolve'
+import { createKey, resolveInteraction } from '../src/internals/resolve.js'
 
 const command = { [Symbol('foo')]: 0 }
 class FakeMap extends Map {

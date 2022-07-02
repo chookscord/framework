@@ -1,8 +1,8 @@
 import { FSWatcher } from 'chokidar'
 import { once } from 'events'
 import { Stats } from 'fs'
-import type { SourceMap } from '../src/lib/sourcemap'
-import { createWatchCompiler } from '../src/server/compiler'
+import type { SourceMap } from '../src/lib/sourcemap.js'
+import { createWatchCompiler } from '../src/server/compiler.js'
 
 jest.mock('@swc/core', () => 1)
 

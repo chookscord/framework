@@ -5,7 +5,7 @@ import { createClient, createLogger, loadEvent, loadButton, loadMessageCommand, 
 import { version } from 'chooksie/package.json'
 import type { ClientEvents } from 'discord.js'
 import { relative } from 'path'
-import type { SourceDir } from '../lib'
+import type { SourceDir } from '../lib/index.js'
 import config from './chooks.config.js'
 
 const pino = createLogger()

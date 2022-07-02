@@ -1,8 +1,8 @@
 import { CommandModule } from 'chooksie'
 import type { AppCommand, LoggerFactory } from 'chooksie/internals'
-import { createKey, getAutocompletes } from '../internals'
-import { diffCommand, registerCommands, tokenToAppId, transformModule } from '../lib'
-import type { Stores } from './loaders'
+import { createKey, getAutocompletes } from 'chooksie/internals'
+import { diffCommand, registerCommands, tokenToAppId, transformModule } from '../lib/index.js'
+import type { Stores } from './loaders.js'
 
 function isAbortError(error: unknown): error is Error {
   return error instanceof Error && error.name === 'AbortError'

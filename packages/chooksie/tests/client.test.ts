@@ -1,5 +1,5 @@
 import { Client } from 'discord.js'
-import createClient from '../src/internals/client'
+import createClient from '../src/internals/client.js'
 
 describe('create client', () => {
   it('throws on missing intents', () => {

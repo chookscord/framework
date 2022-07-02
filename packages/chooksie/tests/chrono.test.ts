@@ -1,4 +1,4 @@
-import timer from '../src/internals/chrono'
+import timer from '../src/internals/chrono.js'
 
 describe('timer', () => {
   const _hrtime = process.hrtime

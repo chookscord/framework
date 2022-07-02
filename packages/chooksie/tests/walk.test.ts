@@ -1,5 +1,5 @@
 import { Dirent } from 'fs'
-import walk from '../src/internals/walk'
+import walk from '../src/internals/walk.js'
 import { opendir } from 'fs/promises'
 
 jest.mock('fs/promises')

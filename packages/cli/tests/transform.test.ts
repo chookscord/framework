@@ -1,6 +1,6 @@
 import type { AppCommand, AppCommandOption } from 'chooksie/dist/internals/discord'
 import { AppChannelType, AppCommandOptionType, AppCommandType } from 'chooksie/dist/internals/discord'
-import { transformCommand, transformOption } from '../src/lib'
+import { transformCommand, transformOption } from '../src/lib/index.js'
 
 jest.mock('@swc/core', () => 1)
 

@@ -1,6 +1,6 @@
 import type { CommandModule, Option } from 'chooksie'
 import type { AppCommand, AppCommandOption } from 'chooksie/internals'
-import { AppChannelType, AppCommandOptionType, AppCommandType } from '../internals'
+import { AppChannelType, AppCommandOptionType, AppCommandType } from 'chooksie/internals'
 
 function transformOption(option: Option): AppCommandOption {
   const opt = <AppCommandOption>{

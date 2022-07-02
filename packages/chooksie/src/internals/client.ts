@@ -1,10 +1,10 @@
 import type { CommandInteraction, ContextMenuInteraction, Interaction } from 'discord.js'
 import { Client, MessageEmbed } from 'discord.js'
-import type { ChooksConfig, CommandStore } from '../types'
-import timer from './chrono'
-import genId from './id'
-import pino from './logger'
-import { resolveInteraction } from './resolve'
+import type { ChooksConfig, CommandStore } from '../types.js'
+import timer from './chrono.js'
+import genId from './id.js'
+import pino from './logger.js'
+import { resolveInteraction } from './resolve.js'
 
 function createClient(config: Partial<ChooksConfig>): Client {
   const client = new Client({

@@ -1,9 +1,9 @@
 import { interopRequireDefault } from '@swc/helpers'
 import type { ChooksConfig } from 'chooksie'
 import type { Awaitable } from 'discord.js'
-import type { FileOptions } from '../lib'
-import { compile, resolveConfigFile, validateConfig, write } from '../lib'
-import type { WatchCompilerOptions } from './compiler'
+import type { FileOptions } from '../lib/index.js'
+import { compile, resolveConfigFile, validateConfig, write } from '../lib/index.js'
+import type { WatchCompilerOptions } from './compiler.js'
 
 export interface ConfigResolverOverrides {
   loader?: (path: string) => Awaitable<ChooksConfig>

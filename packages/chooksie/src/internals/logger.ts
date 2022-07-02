@@ -1,6 +1,6 @@
 import type { DestinationStream, LoggerOptions } from 'pino'
-import _pino from 'pino'
-import type { Logger } from '../types'
+import { pino as _pino } from 'pino'
+import type { Logger } from '../types.js'
 
 export type LoggerType = 'app' | 'autocomplete' | 'command' | 'subcommand' | 'user' | 'message' | 'event' | 'script' | 'modal' | 'button'
 export type LoggerFactory = (type: LoggerType, name: string) => Logger

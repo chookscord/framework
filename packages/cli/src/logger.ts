@@ -1,9 +1,9 @@
 import type { LoggerType } from 'chooksie/internals'
 import type { Transform } from 'node:stream'
 import { once } from 'node:stream'
-import * as pc from 'picocolors'
-import build from 'pino-abstract-transport'
-import SonicBoom from 'sonic-boom'
+import pc from 'picocolors'
+import { default as build } from 'pino-abstract-transport'
+import { default as SonicBoom } from 'sonic-boom'
 
 const stackRegex = /\(([^)]+)\)/
 const stackFormat = `(${pc.cyan('$1')})`
@@ -177,6 +177,5 @@ function transport(): Transform {
   return build(write)
 }
 
-transport.target = __filename
-
-export = transport
+export default transport
+export const target = __filename

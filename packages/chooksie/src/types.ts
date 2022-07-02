@@ -9,7 +9,6 @@ import type {
   CommandInteraction,
   IntentsString,
   Interaction,
-  MessageComponentInteraction,
   MessageContextMenuInteraction,
   ModalSubmitInteraction,
   UserContextMenuInteraction,
@@ -21,7 +20,7 @@ import type {
   AppCommandType,
   AppDescription,
   AppName,
-} from './internals/discord'
+} from './internals/discord.js'
 
 // #region Config
 /**

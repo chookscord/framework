@@ -2,8 +2,8 @@
 import type { Client } from 'discord.js'
 import type { Logger } from 'pino'
 import _pino from 'pino'
-import { loadEvent, loadSlashCommand, loadSlashSubcommand } from '../src/internals/loaders'
-import { createKey } from '../src/internals/resolve'
+import { loadEvent, loadSlashCommand, loadSlashSubcommand } from '../src/internals/loaders.js'
+import { createKey } from '../src/internals/resolve.js'
 
 jest.mock('pino', () => {
   const pino = jest.fn() as unknown as Logger

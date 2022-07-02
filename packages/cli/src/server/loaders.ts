@@ -20,10 +20,10 @@ import type {
   UserCommand,
 } from 'chooksie'
 import type { LoggerFactory } from 'chooksie/internals'
-import { Awaitable, Client, ClientEvents, MessageComponentInteraction, Modal } from 'discord.js'
+import { Awaitable, Client, ClientEvents, MessageComponentInteraction } from 'discord.js'
 import { relative } from 'node:path'
-import { createKey, genId, getAutocompletes, timer } from '../internals'
-import type { SourceMap, Store } from '../lib'
+import { createKey, genId, getAutocompletes, timer } from 'chooksie/internals'
+import type { SourceMap, Store } from '../lib/index.js'
 
 export type VoidFn = () => Awaitable<void>
 export type CleanupFn = VoidFn
