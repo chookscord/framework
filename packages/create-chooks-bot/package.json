@@ -17,7 +17,7 @@
     "dev": "concurrently -r 'yarn:build:* -w'"
   },
   "dependencies": {
-    "nanospinner": "^1.0.0",
+    "nanospinner": "^1.1.0",
     "package-name-regex": "^2.0.6",
     "prompts": "^2.4.2"
   },
@@ -25,7 +25,7 @@
     "@types/package-name-regex": "^2.0.0",
     "@types/prompts": "^2.0.14",
     "chooksie": "workspace:*",
-    "discord.js": "^13.7.0"
+    "discord.js": "^13.8.1"
   },
   "repository": {
     "type": "git",

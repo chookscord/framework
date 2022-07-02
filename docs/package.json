@@ -12,10 +12,10 @@
     "@sapphire/framework": "next",
     "@vuepress/plugin-docsearch": "next",
     "chooksie": "workspace:*",
-    "discord.js": "^13.7.0",
-    "fastify": "^3.27.2",
-    "sequelize": "^6.17.0",
-    "sqlite3": "^5.0.2",
+    "discord.js": "^13.8.1",
+    "fastify": "^4.2.0",
+    "sequelize": "^6.21.2",
+    "sqlite3": "^5.0.8",
     "vuepress-vite": "next"
   }
 }
