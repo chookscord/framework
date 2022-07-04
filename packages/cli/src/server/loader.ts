@@ -183,6 +183,10 @@ async function reloadModule(targetId: Identifier): Promise<void> {
   }
 }
 
+export function unloadModule(id: Identifier): void {
+  modules.delete(id)
+}
+
 export type LoadStatus = 'cached' | 'reloaded' | 'loaded'
 export interface LoadResult<T> {
   status: LoadStatus
