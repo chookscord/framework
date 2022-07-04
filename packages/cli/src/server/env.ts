@@ -7,12 +7,12 @@ import { resolve } from 'node:path'
 import type { AbsolutePath } from './loader.js'
 
 export interface EnvWatcherEvents {
-  update: [env: Record<string, string>]
+  update: []
 }
 
 export interface EnvWatcher extends EventEmitter {
-  on: <T extends keyof EnvWatcherEvents>(eventName: T, listener: () => void) => this
-  once: <T extends keyof EnvWatcherEvents>(eventName: T, listener: () => void) => this
+  on: <T extends keyof EnvWatcherEvents>(eventName: T, listener: (...args: EnvWatcherEvents[T]) => void) => this
+  once: <T extends keyof EnvWatcherEvents>(eventName: T, listener: (...args: EnvWatcherEvents[T]) => void) => this
   emit: <T extends keyof EnvWatcherEvents>(eventName: T) => boolean
 }
 
