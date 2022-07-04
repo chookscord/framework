@@ -1,6 +1,5 @@
 import type {
   ButtonHandler,
-  ChooksScript,
   Command,
   CommandContext,
   CommandModule,
@@ -9,6 +8,7 @@ import type {
   Event,
   GenericHandler,
   GenericHandlerExecute,
+  LifecycleEvents,
   Logger,
   MessageCommand,
   ModalHandler,
@@ -20,9 +20,9 @@ import type {
   UserCommand,
 } from 'chooksie'
 import type { LoggerFactory } from 'chooksie/internals'
+import { createKey, genId, getAutocompletes, timer } from 'chooksie/internals'
 import { Awaitable, Client, ClientEvents, MessageComponentInteraction } from 'discord.js'
 import { relative } from 'node:path'
-import { createKey, genId, getAutocompletes, timer } from 'chooksie/internals'
 import type { SourceMap, Store } from '../lib/index.js'
 
 export type VoidFn = () => Awaitable<void>
@@ -51,7 +51,7 @@ export interface Stores {
   handler: Map<string, string>
 }
 
-function hasOnLoad(mod: Record<string, unknown>): mod is Required<ChooksScript> {
+function hasOnLoad(mod: Record<string, unknown>): mod is Required<LifecycleEvents> {
   return typeof mod.chooksOnLoad === 'function'
 }
 

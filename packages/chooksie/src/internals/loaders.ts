@@ -1,5 +1,5 @@
 import type { Client, ClientEvents, MessageComponentInteraction } from 'discord.js'
-import type { ButtonHandler, ChooksScript, CommandContext, CommandStore, EmptyObject, Event, GenericHandler, GenericHandlerExecute, MessageCommand, ModalHandler, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types.js'
+import type { ButtonHandler, CommandContext, CommandStore, EmptyObject, Event, GenericHandler, GenericHandlerExecute, LifecycleEvents, MessageCommand, ModalHandler, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types.js'
 import timer from './chrono.js'
 import genId from './id.js'
 import createLogger from './logger.js'
@@ -195,7 +195,7 @@ async function loadButton(store: CommandStore, button: ButtonHandler): Promise<v
 /**
  * @internal **FOR PRODUCTION USE ONLY**.
  */
-async function loadScript(client: Client, relpath: string, script: ChooksScript): Promise<void> {
+async function loadScript(client: Client, relpath: string, script: LifecycleEvents): Promise<void> {
   if (typeof script.chooksOnLoad === 'function') {
     const id = genId()
     const logger = pino('script', relpath)

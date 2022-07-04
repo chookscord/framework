@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'production'
-import type { ButtonHandler, ChooksScript, Command, Event, MessageCommand, ModalHandler, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
+import type { ButtonHandler, LifecycleEvents, Command, Event, MessageCommand, ModalHandler, SlashCommand, SlashSubcommand, UserCommand } from 'chooksie'
 import 'chooksie/dotenv'
 import { createClient, createLogger, loadEvent, loadButton, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand, onInteractionCreate, timer, walk } from 'chooksie/internals'
 import { version } from 'chooksie/package.json'
@@ -13,8 +13,8 @@ const logger = pino('app', 'chooks')
 
 const MODULE_NAMES: SourceDir[] = ['commands', 'subcommands', 'messages', 'users', 'events', 'modals', 'buttons']
 
-function hasScript(mod: Record<string, unknown>): mod is ChooksScript {
-  return typeof mod.chooksOnLoad === 'function'
+function hasScript(mod: unknown): mod is LifecycleEvents {
+  return typeof (mod as LifecycleEvents).chooksOnLoad === 'function'
 }
 
 function getFileType(path: string): SourceDir | 'scripts' {

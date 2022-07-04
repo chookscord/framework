@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any, no-trailing-spaces */
 import type {
   AutocompleteInteraction,
   Awaitable,
@@ -956,26 +956,36 @@ export function defineChoice<T extends string | number>(choice: Choice<T>) {
 }
 
 // #endregion
-// #region Scripts
+// #region Lifecycle
 /**
- * A script that executes when the file is loaded and reloaded.
+ * An event that is triggered when the file is loaded and reloaded.
  *
  * @example
- * export const chooksOnLoad: OnLoad = (ctx) => {
+ * export const chooksOnLoad: LoadEvent = (ctx) => {
  *   ctx.logger.info('File loaded!')
+ * }
+ */
+export type LoadEvent = (ctx: Context) => Awaitable<UnloadEvent | void>
+
+/**
+ * An event that is triggered when a file is unloaded.  
+ * Only executable during development.
+ *
+ * @example
+ * export const chooksOnLoad: LoadEvent = (ctx) => {
+ *   ctx.logger.info('File loaded!)
  *   return () => {
- *     ctx.logger.info('File reloading...')
+ *     ctx.logger.info('File unloaded!)
  *   }
  * }
  */
-export type OnLoad = (ctx: Context) => Awaitable<(() => void) | void>
+export type UnloadEvent = () => Awaitable<void>
 
 /**
  * A file that exports special variables that does executes a specific task.
  */
-export interface ChooksScript {
-  chooksOnLoad?: OnLoad
-  [key: string]: unknown
+export interface LifecycleEvents {
+  chooksOnLoad?: LoadEvent
 }
 
 /**
@@ -985,10 +995,10 @@ export interface ChooksScript {
  * starting web servers, connecting to databases, etc.
  *
  * ## See Also
- * - {@link OnLoad On Load Script}
+ * - {@link LoadEvent Load Event}
  * - [External Scripts](https://guide.chooks.app/advanced/scripts/) Web Guide
  * - [Database and Servers](https://guide.chooks.app/advanced/database-servers/) Web Guide
- * - {@link ChooksScript Scripts}
+ * - {@link LifecycleEvents Lifecycle Events}
  *
  * ## Examples
  * - Running a [`Fastify`](https://www.npmjs.com/package/fastify) server
@@ -1020,8 +1030,8 @@ export interface ChooksScript {
  *   }
  * })
  */
-export function defineOnLoad(script: OnLoad) {
-  return script
+export function defineOnLoad(listener: LoadEvent) {
+  return listener
 }
 // #endregion
 // #region Aliases
