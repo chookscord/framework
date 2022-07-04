@@ -1,4 +1,5 @@
 import { watch } from 'chokidar'
+import type { DotenvParseOutput } from 'dotenv'
 import dotenv from 'dotenv'
 import isEq from 'fast-deep-equal'
 import { EventEmitter } from 'node:events'
@@ -25,11 +26,11 @@ async function getEnv(filepath: AbsolutePath) {
   }
 }
 
-export async function watchEnv(root: AbsolutePath): Promise<EnvWatcher> {
+export async function watchEnv(root: AbsolutePath, init?: DotenvParseOutput): Promise<EnvWatcher> {
   const ee = new EventEmitter() as EnvWatcher
   const filepath = resolve(root, '.env') as AbsolutePath
 
-  let prev = await getEnv(filepath)
+  let prev = init ?? await getEnv(filepath)
   Object.assign(process.env, prev)
 
   const watcher = watch(filepath, {

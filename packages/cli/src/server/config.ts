@@ -50,16 +50,16 @@ export async function resolveConfig(root: AbsolutePath): Promise<ChooksConfig> {
   return mod.default
 }
 
-export async function configWatcher(root: AbsolutePath): Promise<ConfigWatcher> {
+export async function configWatcher(root: AbsolutePath, init?: ChooksConfig): Promise<ConfigWatcher> {
   const ee = new EventEmitter() as ConfigWatcher
   const filepaths = configs.map(config => resolve(root, config))
+
+  let prev = init ?? await resolveConfig(root)
 
   const watcher = watch(filepaths, {
     cwd: root,
     alwaysStat: true,
   })
-
-  let prev = await resolveConfig(root)
 
   watcher.on('change', async () => {
     const curr = await resolveConfig(root)
