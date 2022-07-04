@@ -183,7 +183,8 @@ async function reloadModule(targetId: Identifier): Promise<void> {
   }
 }
 
-export function unloadModule(id: Identifier): void {
+export function unloadModule(filepath: AbsolutePath): void {
+  const id = tsToJs(filepath) as Identifier
   modules.delete(id)
 }
 
