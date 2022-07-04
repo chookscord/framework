@@ -112,28 +112,25 @@ async function createModule(linker: Linker, data: ModuleEntry) {
 /**
  * @internal
  */
-async function _import(filepath: AbsolutePath, linker: Linker, parentId: Identifier): Promise<SourceTextModule> {
+async function _import(filepath: AbsolutePath, linker: Linker, parentId?: Identifier): Promise<CachedModuleEntry> {
   const id = tsToJs(filepath) as Identifier
   let entry = modules.get(id)
 
   if (entry === undefined) {
     const contents = await read(filepath)
     const code = await transform(contents)
-
-    entry = await createModule(linker, {
-      id,
-      contents,
-      code,
-    })
+    entry = await createModule(linker, { id, contents, code })
   }
 
-  entry.dependents.add(parentId)
+  if (parentId !== undefined) {
+    entry.dependents.add(parentId)
+  }
 
   if (entry.module.status === 'linking') {
     await entry.link
   }
 
-  return entry.module
+  return entry
 }
 
 /**
@@ -144,7 +141,9 @@ async function _linker(specifier: string, parent: Module): Promise<SourceTextMod
   const parentId = parent.identifier as Identifier
   const base = dirname(parentId)
   const filepath = resolve(base, specifier) as AbsolutePath
-  return _import(filepath, _linker, parentId)
+
+  const entry = await _import(filepath, _linker, parentId)
+  return entry.module
 }
 
 export interface PrunedModule {
@@ -208,6 +207,11 @@ export async function loadModule(filepath: AbsolutePath): Promise<void> {
 
   const code = await transform(contents)
   await createModule(_linker, { id, contents, code })
+}
+
+export async function loadSingleModule<T>(filepath: AbsolutePath): Promise<T> {
+  const entry = await _import(filepath, _linker)
+  return entry.module.namespace as T
 }
 
 export async function* onModuleReady(): AsyncGenerator<ModuleReadyEvent> {
