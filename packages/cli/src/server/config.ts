@@ -5,7 +5,7 @@ import { EventEmitter } from 'node:events'
 import { opendir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import type { AbsolutePath } from './loader.js'
-import { loadSingleModule } from './loader.js'
+import { loadSingleModule, unloadModule } from './loader.js'
 
 const configs = [
   'chooks.config.js',
@@ -45,6 +45,7 @@ export async function resolveConfig(root: AbsolutePath): Promise<ChooksConfig> {
   const filename = configs[config]
   const filepath = resolve(root, filename) as AbsolutePath
 
+  unloadModule(filepath)
   const mod = await loadSingleModule<{ default: ChooksConfig }>(filepath)
   return mod.default
 }
