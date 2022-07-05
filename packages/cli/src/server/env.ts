@@ -1,7 +1,5 @@
 import { watch } from 'chokidar'
-import type { DotenvParseOutput } from 'dotenv'
 import dotenv from 'dotenv'
-import isEq from 'fast-deep-equal'
 import { EventEmitter } from 'node:events'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
@@ -19,19 +17,23 @@ export interface EnvWatcher extends EventEmitter {
 
 async function getEnv(filepath: AbsolutePath) {
   try {
-    const contents = await readFile(filepath)
-    return dotenv.parse(contents)
+    return await readFile(filepath)
   } catch {
-    return {}
+    return Buffer.alloc(0)
   }
 }
 
-export async function watchEnv(root: AbsolutePath, init?: DotenvParseOutput): Promise<EnvWatcher> {
+function setEnv(buf: Buffer) {
+  const env = dotenv.parse(buf)
+  Object.assign(process.env, env)
+}
+
+export async function watchEnv(root: AbsolutePath, init?: Buffer): Promise<EnvWatcher> {
   const ee = new EventEmitter() as EnvWatcher
   const filepath = resolve(root, '.env') as AbsolutePath
 
   let prev = init ?? await getEnv(filepath)
-  Object.assign(process.env, prev)
+  setEnv(prev)
 
   const watcher = watch(filepath, {
     cwd: root,
@@ -40,9 +42,9 @@ export async function watchEnv(root: AbsolutePath, init?: DotenvParseOutput): Pr
 
   watcher.on('change', async () => {
     const curr = await getEnv(filepath)
-    if (!isEq(prev, curr)) {
+    if (!curr.equals(prev)) {
       prev = curr
-      Object.assign(process.env, curr)
+      setEnv(curr)
       ee.emit('update')
     }
   })
