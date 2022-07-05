@@ -5,9 +5,11 @@ import type { Logger } from '../types.js'
 export type LoggerType = 'app' | 'autocomplete' | 'command' | 'subcommand' | 'user' | 'message' | 'event' | 'script' | 'modal' | 'button'
 export type LoggerFactory = (type: LoggerType, name: string) => Logger
 
-function createLogger(opts?: LoggerOptions | DestinationStream): LoggerFactory {
-  const logger = _pino(opts)
-  return (type, name): Logger => logger.child({ type, name })
-}
+export let logger: Logger
 
-export default createLogger
+export function registerLogger(opts?: LoggerOptions | DestinationStream): void {
+  if (logger !== undefined) {
+    throw new Error('logger already registered!')
+  }
+  logger = _pino(opts)
+}

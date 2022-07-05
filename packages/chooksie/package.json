@@ -33,9 +33,9 @@
       "optional": true
     }
   },
-  "main": "./dist/types.js",
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./dist/types.js",
+    ".": "./dist/index.js",
     "./dotenv": "./dist/dotenv.js",
     "./fetch": "./dist/fetch.js",
     "./internals": "./dist/internals/index.js",

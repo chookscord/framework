@@ -5,7 +5,7 @@ export type { AppCommand, AppCommandOption, AppCommandOptionChoice, AppDescripti
 export { default as genId } from './id.js'
 export { default as hasLifecycle } from './lifecycle.js'
 export { getAutocompletes, loadButton, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand } from './loaders.js'
-export { default as createLogger } from './logger.js'
+export { registerLogger } from './logger.js'
 export type { LoggerFactory, LoggerType } from './logger.js'
 export { createKey, resolveInteraction } from './resolve.js'
 export { default as walk } from './walk.js'
