@@ -1,17 +1,19 @@
 {
+  "module": {
+    "type": "es6",
+    "noInterop": true,
+    "strict": true
+  },
   "jsc": {
     "loose": true,
-    "target": "es2020",
     "parser": {
       "syntax": "typescript",
-      "dts": true
+      "dynamicImport": true,
+      "importAssertions": true
     },
-    "externalHelpers": true
+    "target": "es2021"
   },
   "exclude": [
     "\\.d\\.ts$"
-  ],
-  "module": {
-    "type": "commonjs"
-  }
+  ]
 }
