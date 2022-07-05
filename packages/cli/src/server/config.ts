@@ -16,6 +16,7 @@ const configs = [
 
 export interface ConfigWatcherEvents {
   update: [config: ChooksConfig]
+  reload: []
 }
 
 export interface ConfigWatcher extends EventEmitter {
@@ -61,13 +62,16 @@ export async function watchConfig(root: AbsolutePath, init?: ChooksConfig): Prom
     alwaysStat: true,
   })
 
-  watcher.on('change', async () => {
+  const checkUpdate = async () => {
     const curr = await resolveConfig(root)
     if (!isEq(prev, curr)) {
       prev = curr
       ee.emit('update', curr)
     }
-  })
+  }
+
+  watcher.on('change', checkUpdate)
+  ee.on('reload', checkUpdate)
 
   return ee
 }
