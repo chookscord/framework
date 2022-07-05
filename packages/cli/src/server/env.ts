@@ -28,12 +28,17 @@ function setEnv(buf: Buffer) {
   Object.assign(process.env, env)
 }
 
+export async function loadEnv(filepath: AbsolutePath): Promise<Buffer> {
+  const buf = await getEnv(filepath)
+  setEnv(buf)
+  return buf
+}
+
 export async function watchEnv(root: AbsolutePath, init?: Buffer): Promise<EnvWatcher> {
   const ee = new EventEmitter() as EnvWatcher
   const filepath = resolve(root, '.env') as AbsolutePath
 
-  let prev = init ?? await getEnv(filepath)
-  setEnv(prev)
+  let prev = init ?? await loadEnv(filepath)
 
   const watcher = watch(filepath, {
     cwd: root,
