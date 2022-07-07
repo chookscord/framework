@@ -1,12 +1,5 @@
 {
   "extends": "tsconfig/base.json",
-  "compilerOptions": {
-    "paths": {
-      "chooksie/internals": [
-        "../chooksie/dist/internals/index.d.ts"
-      ]
-    }
-  },
   "include": [
     "src",
     "types"
