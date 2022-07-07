@@ -1,8 +1,7 @@
 import swc from '@swc/core'
-import { on } from 'node:events'
+import { EventEmitter, on } from 'node:events'
 import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
-import { EventEmitter } from 'node:stream'
 import type { Module } from 'node:vm'
 import { SourceTextModule } from 'node:vm'
 
