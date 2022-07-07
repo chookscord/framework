@@ -32,7 +32,8 @@
   },
   "devDependencies": {
     "chooksie": "workspace:*",
-    "discord.js": "^13.8.1"
+    "discord.js": "^13.8.1",
+    "pino": "^8.1.0"
   },
   "repository": {
     "type": "git",
