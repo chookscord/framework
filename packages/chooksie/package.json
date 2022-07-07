@@ -36,6 +36,7 @@
   "main": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",
+    "./logger": "./dist/logger.js",
     "./dotenv": "./dist/dotenv.js",
     "./fetch": "./dist/fetch.js",
     "./internals": "./dist/internals/index.js",
