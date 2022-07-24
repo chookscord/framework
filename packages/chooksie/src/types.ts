@@ -177,6 +177,12 @@ export interface Command {
 export type CommandStore = Map<string, Command>
 // #endregion
 // #region Events
+export type EventListener<Name extends keyof ClientEvents = keyof ClientEvents, T = EmptyObject> = (
+  this: T,
+  ctx: EventContext,
+  ...args: ClientEvents[Name]
+) => Awaitable<void>
+
 /**
  * An event handler.
  */
@@ -184,7 +190,7 @@ export interface Event<Name extends keyof ClientEvents, T = EmptyObject> {
   name: Name
   once?: boolean
   setup?: () => Awaitable<T>
-  execute: (this: T, ctx: EventContext, ...args: ClientEvents[Name]) => Awaitable<void>
+  execute: EventListener<Name, T>
 }
 
 /**
