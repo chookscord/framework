@@ -136,14 +136,14 @@ export async function loadSlashSubcommand(store: CommandStore, command: SlashSub
   for (const option of command.options) {
     if (option.type === 'SUB_COMMAND') {
       await loadSubcommand(store, command.name, null, option as Subcommand)
-      return
+      continue
     }
 
     if (option.type === 'SUB_COMMAND_GROUP') {
       for (const subcommand of option.options as Subcommand[]) {
         await loadSubcommand(store, command.name, option.name, subcommand)
       }
-      return
+      continue
     }
   }
 }
