@@ -1,40 +1,51 @@
-import { UnloadEvent } from 'chooksie'
-import { genId, hasLifecycle, LoggerFactory } from 'chooksie/internals'
-import { Client } from 'discord.js'
+import type { LifecycleEvents, UnloadEvent } from 'chooksie'
+import { createLogger, genId, hasLifecycle } from 'chooksie/internals'
+import type { Client } from 'discord.js'
 import { basename } from 'path'
-import { Identifier } from './loader.js'
+import type { Identifier } from './loader.js'
 
-const scripts = new Map<Identifier, UnloadEvent>()
+export interface CachedLifecycle {
+  ac: AbortController
+  ns: Required<LifecycleEvents>
+  unload: UnloadEvent | void
+}
 
-async function unloadScript(id: Identifier) {
-  const cleanup = scripts.get(id)
+const lifecycles = new Map<Identifier, CachedLifecycle>()
 
-  if (typeof cleanup === 'function') {
-    scripts.delete(id)
-    await cleanup()
+async function unloadLifecycle(id: Identifier) {
+  const lc = lifecycles.get(id)
+
+  if (lc === undefined) {
+    return
+  }
+
+  lifecycles.delete(id)
+
+  lc.ac.abort()
+
+  if (typeof lc.unload === 'function') {
+    await lc.unload()
   }
 }
 
-// @todo: abort signals for previous lifecycle
-export async function loadScript(
+export async function loadLifecycle(
   id: Identifier,
   ns: Record<string, unknown>,
   client: Client<true>,
-  pino: LoggerFactory,
 ): Promise<void> {
-  await unloadScript(id)
+  await unloadLifecycle(id)
 
   if (!hasLifecycle(ns)) {
     return
   }
 
+  const ac = new AbortController()
   const unload = await ns.chooksOnLoad({
     id: genId(),
     client,
-    logger: pino('script', basename(id)),
+    logger: createLogger('script', basename(id)),
+    signal: ac.signal,
   })
 
-  if (typeof unload === 'function') {
-    scripts.set(id, unload)
-  }
+  lifecycles.set(id, { ns, unload, ac })
 }
