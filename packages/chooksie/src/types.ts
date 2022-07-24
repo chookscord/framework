@@ -113,6 +113,13 @@ export interface HandlerContext<T> extends CommandContext<T> {
   payload: string | null
 }
 
+/**
+ * Context for lifecycle load event.
+ */
+export interface LoadLifecycleContext extends Context {
+  signal: AbortSignal
+}
+
 export type Execute<InteractionType, ThisArg> = (
   this: ThisArg,
   ctx: CommandContext<InteractionType>
@@ -234,11 +241,14 @@ export function defineEvent<T, Name extends keyof ClientEvents>(event: DefineEve
 }
 // #endregion
 // #region Commands
+export type ContextMenuCommand =
+| UserCommand<any>
+| MessageCommand<any>
+
 export type CommandModule =
 | SlashCommand<any>
 | SlashSubcommand
-| UserCommand<any>
-| MessageCommand<any>
+| ContextMenuCommand
 
 /**
  * A basic slash command.
@@ -634,6 +644,10 @@ export function defineSubcommandGroup(command: SubcommandGroup) {
 }
 // #endregion
 // #region Modals
+export type Handlers =
+| ModalHandler
+| ButtonHandler
+
 /**
  * A handler for submitted modals.
  */
@@ -971,7 +985,7 @@ export function defineChoice<T extends string | number>(choice: Choice<T>) {
  *   ctx.logger.info('File loaded!')
  * }
  */
-export type LoadEvent = (ctx: Context) => Awaitable<UnloadEvent | void>
+export type LoadEvent = (ctx: LoadLifecycleContext) => Awaitable<UnloadEvent | void>
 
 /**
  * An event that is triggered when a file is unloaded.  

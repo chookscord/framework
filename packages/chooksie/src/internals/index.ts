@@ -4,7 +4,7 @@ export { AppChannelType, AppCommandOptionType, AppCommandType } from './discord.
 export type { AppCommand, AppCommandOption, AppCommandOptionChoice, AppDescription, AppName } from './discord.js'
 export { default as genId } from './id.js'
 export { default as hasLifecycle } from './lifecycle.js'
-export { getAutocompletes, loadButton, loadEvent, loadMessageCommand, loadModal, loadScript, loadSlashCommand, loadSlashSubcommand, loadUserCommand } from './loaders.js'
+export * from './loaders.js'
 export * from './logger.js'
 export { createKey, resolveInteraction } from './resolve.js'
 export { default as walk } from './walk.js'

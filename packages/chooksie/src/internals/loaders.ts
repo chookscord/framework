@@ -1,11 +1,39 @@
 import type { Client, ClientEvents, MessageComponentInteraction } from 'discord.js'
-import type { ButtonHandler, CommandContext, CommandStore, EmptyObject, Event, GenericHandler, GenericHandlerExecute, LifecycleEvents, MessageCommand, ModalHandler, Option, OptionWithAutocomplete, SlashCommand, SlashSubcommand, Subcommand, SubcommandGroup, UserCommand } from '../types.js'
+import { createLogger } from '../logger.js'
+import type {
+  CommandContext,
+  CommandStore,
+  ContextMenuCommand,
+  EmptyObject,
+  Event,
+  GenericHandler,
+  GenericHandlerExecute,
+  Handlers,
+  LifecycleEvents, NonCommandOption,
+  OptionWithAutocomplete,
+  SlashCommand,
+  SlashSubcommand,
+  Subcommand,
+  SubcommandGroup,
+} from '../types.js'
 import timer from './chrono.js'
 import genId from './id.js'
-import createLogger from './logger.js'
 import { createKey } from './resolve.js'
 
-const pino = createLogger()
+/**
+ * # DO NOT TOUCH
+ *
+ * Only used for passing to lifecycles.
+ * @internal
+ */
+const signal = new AbortSignal()
+
+const nsMap = {
+  user: 'usr',
+  message: 'msg',
+  button: 'btn',
+  modal: 'modal',
+} as const
 
 function withPayload(execute: GenericHandlerExecute) {
   return ((ctx: CommandContext<MessageComponentInteraction>) => {
@@ -16,22 +44,22 @@ function withPayload(execute: GenericHandlerExecute) {
   }) as GenericHandler
 }
 
-function getAutocompletes(options: Option[] | undefined): OptionWithAutocomplete[] {
-  if (!options) return []
-
-  return options.filter((option): option is OptionWithAutocomplete => {
-    return 'autocomplete' in option && typeof option.autocomplete === 'function'
-  })
+export function* getAutocompletes(options: NonCommandOption[]): Generator<OptionWithAutocomplete, void> {
+  for (const option of options) {
+    if ('autocomplete' in option && typeof option.autocomplete === 'function') {
+      yield option
+    }
+  }
 }
 
 /**
  * @internal **FOR PRODUCTION USE ONLY**.
  */
-async function loadEvent(client: Client, event: Event<keyof ClientEvents>): Promise<void> {
+export async function loadEvent(client: Client, event: Event<keyof ClientEvents>): Promise<void> {
   const freq = event.once ? 'once' : 'on'
   const deps = await event.setup?.() ?? {}
 
-  const _logger = pino('event', event.name)
+  const _logger = createLogger('event', event.name)
   const _execute = event.execute.bind(deps)
 
   const execute = async (...args: ClientEvents[keyof ClientEvents]) => {
@@ -60,70 +88,60 @@ async function loadEvent(client: Client, event: Event<keyof ClientEvents>): Prom
   client[freq](event.name, execute)
 }
 
-async function loadAutocompletes(store: CommandStore, parentKey: string, options: Option[] | undefined) {
-  const autocompletes = getAutocompletes(options)
-  if (!autocompletes.length) return
+async function loadAutocompletes(store: CommandStore, parentKey: string, options: NonCommandOption[]) {
+  for (const autocomplete of getAutocompletes(options)) {
+    const deps = await autocomplete.setup?.() ?? {}
+    const execute = autocomplete.autocomplete!.bind(deps) as GenericHandler
 
-  const jobs = autocompletes.map(async option => {
-    const deps = await option.setup?.() ?? {}
-    const autocomplete = <GenericHandler>option.autocomplete!.bind(deps)
+    const key = createKey('auto', parentKey, autocomplete.name)
+    const logger = createLogger('autocomplete', key)
 
-    const key = createKey('auto', parentKey, option.name)
-    const logger = pino('autocomplete', key)
-
-    store.set(key, { execute: autocomplete, logger })
-  })
-
-  await Promise.all(jobs)
+    store.set(key, { execute, logger })
+  }
 }
 
-async function loadSlashCommand(store: CommandStore, command: SlashCommand): Promise<void> {
+export async function loadSlashCommand(store: CommandStore, command: SlashCommand): Promise<void> {
   const deps = await command.setup?.() ?? {}
-  const execute = <GenericHandler>command.execute.bind(deps)
+  const execute = command.execute.bind(deps) as GenericHandler
 
   const key = createKey('cmd', command.name)
-  const logger = pino('command', key)
+  const logger = createLogger('command', key)
 
   store.set(key, { execute, logger })
 
-  await loadAutocompletes(store, command.name, command.options)
+  if (command.options !== undefined) {
+    await loadAutocompletes(store, command.name, command.options)
+  }
 }
 
-async function loadSubcommand(store: CommandStore, parentName: string, subcommand: Subcommand) {
-  const deps = await subcommand.setup?.() ?? {}
-  const execute = <GenericHandler>subcommand.execute.bind(deps)
+async function loadSubcommand(store: CommandStore, parentName: string, groupName: string | null, option: Subcommand) {
+  const deps = await option.setup?.() ?? {}
+  const execute = option.execute.bind(deps) as GenericHandler
 
-  const parentKey = createKey(parentName, subcommand.name)
+  const parentKey = createKey(parentName, groupName, option.name)
   const key = createKey('cmd', parentKey)
-  const logger = pino('subcommand', key)
+  const logger = createLogger('subcommand', key)
+
   store.set(key, { execute, logger })
 
-  await loadAutocompletes(store, parentKey, subcommand.options)
+  if (option.options !== undefined) {
+    await loadAutocompletes(store, parentKey, option.options)
+  }
 }
 
 async function loadSubcommandGroup(store: CommandStore, parentName: string, group: SubcommandGroup) {
-  const subcommands = group.options.map(async subcommand => {
-    const deps = await subcommand.setup?.() as EmptyObject ?? {}
-    const execute = <GenericHandler>subcommand.execute.bind(deps)
-
-    const parentKey = createKey(parentName, group.name, subcommand.name)
-    const key = createKey('cmd', parentKey)
-    const logger = pino('subcommand', key)
-    store.set(key, { execute, logger })
-
-    await loadAutocompletes(store, parentKey, subcommand.options)
-  })
-
-  await Promise.all(subcommands)
+  for (const option of group.options) {
+    await loadSubcommand(store, parentName, group.name, option as Subcommand)
+  }
 }
 
 /**
  * @internal **FOR PRODUCTION USE ONLY**.
  */
-async function loadSlashSubcommand(store: CommandStore, command: SlashSubcommand): Promise<void> {
-  const options = command.options.map(async option => {
+export async function loadSlashSubcommand(store: CommandStore, command: SlashSubcommand): Promise<void> {
+  for (const option of command.options) {
     if (option.type === 'SUB_COMMAND') {
-      await loadSubcommand(store, command.name, option as Subcommand)
+      await loadSubcommand(store, command.name, null, option as Subcommand)
       return
     }
 
@@ -131,86 +149,42 @@ async function loadSlashSubcommand(store: CommandStore, command: SlashSubcommand
       await loadSubcommandGroup(store, command.name, option)
       return
     }
+  }
+}
+
+/**
+ * @internal **FOR PRODUCTION USE ONLY**
+ */
+export async function loadContextMenuCommand(store: CommandStore, type: 'user' | 'message', command: ContextMenuCommand): Promise<void> {
+  const key = createKey(nsMap[type], command.name)
+  const deps = await command.setup?.() as EmptyObject ?? {}
+
+  store.set(key, {
+    execute: command.execute.bind(deps) as GenericHandler,
+    logger: createLogger(type, key),
   })
-
-  await Promise.all(options)
 }
 
 /**
  * @internal **FOR PRODUCTION USE ONLY**
  */
-async function loadUserCommand(store: CommandStore, command: UserCommand): Promise<void> {
-  const deps = await command.setup?.() ?? {}
-  const execute = <GenericHandler>command.execute.bind(deps)
+export async function loadHandler(store: CommandStore, type: 'button' | 'modal', handler: Handlers): Promise<void> {
+  const key = createKey(nsMap[type], handler.customId)
+  const deps = await handler.setup?.() ?? {}
 
-  const key = createKey('usr', command.name)
-  const logger = pino('user', key)
-
-  store.set(key, { execute, logger })
-}
-
-/**
- * @internal **FOR PRODUCTION USE ONLY**
- */
-async function loadMessageCommand(store: CommandStore, command: MessageCommand): Promise<void> {
-  const deps = await command.setup?.() ?? {}
-  const execute = <GenericHandler>command.execute.bind(deps)
-
-  const key = createKey('msg', command.name)
-  const logger = pino('message', key)
-
-  store.set(key, { execute, logger })
-}
-
-/**
- * @internal **FOR PRODUCTION USE ONLY**
- */
-async function loadModal(store: CommandStore, modal: ModalHandler): Promise<void> {
-  const deps = await modal.setup?.() ?? {}
-
-  const _execute = modal.execute.bind(deps)
-  const execute = withPayload(_execute as GenericHandlerExecute)
-
-  const key = createKey('mod', modal.customId)
-  const logger = pino('modal', key)
-
-  store.set(key, { execute, logger })
-}
-
-/**
- * @internal **FOR PRODUCTION USE ONLY**
- */
-async function loadButton(store: CommandStore, button: ButtonHandler): Promise<void> {
-  const deps = await button.setup?.() ?? {}
-
-  const _execute = button.execute.bind(deps)
-  const execute = withPayload(_execute as GenericHandlerExecute)
-
-  const key = createKey('btn', button.customId)
-  const logger = pino('button', key)
-
-  store.set(key, { execute, logger })
+  store.set(key, {
+    execute: withPayload(handler.execute.bind(deps) as GenericHandlerExecute),
+    logger: createLogger(type, key),
+  })
 }
 
 /**
  * @internal **FOR PRODUCTION USE ONLY**.
  */
-async function loadScript(client: Client, relpath: string, script: LifecycleEvents): Promise<void> {
+export async function loadLifecycle(client: Client, filename: string, script: LifecycleEvents): Promise<void> {
   if (typeof script.chooksOnLoad === 'function') {
     const id = genId()
-    const logger = pino('script', relpath)
-    await script.chooksOnLoad({ id, client, logger })
+    const logger = createLogger('script', filename)
+    await script.chooksOnLoad({ id, client, logger, signal })
   }
 }
-
-export {
-  loadEvent,
-  loadSlashCommand,
-  loadSlashSubcommand,
-  loadUserCommand,
-  loadMessageCommand,
-  loadModal,
-  loadButton,
-  loadScript,
-}
-export { getAutocompletes }
