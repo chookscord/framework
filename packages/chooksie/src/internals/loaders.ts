@@ -129,12 +129,6 @@ async function loadSubcommand(store: CommandStore, parentName: string, groupName
   }
 }
 
-async function loadSubcommandGroup(store: CommandStore, parentName: string, group: SubcommandGroup) {
-  for (const option of group.options) {
-    await loadSubcommand(store, parentName, group.name, option as Subcommand)
-  }
-}
-
 /**
  * @internal **FOR PRODUCTION USE ONLY**.
  */
@@ -146,7 +140,9 @@ export async function loadSlashSubcommand(store: CommandStore, command: SlashSub
     }
 
     if (option.type === 'SUB_COMMAND_GROUP') {
-      await loadSubcommandGroup(store, command.name, option)
+      for (const subcommand of option.options as Subcommand[]) {
+        await loadSubcommand(store, command.name, option.name, subcommand)
+      }
       return
     }
   }
