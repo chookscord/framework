@@ -1,8 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { BoolOption, ChannelOption, ChannelType, Choice, ModalHandler, CommandModule, Event, MentionableOption, MessageCommand, NumberOption, RoleOption, SlashCommand, SlashSubcommand, StringOption, Subcommand, SubcommandGroup, UserCommand, UserOption, ButtonHandler } from 'chooksie'
+import type {
+  BoolOption,
+  ButtonHandler,
+  ChannelOption,
+  ChannelType,
+  Choice,
+  CommandModule,
+  Event,
+  MentionableOption,
+  MessageCommand,
+  ModalHandler,
+  NumberOption,
+  RoleOption,
+  SlashCommand,
+  SlashSubcommand,
+  StringOption,
+  Subcommand,
+  SubcommandGroup,
+  UserCommand,
+  UserOption,
+} from 'chooksie'
+import { AppChannelType } from 'chooksie/internals'
 import type { ClientEvents } from 'discord.js'
 import Joi from 'joi'
-import { AppChannelType } from 'chooksie/internals'
 
 const appName = Joi.string()
   .lowercase()
