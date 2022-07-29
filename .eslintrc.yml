@@ -1,0 +1,15 @@
+---
+root: true
+env:
+  node: true
+extends:
+  - "@chookslint/eslint-config/strict"
+parser: "@typescript-eslint/parser"
+parserOptions:
+  sourceType: module
+  ecmaVersion: 2022
+overrides:
+  - files: "*.ts"
+    extends:
+      - "@chookslint/eslint-config-typescript/strict"
+      - "@chookslint/eslint-config-typescript/types"

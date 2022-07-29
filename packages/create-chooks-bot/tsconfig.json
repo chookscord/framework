@@ -1,0 +1,10 @@
+{
+  "extends": "tsconfig/create-chooks-bot.json",
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

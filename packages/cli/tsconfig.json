@@ -1,0 +1,10 @@
+{
+  "extends": "tsconfig/chooksie-cli.json",
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
