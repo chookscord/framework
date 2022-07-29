@@ -1,8 +1,0 @@
-{
-  "scripts": {
-    "start": "node dist",
-    "dev": "chooks",
-    "build": "chooks build",
-    "register": "chooks register"
-  }
-}

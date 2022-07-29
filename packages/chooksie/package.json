@@ -1,61 +1,12 @@
 {
   "name": "chooksie",
-  "version": "2.4.1",
+  "version": "3.0.0-dev.0",
   "description": "Fast Discord.JS Framework",
   "license": "MIT",
-  "files": [
-    "dist/**/*.{js,d.ts}"
-  ],
-  "scripts": {
-    "test": "jest",
-    "build": "concurrently -r 'yarn:build:*'",
-    "build:swc": "swc src -d dist --config-file ../../.swcrc",
-    "build:tsc": "tsc",
-    "dev": "concurrently -r 'yarn:build:* -w'"
-  },
-  "dependencies": {
-    "@swc/helpers": "^0.3.6",
-    "dotenv": "^16.0.0",
-    "pino": "^7.8.0",
-    "uid": "^2.0.0"
-  },
-  "devDependencies": {
-    "discord.js": "^13.7.0",
-    "undici": "^5.2.0"
-  },
-  "peerDependencies": {
-    "discord.js": "^13.7.0",
-    "undici": "^5.2.0"
-  },
-  "peerDependenciesMeta": {
-    "undici": {
-      "optional": true
-    }
-  },
-  "main": "./dist/types.js",
-  "exports": {
-    ".": "./dist/types.js",
-    "./dotenv": "./dist/dotenv.js",
-    "./fetch": "./dist/fetch.js",
-    "./internals": "./dist/internals/index.js",
-    "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {
-      "fetch": [
-        "./dist/fetch.d.ts"
-      ],
-      "dotenv": [
-        "./dist/dotenv.d.ts"
-      ],
-      "package.json": [
-        "./package.json"
-      ]
-    }
-  },
+  "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chookscord/framework.git",
+    "url": "git+https://github.com/Choooks22/chooksie.git",
     "directory": "packages/chooksie"
   },
   "keywords": [

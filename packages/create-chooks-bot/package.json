@@ -1,35 +1,12 @@
 {
   "name": "create-chooks-bot",
-  "version": "2.4.1",
+  "version": "3.0.0-dev.0",
   "description": "Scaffold for the Chooksie Framework",
   "license": "MIT",
   "type": "module",
-  "bin": "dist/bin/index.js",
-  "main": "dist/bin/index.js",
-  "files": [
-    "dist",
-    "templates"
-  ],
-  "scripts": {
-    "build": "concurrently -r 'yarn:build:*'",
-    "build:swc": "swc src -d dist --config-file ../../.swcrc -C module.type=es6",
-    "build:tsc": "tsc",
-    "dev": "concurrently -r 'yarn:build:* -w'"
-  },
-  "dependencies": {
-    "nanospinner": "^1.0.0",
-    "package-name-regex": "^2.0.6",
-    "prompts": "^2.4.2"
-  },
-  "devDependencies": {
-    "@types/package-name-regex": "^2.0.0",
-    "@types/prompts": "^2.0.14",
-    "chooksie": "workspace:*",
-    "discord.js": "^13.7.0"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chookscord/framework.git",
+    "url": "git+https://github.com/Choooks22/chooksie.git",
     "directory": "packages/create-chooks-bot"
   },
   "publishConfig": {

@@ -27,8 +27,7 @@
   ],
   "extensions": {
     "recommendations": [
-      "dbaeumer.vscode-eslint",
-      "Orta.vscode-jest"
+      "dbaeumer.vscode-eslint"
     ]
   },
   "settings": {
@@ -37,12 +36,6 @@
       "configs/": true,
       "packages/": true,
       "docs/": true
-    },
-    "jest.disabledWorkspaceFolders": [
-      "🏗 Scaffold",
-      "📖 Docs",
-      "🔧 Configs",
-      "🌱 Root"
-    ]
+    }
   }
 }

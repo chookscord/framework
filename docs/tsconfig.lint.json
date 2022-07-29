@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": [
-    "guide/.vuepress/**/*.ts",
-    "guide"
-  ]
-}
