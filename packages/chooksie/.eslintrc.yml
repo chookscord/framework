@@ -1,3 +1,9 @@
 ---
 parserOptions:
   project: "./tsconfig.json"
+overrides:
+  - files: "src/types/**/*.ts"
+    rules:
+      "@typescript-eslint/method-signature-style": off
+      "@typescript-eslint/no-empty-interface": off
+      "@typescript-eslint/no-explicit-any": off

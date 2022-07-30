@@ -9,6 +9,19 @@
     "dev": "tsc --watch --incremental --preserveWatchOutput",
     "lint": "TIMING=1 eslint --fix src"
   },
+  "dependencies": {
+    "pino": "^8.3.1"
+  },
+  "devDependencies": {
+    "discord.js": "^14.1.1"
+  },
+  "peerDependencies": {
+    "discord.js": "^14.1.1"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./types": "./dist/types/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Choooks22/chooksie.git",
