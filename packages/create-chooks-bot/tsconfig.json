@@ -1,5 +1,8 @@
 {
   "extends": "tsconfig/create-chooks-bot.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
   "include": [
     "src"
   ],

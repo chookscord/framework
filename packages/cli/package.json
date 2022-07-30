@@ -4,6 +4,11 @@
   "description": "CLI package for the Chooksie Framework",
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "dev": "tsc --watch --incremental --preserveWatchOutput",
+    "lint": "TIMING=1 eslint --fix src"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Choooks22/chooksie.git",
