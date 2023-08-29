@@ -1,15 +1,22 @@
-import { Command } from '@sapphire/framework'
+import { Command } from '@sapphire/framework';
 
 export class PingCommand extends Command {
   constructor(context) {
     super(context, {
-      description: 'Pong!',
-      chatInputCommand: {
-        register: true,
-      },
-    })
+      description: 'Pong!'
+    });
   }
+
+  registerApplicationCommands(registry) {
+    registry.registerChatInputCommand(
+      (builder) =>
+        builder //
+          .setName(this.name)
+          .setDescription(this.description)
+    );
+  }
+
   async chatInputRun(interaction) {
-    await interaction.reply('Pong!')
+    return interaction.reply('Pong!');
   }
 }
